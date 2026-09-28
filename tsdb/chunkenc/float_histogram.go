@@ -723,7 +723,7 @@ func (a *FloatHistogramAppender) AppendFloatHistogram(prev Appender, _, t int64,
 			// we silently ignore prev when it isn't a float-histogram appender
 			// (e.g. a transition from an integer histogram chunk, where the
 			// counter-reset relationship is not defined here).
-			if p, ok := prev.(floatHistogramAppendable); ok {
+			if p, ok := alpHistogramPrevious(prev).(floatHistogramAppendable); ok {
 				_, _, _, _, _, counterReset := p.appendable(h)
 				if counterReset {
 					a.setCounterResetHeader(CounterReset)

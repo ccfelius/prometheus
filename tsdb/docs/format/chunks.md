@@ -36,7 +36,7 @@ in-file offset (lower 4 bytes) and segment sequence number (upper 4 bytes).
 Notes:
 
 * `len`: Chunk size in bytes. 1 to 5 bytes long using the [`<uvarint>` encoding](https://go.dev/src/encoding/binary/varint.go).
-* `encoding`: Currently one of `XOR`, `XOR2`, `histogram`, `floathistogram`, `histogramST`, or `floathistogramST`, see [code for numerical values](https://github.com/prometheus/prometheus/blob/02d0de9987ad99dee5de21853715954fadb3239f/tsdb/chunkenc/chunk.go#L28-L47). The `XOR2`, `histogramST`, and `floathistogramST` encodings extend their non-ST counterparts with optional Start Timestamp (ST) data. `XOR2` is selected by the [`storage.tsdb.chunk_encoding.floats`](../../../docs/configuration/configuration.md#tsdb) configuration field; `histogramST` and `floathistogramST` are gated behind the experimental [`histograms-st-encoding` feature flag](../../../docs/feature_flags.md#histogram-st-chunk-encoding).
+* `encoding`: Currently one of `ALP`, `ALPHistogram`, `ALPFloatHistogram`, `XOR`, `XOR2`, `histogram`, `floathistogram`, `histogramST`, or `floathistogramST`. See [the encoding definitions](../../chunkenc/chunk.go) for numerical values. The `XOR2`, `histogramST`, and `floathistogramST` encodings extend their non-ST counterparts with optional Start Timestamp (ST) data. `XOR2` is selected by the [`storage.tsdb.chunk_encoding.floats`](../../../docs/configuration/configuration.md#tsdb) configuration field; `histogramST` and `floathistogramST` are gated behind the experimental [`histograms-st-encoding` feature flag](../../../docs/feature_flags.md#histogram-st-chunk-encoding). ALP encodings support ST and are selected independently for floats and histograms under `storage.tsdb.chunk_encoding`.
 * `data`: See below for each encoding.
 * `checksum`: Checksum of `encoding` and `data`. It's a [cyclic redundancy check](https://en.wikipedia.org/wiki/Cyclic_redundancy_check) with the Castagnoli polynomial, serialised as an unsigned 32 bits big endian number. Can be referred as a `CRC-32C`.
 
@@ -409,3 +409,13 @@ sample 1, and sample 2-and-following). The optional ST field and the
 │ sample_n <data> │ ?st_n <varbit_int>   │
 └─────────────────┴──────────────────────┘
 ```
+
+## ALP chunk data
+
+The experimental ALP encoding (7) uses independent lossless value blocks and
+separate timestamp streams. See the [ALP format specification](alp.md).
+
+ALP histogram encodings (8 for integer counts, 9 for floating counts) store
+shared layout metadata and packed numeric streams. Both support start timestamps
+and are selected with `storage.tsdb.chunk_encoding.histograms: alp`. See the
+[ALP histogram format specification](alp_histograms.md).

@@ -36,6 +36,7 @@ func TestChunk(t *testing.T) {
 	}{
 		{encoding: EncXOR, supportsST: false, factory: func() Chunk { return NewXORChunk() }},
 		{encoding: EncXOR2, supportsST: true, factory: func() Chunk { return NewXOR2Chunk() }},
+		{encoding: EncALP, supportsST: true, factory: func() Chunk { return NewALPChunk() }},
 	}
 	for _, tc := range testcases {
 		t.Run(tc.encoding.String(), func(t *testing.T) {

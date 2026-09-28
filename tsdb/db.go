@@ -251,6 +251,8 @@ type Options struct {
 	// integer and float histograms (EncHistogramST and EncFloatHistogramST).
 	// Independent of FloatChunkEncoding; only controls histogram families.
 	EnableHistogramSTEncoding bool
+	// EnableALPHistograms selects experimental ALP histogram chunks, including ST.
+	EnableALPHistograms bool
 
 	// EnableSTStorage determines whether TSDB should write a Start Timestamp (ST)
 	// per sample to WAL.
@@ -275,7 +277,7 @@ type Options struct {
 	// encoding ApplyConfig falls back to whenever chunk_encoding.floats is absent
 	// from the configuration file, so callers reading that field at startup must
 	// resolve it into this one.
-	// Defaults to EncXOR. Set to EncXOR2 to encode new float chunks as XOR2.
+	// Defaults to EncXOR. EncXOR2 and experimental EncALP also preserve start timestamps.
 	// Always use DefaultOptions() rather than a bare Options literal; the zero value
 	// of this field is EncNone, not EncXOR.
 	FloatChunkEncoding chunkenc.Encoding
@@ -939,8 +941,8 @@ func validateOpts(opts *Options, rngs []int64) (*Options, []int64, error) {
 	if opts.FloatChunkEncoding == chunkenc.EncNone {
 		opts.FloatChunkEncoding = chunkenc.EncXOR
 	}
-	if opts.FloatChunkEncoding != chunkenc.EncXOR && opts.FloatChunkEncoding != chunkenc.EncXOR2 {
-		return nil, nil, fmt.Errorf("unsupported float chunk encoding %q; valid values are %q and %q", strings.ToLower(opts.FloatChunkEncoding.String()), config.FloatChunkEncodingXOR, config.FloatChunkEncodingXOR2)
+	if opts.FloatChunkEncoding != chunkenc.EncXOR && opts.FloatChunkEncoding != chunkenc.EncXOR2 && opts.FloatChunkEncoding != chunkenc.EncALP {
+		return nil, nil, fmt.Errorf("unsupported float chunk encoding %q; valid values are %q, %q, and %q", strings.ToLower(opts.FloatChunkEncoding.String()), config.FloatChunkEncodingXOR, config.FloatChunkEncodingXOR2, config.FloatChunkEncodingALP)
 	}
 	if opts.EnableSTStorage && opts.FloatChunkEncoding == chunkenc.EncXOR {
 		return nil, nil, errXORIncompatibleWithSTStorage
@@ -1097,6 +1099,7 @@ func open(dir string, l *slog.Logger, r prometheus.Registerer, opts *Options, rn
 			UseUncachedIO:               opts.UseUncachedIO,
 			BlockExcludeFilter:          opts.BlockCompactionExcludeFunc,
 			FloatChunkEncoding:          db.floatChunkEncoding,
+			ALPHistograms:               func() bool { return db.head.opts.EnableALPHistograms.Load() },
 		})
 	}
 	if err != nil {
@@ -1166,6 +1169,7 @@ func open(dir string, l *slog.Logger, r prometheus.Registerer, opts *Options, rn
 	headOpts.EnableSTStorage.Store(opts.EnableSTStorage)
 	headOpts.FloatChunkEncoding.Store(uint32(opts.FloatChunkEncoding))
 	headOpts.EnableHistogramSTEncoding.Store(opts.EnableHistogramSTEncoding)
+	headOpts.EnableALPHistograms.Store(opts.EnableALPHistograms)
 	headOpts.EnableMetadataWALRecords = opts.EnableMetadataWALRecords
 	headOpts.EnableFastStartup = opts.EnableFastStartup
 	if opts.WALReplayConcurrency > 0 {
@@ -1384,14 +1388,26 @@ func (db *DB) ApplyConfig(conf *config.Config) error {
 		// db.opts.EnableSTStorage is set once at startup and never mutated.
 		// An absent chunk_encoding.floats keeps the encoding resolved at startup.
 		effectiveEncoding := db.opts.FloatChunkEncoding
+		alpHistograms := db.opts.EnableALPHistograms
+		switch histograms := conf.StorageConfig.TSDBConfig.ChunkEncoding.Histograms; histograms {
+		case "":
+		case "alp":
+			alpHistograms = true
+		case "default":
+			alpHistograms = false
+		default:
+			return fmt.Errorf("unsupported histogram chunk encoding %q", histograms)
+		}
 		switch floats := conf.StorageConfig.TSDBConfig.ChunkEncoding.Floats; floats {
 		case "":
 		case config.FloatChunkEncodingXOR:
 			effectiveEncoding = chunkenc.EncXOR
 		case config.FloatChunkEncodingXOR2:
 			effectiveEncoding = chunkenc.EncXOR2
+		case config.FloatChunkEncodingALP:
+			effectiveEncoding = chunkenc.EncALP
 		default:
-			return fmt.Errorf("unsupported float chunk encoding %q; valid values are %q and %q", floats, config.FloatChunkEncodingXOR, config.FloatChunkEncodingXOR2)
+			return fmt.Errorf("unsupported float chunk encoding %q; valid values are %q, %q, and %q", floats, config.FloatChunkEncodingXOR, config.FloatChunkEncodingXOR2, config.FloatChunkEncodingALP)
 		}
 		if db.opts.EnableSTStorage && effectiveEncoding == chunkenc.EncXOR {
 			return errXORIncompatibleWithSTStorage
@@ -1410,9 +1426,11 @@ func (db *DB) ApplyConfig(conf *config.Config) error {
 			db.retentionMtx.Unlock()
 		}
 		db.head.opts.FloatChunkEncoding.Store(uint32(effectiveEncoding))
+		db.head.opts.EnableALPHistograms.Store(alpHistograms)
 	} else {
 		db.opts.staleSeriesCompactionThreshold.Store(0)
 		db.head.opts.FloatChunkEncoding.Store(uint32(db.opts.FloatChunkEncoding))
+		db.head.opts.EnableALPHistograms.Store(db.opts.EnableALPHistograms)
 	}
 	if oooTimeWindow < 0 {
 		oooTimeWindow = 0

@@ -198,8 +198,9 @@ func (h *Head) appender() *headAppender {
 			appendID:              appendID,
 			cleanupAppendIDsBelow: cleanupAppendIDsBelow,
 			storeST:               h.opts.EnableSTStorage.Load(),
-			useXOR2:               h.opts.UseXOR2FloatEncoding(),
+			floatEncoding:         h.opts.FloatEncoding(),
 			useHistogramST:        h.opts.EnableHistogramSTEncoding.Load(),
+			useALPHistograms:      h.opts.EnableALPHistograms.Load(),
 		},
 	}
 }
@@ -427,9 +428,10 @@ type headAppenderBase struct {
 
 	appendID, cleanupAppendIDsBelow uint64
 	closed                          bool
-	storeST                         bool // Whether start-timestamp storage is enabled for this append.
-	useXOR2                         bool // Whether XOR2 encoding is used for float chunks in this append.
-	useHistogramST                  bool // Whether ST-capable histogram chunk encoding is used in this append.
+	storeST                         bool              // Whether start-timestamp storage is enabled for this append.
+	floatEncoding                   chunkenc.Encoding // The encoding used for new float chunks in this append.
+	useHistogramST                  bool              // Whether ST-capable histogram chunk encoding is used in this append.
+	useALPHistograms                bool              // Selects ALP encoding for both histogram families.
 }
 type headAppender struct {
 	headAppenderBase
@@ -1800,12 +1802,13 @@ func (a *headAppenderBase) Commit() (err error) {
 		oooMaxT:     math.MinInt64,
 		oooCapMax:   h.opts.OutOfOrderCapMax.Load(),
 		appendChunkOpts: chunkOpts{
-			chunkDiskMapper: h.chunkDiskMapper,
-			chunkRange:      h.chunkRange.Load(),
-			samplesPerChunk: h.opts.SamplesPerChunk,
-			useXOR2:         a.useXOR2,
-			useHistogramST:  a.useHistogramST,
-			storeST:         a.storeST,
+			chunkDiskMapper:  h.chunkDiskMapper,
+			chunkRange:       h.chunkRange.Load(),
+			samplesPerChunk:  h.opts.SamplesPerChunk,
+			floatEncoding:    a.floatEncoding,
+			useHistogramST:   a.useHistogramST,
+			useALPHistograms: a.useALPHistograms,
+			storeST:          a.storeST,
 		},
 		oooEnc: record.Encoder{
 			EnableSTStorage: a.storeST,
@@ -1889,12 +1892,13 @@ func (s *memSeries) insert(st, t int64, v float64, h *histogram.Histogram, fh *h
 
 // chunkOpts are chunk-level options that are passed when appending to a memSeries.
 type chunkOpts struct {
-	chunkDiskMapper *chunks.ChunkDiskMapper
-	chunkRange      int64
-	samplesPerChunk int
-	useXOR2         bool // Selects XOR2 encoding for float chunks.
-	useHistogramST  bool // Selects ST-capable encoding for integer and float histogram chunks.
-	storeST         bool // Whether start-timestamp storage is enabled.
+	chunkDiskMapper  *chunks.ChunkDiskMapper
+	chunkRange       int64
+	samplesPerChunk  int
+	floatEncoding    chunkenc.Encoding // Selects the encoding for new float chunks.
+	useHistogramST   bool              // Selects ST-capable encoding for integer and float histogram chunks.
+	useALPHistograms bool              // Selects ALP encoding for both histogram families.
+	storeST          bool              // Whether start-timestamp storage is enabled.
 }
 
 // append adds the sample (t, v) to the series. The caller also has to provide
@@ -1902,7 +1906,7 @@ type chunkOpts struct {
 // isolation for this append.)
 // Series lock must be held when calling.
 func (s *memSeries) append(st, t int64, v float64, appendID uint64, o chunkOpts) (sampleInOrder, chunkCreated bool) {
-	c, sampleInOrder, chunkCreated := s.appendPreprocessor(t, chunkenc.ValFloat.ChunkEncoding(o.useXOR2, o.useHistogramST), o)
+	c, sampleInOrder, chunkCreated := s.appendPreprocessor(t, chunkenc.ValFloat.ChunkEncodingWithOptions(o.floatEncoding, o.useHistogramST, o.useALPHistograms), o)
 	if !sampleInOrder {
 		return sampleInOrder, chunkCreated
 	}
@@ -1932,7 +1936,7 @@ func (s *memSeries) appendHistogram(st, t int64, h *histogram.Histogram, appendI
 
 	prevApp := s.app
 
-	c, sampleInOrder, chunkCreated := s.histogramsAppendPreprocessor(t, chunkenc.ValHistogram.ChunkEncoding(o.useXOR2, o.useHistogramST), o)
+	c, sampleInOrder, chunkCreated := s.histogramsAppendPreprocessor(t, chunkenc.ValHistogram.ChunkEncodingWithOptions(o.floatEncoding, o.useHistogramST, o.useALPHistograms), o)
 	if !sampleInOrder {
 		return sampleInOrder, chunkCreated
 	}
@@ -1987,7 +1991,7 @@ func (s *memSeries) appendFloatHistogram(st, t int64, fh *histogram.FloatHistogr
 
 	prevApp := s.app
 
-	c, sampleInOrder, chunkCreated := s.histogramsAppendPreprocessor(t, chunkenc.ValFloatHistogram.ChunkEncoding(o.useXOR2, o.useHistogramST), o)
+	c, sampleInOrder, chunkCreated := s.histogramsAppendPreprocessor(t, chunkenc.ValFloatHistogram.ChunkEncodingWithOptions(o.floatEncoding, o.useHistogramST, o.useALPHistograms), o)
 	if !sampleInOrder {
 		return sampleInOrder, chunkCreated
 	}
@@ -2054,7 +2058,7 @@ func (s *memSeries) appendPreprocessor(t int64, e chunkenc.Encoding, o chunkOpts
 	}
 
 	// Check the chunk size, unless we just created it and if the chunk is too large, cut a new one.
-	if !chunkCreated && len(c.chunk.Bytes()) > chunkenc.MaxBytesPerXORChunkBeforeAppend {
+	if !chunkCreated && chunkenc.IsFloatChunkFull(c.chunk) {
 		c = s.cutNewHeadChunk(t, e, o.chunkRange)
 		chunkCreated = true
 	}
@@ -2119,7 +2123,7 @@ func (s *memSeries) histogramsAppendPreprocessor(t int64, e chunkenc.Encoding, o
 		return c, false, chunkCreated
 	}
 
-	if c.chunk.Encoding() != e {
+	if c.chunk.Encoding() != e || (e == chunkenc.EncALPHistogram || e == chunkenc.EncALPFloatHistogram) && c.chunk.NumSamples() >= chunkenc.MaxSamplesPerALPHistogramChunk {
 		// The chunk encoding expected by this append is different than the head chunk's
 		// encoding. So we cut a new chunk with the expected encoding.
 		c = s.cutNewHeadChunk(t, e, o.chunkRange)
@@ -2128,7 +2132,7 @@ func (s *memSeries) histogramsAppendPreprocessor(t int64, e chunkenc.Encoding, o
 
 	numSamples := c.chunk.NumSamples()
 	targetBytes := chunkenc.TargetBytesPerHistogramChunk
-	numBytes := len(c.chunk.Bytes())
+	numBytes := chunkenc.HistogramChunkSize(c.chunk)
 
 	if numSamples == 0 {
 		// It could be the new chunk created after reading the chunk snapshot,
@@ -2240,7 +2244,7 @@ func (s *memSeries) mmapCurrentOOOHeadChunk(o chunkOpts, logger *slog.Logger) []
 		// OOO is not enabled or there is no head chunk, so nothing to m-map here.
 		return nil
 	}
-	chks, err := s.ooo.oooHeadChunk.chunk.ToEncodedChunks(math.MinInt64, math.MaxInt64, o.useXOR2, o.useHistogramST)
+	chks, err := s.ooo.oooHeadChunk.chunk.toEncodedChunksWithFloatEncoding(math.MinInt64, math.MaxInt64, o.floatEncoding, o.useHistogramST, o.useALPHistograms)
 	if err != nil {
 		handleChunkWriteError(err)
 		return nil

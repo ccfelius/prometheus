@@ -343,7 +343,7 @@ func (a *FloatHistogramSTAppender) AppendFloatHistogram(prev Appender, st, t int
 		case fh.CounterResetHint == histogram.CounterReset:
 			a.setCounterResetHeader(CounterReset)
 		case prev != nil:
-			if p, ok := prev.(floatHistogramAppendable); ok {
+			if p, ok := alpHistogramPrevious(prev).(floatHistogramAppendable); ok {
 				_, _, _, _, _, counterReset := p.appendable(fh)
 				if counterReset {
 					a.setCounterResetHeader(CounterReset)

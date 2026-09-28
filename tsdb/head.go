@@ -192,6 +192,8 @@ type HeadOptions struct {
 	// integer and float histograms (EncHistogramST and EncFloatHistogramST).
 	// Represents the 'histograms-st-encoding' feature flag.
 	EnableHistogramSTEncoding atomic.Bool
+	// EnableALPHistograms selects ALP encoding for integer and float histograms.
+	EnableALPHistograms atomic.Bool
 
 	ChunkRange int64
 	// ChunkDirRoot is the parent directory of the chunks directory.
@@ -266,6 +268,11 @@ func DefaultHeadOptions() *HeadOptions {
 // UseXOR2FloatEncoding reports whether new float chunks should use XOR2 encoding.
 func (o *HeadOptions) UseXOR2FloatEncoding() bool {
 	return chunkenc.Encoding(o.FloatChunkEncoding.Load()) == chunkenc.EncXOR2
+}
+
+// FloatEncoding returns the encoding selected for new float chunks.
+func (o *HeadOptions) FloatEncoding() chunkenc.Encoding {
+	return chunkenc.Encoding(o.FloatChunkEncoding.Load())
 }
 
 // SeriesLifecycleCallback specifies a list of callbacks that will be called during a lifecycle of a series.

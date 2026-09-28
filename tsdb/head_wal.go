@@ -711,11 +711,11 @@ func (h *Head) appendChunkAndMmap(ms *memSeries, appendFn func() (sampleInOrder,
 // valueTypeForChunkEncoding maps a chunk encoding to the sample value type it holds.
 func valueTypeForChunkEncoding(enc chunkenc.Encoding) chunkenc.ValueType {
 	switch enc {
-	case chunkenc.EncXOR, chunkenc.EncXOR2:
+	case chunkenc.EncXOR, chunkenc.EncXOR2, chunkenc.EncALP:
 		return chunkenc.ValFloat
-	case chunkenc.EncHistogram, chunkenc.EncHistogramST:
+	case chunkenc.EncHistogram, chunkenc.EncHistogramST, chunkenc.EncALPHistogram:
 		return chunkenc.ValHistogram
-	case chunkenc.EncFloatHistogram, chunkenc.EncFloatHistogramST:
+	case chunkenc.EncFloatHistogram, chunkenc.EncFloatHistogramST, chunkenc.EncALPFloatHistogram:
 		return chunkenc.ValFloatHistogram
 	default:
 		return chunkenc.ValNone
@@ -821,12 +821,13 @@ func (wp *walSubsetProcessor) processWALSamples(h *Head, mmappedChunks, oooMmapp
 	// XOR chunks cannot store start timestamps and must not be continued with
 	// XOR2 appends when ST storage is active.
 	appendChunkOpts := chunkOpts{
-		chunkDiskMapper: h.chunkDiskMapper,
-		chunkRange:      h.chunkRange.Load(),
-		samplesPerChunk: h.opts.SamplesPerChunk,
-		useXOR2:         h.opts.UseXOR2FloatEncoding(),
-		useHistogramST:  h.opts.EnableHistogramSTEncoding.Load(),
-		storeST:         h.opts.EnableSTStorage.Load(),
+		chunkDiskMapper:  h.chunkDiskMapper,
+		chunkRange:       h.chunkRange.Load(),
+		samplesPerChunk:  h.opts.SamplesPerChunk,
+		floatEncoding:    h.opts.FloatEncoding(),
+		useHistogramST:   h.opts.EnableHistogramSTEncoding.Load(),
+		useALPHistograms: h.opts.EnableALPHistograms.Load(),
+		storeST:          h.opts.EnableSTStorage.Load(),
 	}
 
 	for in := range wp.input {
@@ -1242,12 +1243,13 @@ func (wp *wblSubsetProcessor) processWBLSamples(h *Head) (map[chunks.HeadSeriesR
 	// that appendPreprocessor forces an immediate chunk cut when an XOR chunk is
 	// encountered during replay into a head with ST storage enabled.
 	appendChunkOpts := chunkOpts{
-		chunkDiskMapper: h.chunkDiskMapper,
-		chunkRange:      h.chunkRange.Load(),
-		samplesPerChunk: h.opts.SamplesPerChunk,
-		useXOR2:         h.opts.UseXOR2FloatEncoding(),
-		useHistogramST:  h.opts.EnableHistogramSTEncoding.Load(),
-		storeST:         h.opts.EnableSTStorage.Load(),
+		chunkDiskMapper:  h.chunkDiskMapper,
+		chunkRange:       h.chunkRange.Load(),
+		samplesPerChunk:  h.opts.SamplesPerChunk,
+		floatEncoding:    h.opts.FloatEncoding(),
+		useHistogramST:   h.opts.EnableHistogramSTEncoding.Load(),
+		useALPHistograms: h.opts.EnableALPHistograms.Load(),
+		storeST:          h.opts.EnableSTStorage.Load(),
 	}
 	// We don't check for minValidTime for ooo samples.
 	mint, maxt := int64(math.MaxInt64), int64(math.MinInt64)
@@ -1359,7 +1361,7 @@ func (s *memSeries) encodeToSnapshotRecord(b []byte) []byte {
 		buf.PutUvarintBytes(s.headChunks.chunk.Bytes())
 
 		switch enc {
-		case chunkenc.EncXOR, chunkenc.EncXOR2:
+		case chunkenc.EncXOR, chunkenc.EncXOR2, chunkenc.EncALP:
 			// Backwards compatibility for old sampleBuf which had last 4 samples.
 			for range 3 {
 				buf.PutBE64int64(0)
@@ -1367,9 +1369,9 @@ func (s *memSeries) encodeToSnapshotRecord(b []byte) []byte {
 			}
 			buf.PutBE64int64(0)
 			buf.PutBEFloat64(s.lastValue)
-		case chunkenc.EncHistogram, chunkenc.EncHistogramST:
+		case chunkenc.EncHistogram, chunkenc.EncHistogramST, chunkenc.EncALPHistogram:
 			record.EncodeHistogram(&buf, s.lastHistogramValue)
-		case chunkenc.EncFloatHistogram, chunkenc.EncFloatHistogramST:
+		case chunkenc.EncFloatHistogram, chunkenc.EncFloatHistogramST, chunkenc.EncALPFloatHistogram:
 			record.EncodeFloatHistogram(&buf, s.lastFloatHistogramValue)
 		default:
 			panic(fmt.Sprintf("unknown chunk encoding: %v", enc))
@@ -1410,7 +1412,7 @@ func decodeSeriesFromChunkSnapshot(d *record.Decoder, b []byte) (csr chunkSnapsh
 	csr.mc.chunk = chk
 
 	switch enc {
-	case chunkenc.EncXOR, chunkenc.EncXOR2:
+	case chunkenc.EncXOR, chunkenc.EncXOR2, chunkenc.EncALP:
 		// Backwards-compatibility for old sampleBuf which had last 4 samples.
 		for range 3 {
 			_ = dec.Be64int64()
@@ -1418,10 +1420,10 @@ func decodeSeriesFromChunkSnapshot(d *record.Decoder, b []byte) (csr chunkSnapsh
 		}
 		_ = dec.Be64int64()
 		csr.lastValue = dec.Be64Float64()
-	case chunkenc.EncHistogram, chunkenc.EncHistogramST:
+	case chunkenc.EncHistogram, chunkenc.EncHistogramST, chunkenc.EncALPHistogram:
 		csr.lastHistogramValue = &histogram.Histogram{}
 		record.DecodeHistogram(&dec, csr.lastHistogramValue)
-	case chunkenc.EncFloatHistogram, chunkenc.EncFloatHistogramST:
+	case chunkenc.EncFloatHistogram, chunkenc.EncFloatHistogramST, chunkenc.EncALPFloatHistogram:
 		csr.lastFloatHistogramValue = &histogram.FloatHistogram{}
 		record.DecodeFloatHistogram(&dec, csr.lastFloatHistogramValue)
 	default:

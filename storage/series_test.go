@@ -814,6 +814,14 @@ func TestSeriesToChunkEncoderFloatEncoding(t *testing.T) {
 				{chunkenc.EncXOR, manyFloats(150)[120:]},
 			},
 		},
+		"alp, 150 samples with ST split at 120": {
+			floatEncoding: chunkenc.EncALP,
+			samples:       manyFloatsWithST(150),
+			expected: []expectedChunk{
+				{chunkenc.EncALP, manyFloatsWithST(150)[:120]},
+				{chunkenc.EncALP, manyFloatsWithST(150)[120:]},
+			},
+		},
 		"xor2, 150 samples split at 120": {
 			floatEncoding: chunkenc.EncXOR2,
 			samples:       manyFloats(150),

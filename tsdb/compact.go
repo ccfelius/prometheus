@@ -78,6 +78,8 @@ type Compactor interface {
 
 // LeveledCompactor implements the Compactor interface.
 type LeveledCompactor struct {
+	floatChunkEncoding          func() chunkenc.Encoding
+	alpHistograms               func() bool
 	metrics                     *CompactorMetrics
 	logger                      *slog.Logger
 	ranges                      []int64
@@ -172,10 +174,13 @@ type LeveledCompactorOptions struct {
 	MergeFunc storage.VerticalChunkSeriesMergeFunc
 
 	// FloatChunkEncoding returns the encoding used for float chunks re-encoded during
-	// vertical (overlapping) compaction. Consulted at compaction time, so it may
-	// reflect runtime-reloaded configuration. Nil means EncXOR. Ignored when MergeFunc
-	// is set.
+	// vertical (overlapping) compaction. Selecting ALP also converts finalized
+	// XOR/XOR2 chunks during ordinary compaction. Consulted at compaction time, so
+	// it may reflect runtime-reloaded configuration. Nil preserves existing chunks.
+	// A custom MergeFunc controls overlap merging independently.
 	FloatChunkEncoding func() chunkenc.Encoding
+	// ALPHistograms selects ALP conversion of both histogram families at compaction.
+	ALPHistograms func() bool
 
 	// BlockExcludeFilter is used to decide which blocks are excluded from compactions.
 	BlockExcludeFilter BlockExcludeFilterFunc
@@ -231,6 +236,8 @@ func NewLeveledCompactorWithOptions(ctx context.Context, r prometheus.Registerer
 		opts.Metrics = NewCompactorMetrics(r)
 	}
 	return &LeveledCompactor{
+		floatChunkEncoding:          opts.FloatChunkEncoding,
+		alpHistograms:               opts.ALPHistograms,
 		ranges:                      ranges,
 		chunkPool:                   pool,
 		logger:                      l,
@@ -582,7 +589,7 @@ func CompactBlockMetas(uid ulid.ULID, blocks ...*BlockMeta) *BlockMeta {
 // Compact creates a new block in the compactor's directory from the blocks in the
 // provided directories.
 func (c *LeveledCompactor) Compact(dest string, dirs []string, open []*Block) ([]ulid.ULID, error) {
-	return c.CompactWithBlockPopulator(dest, dirs, open, DefaultBlockPopulator{})
+	return c.CompactWithBlockPopulator(dest, dirs, open, DefaultBlockPopulator{FloatChunkEncoding: c.floatChunkEncoding, ALPHistograms: c.alpHistograms})
 }
 
 func (c *LeveledCompactor) CompactWithBlockPopulator(dest string, dirs []string, open []*Block, blockPopulator BlockPopulator) ([]ulid.ULID, error) {
@@ -711,7 +718,7 @@ func (c *LeveledCompactor) Write(dest string, b BlockReader, mint, maxt int64, b
 		}
 	}
 
-	err := c.write(dest, meta, DefaultBlockPopulator{}, b)
+	err := c.write(dest, meta, DefaultBlockPopulator{FloatChunkEncoding: c.floatChunkEncoding, ALPHistograms: c.alpHistograms}, b)
 	if err != nil {
 		return nil, err
 	}
@@ -887,12 +894,20 @@ func AllSortedPostings(ctx context.Context, reader IndexReader) index.Postings {
 	return reader.SortedPostings(all)
 }
 
-type DefaultBlockPopulator struct{}
+// DefaultBlockPopulator merges source blocks into the supplied index and chunk writers.
+type DefaultBlockPopulator struct {
+	// FloatChunkEncoding optionally selects ALP conversion of finalized float
+	// chunks, including nonoverlapping chunks normally passed through unchanged.
+	// Other encodings preserve the existing pass-through behavior.
+	FloatChunkEncoding func() chunkenc.Encoding
+	// ALPHistograms selects conversion of finalized histogram chunks to ALP.
+	ALPHistograms func() bool
+}
 
 // PopulateBlock fills the index and chunk writers with new data gathered as the union
 // of the provided blocks. It returns meta information for the new block.
 // It expects sorted blocks input by mint.
-func (DefaultBlockPopulator) PopulateBlock(ctx context.Context, metrics *CompactorMetrics, logger *slog.Logger, chunkPool chunkenc.Pool, mergeFunc storage.VerticalChunkSeriesMergeFunc, blocks []BlockReader, meta *BlockMeta, indexw IndexWriter, chunkw ChunkWriter, postingsFunc IndexReaderPostingsFunc) (err error) {
+func (p DefaultBlockPopulator) PopulateBlock(ctx context.Context, metrics *CompactorMetrics, logger *slog.Logger, chunkPool chunkenc.Pool, mergeFunc storage.VerticalChunkSeriesMergeFunc, blocks []BlockReader, meta *BlockMeta, indexw IndexWriter, chunkw ChunkWriter, postingsFunc IndexReaderPostingsFunc) (err error) {
 	if len(blocks) == 0 {
 		return errors.New("cannot populate block from no readers")
 	}
@@ -1009,6 +1024,66 @@ func (DefaultBlockPopulator) PopulateBlock(ctx context.Context, metrics *Compact
 			continue
 		}
 
+		if p.FloatChunkEncoding != nil && p.FloatChunkEncoding() == chunkenc.EncALP {
+			for i := range chks {
+				old := chks[i].Chunk
+				if old.Encoding() != chunkenc.EncXOR && old.Encoding() != chunkenc.EncXOR2 {
+					continue
+				}
+				c := chunkenc.NewALPChunk()
+				a, err := c.Appender()
+				if err != nil {
+					return err
+				}
+				it := old.Iterator(nil)
+				for it.Next() != chunkenc.ValNone {
+					ts, v := it.At()
+					a.Append(it.AtST(), ts, v)
+				}
+				if err := it.Err(); err != nil {
+					return fmt.Errorf("transcode ALP chunk: %w", err)
+				}
+				c.Compact()
+				chks[i].Chunk = c
+				if err := chunkPool.Put(old); err != nil {
+					return fmt.Errorf("return transcoded chunk to pool: %w", err)
+				}
+			}
+		}
+		if p.ALPHistograms != nil && p.ALPHistograms() {
+			converted := make([]chunks.Meta, 0, len(chks))
+			for _, meta := range chks {
+				old := meta.Chunk
+				switch old.Encoding() {
+				case chunkenc.EncHistogram, chunkenc.EncHistogramST, chunkenc.EncFloatHistogram, chunkenc.EncFloatHistogramST:
+				default:
+					converted = append(converted, meta)
+					continue
+				}
+				if old.NumSamples() > chunkenc.MaxSamplesPerALPHistogramChunk {
+					series := &storage.SeriesEntry{SampleIteratorFn: old.Iterator}
+					it := storage.NewSeriesToChunkEncoderWithOptions(series, chunkenc.EncXOR, true).Iterator(nil)
+					for it.Next() {
+						converted = append(converted, it.At())
+					}
+					if err := it.Err(); err != nil {
+						return fmt.Errorf("split ALP histogram: %w", err)
+					}
+				} else {
+					c, err := chunkenc.RecodeToALPHistogram(old)
+					if err != nil {
+						return fmt.Errorf("transcode ALP histogram: %w", err)
+					}
+					meta.Chunk = c
+					converted = append(converted, meta)
+				}
+				if err := chunkPool.Put(old); err != nil {
+					return err
+				}
+			}
+			chks = converted
+		}
+
 		if err := chunkw.WriteChunks(chks...); err != nil {
 			return fmt.Errorf("write chunks: %w", err)
 		}
@@ -1022,9 +1097,9 @@ func (DefaultBlockPopulator) PopulateBlock(ctx context.Context, metrics *Compact
 			samples := uint64(chk.Chunk.NumSamples())
 			meta.Stats.NumSamples += samples
 			switch chk.Chunk.Encoding() {
-			case chunkenc.EncHistogram, chunkenc.EncFloatHistogram, chunkenc.EncHistogramST, chunkenc.EncFloatHistogramST:
+			case chunkenc.EncHistogram, chunkenc.EncFloatHistogram, chunkenc.EncHistogramST, chunkenc.EncFloatHistogramST, chunkenc.EncALPHistogram, chunkenc.EncALPFloatHistogram:
 				meta.Stats.NumHistogramSamples += samples
-			case chunkenc.EncXOR, chunkenc.EncXOR2:
+			case chunkenc.EncXOR, chunkenc.EncXOR2, chunkenc.EncALP:
 				meta.Stats.NumFloatSamples += samples
 			}
 		}

@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 	"sync"
 	"testing"
@@ -1206,4 +1207,100 @@ func buildTestChunks(t *testing.T) []prompb.Chunk {
 	}
 
 	return chks
+}
+
+func TestStreamALPResponse(t *testing.T) {
+	for _, st := range []bool{false, true} {
+		t.Run(strconv.FormatBool(st), func(t *testing.T) {
+			c := chunkenc.NewALPChunk()
+			a, err := c.Appender()
+			require.NoError(t, err)
+			for i := range 241 {
+				start := int64(0)
+				if st {
+					start = int64(i + 1)
+				}
+				a.Append(start, int64(i+100), float64(i)/100)
+			}
+			css := newMockChunkSeriesSet([]*prompb.ChunkedSeries{{Chunks: []prompb.Chunk{{Type: prompb.Chunk_Encoding(chunkenc.EncALP), Data: c.Bytes(), MinTimeMs: 100, MaxTimeMs: 340}}}})
+			writer := mockWriter{}
+			_, err = StreamChunkedReadResponses(&writer, 0, css, nil, 1024, &sync.Pool{})
+			require.NoError(t, err)
+			count := 0
+			for _, series := range writer.actual {
+				for _, raw := range series.Chunks {
+					expected := prompb.Chunk_XOR
+					if st {
+						expected = prompb.Chunk_XOR2
+					}
+					require.Equal(t, expected, raw.Type)
+					decoded, err := chunkenc.FromData(chunkenc.Encoding(raw.Type), raw.Data)
+					require.NoError(t, err)
+					require.LessOrEqual(t, decoded.NumSamples(), 120)
+					it := decoded.Iterator(nil)
+					for it.Next() != chunkenc.ValNone {
+						ts, v := it.At()
+						require.Equal(t, int64(count+100), ts)
+						require.Equal(t, float64(count)/100, v)
+						if st {
+							require.Equal(t, int64(count+1), it.AtST())
+						}
+						count++
+					}
+					require.NoError(t, it.Err())
+				}
+			}
+			require.Equal(t, 241, count)
+		})
+	}
+}
+
+func TestStreamALPHistogramResponse(t *testing.T) {
+	for _, enc := range []chunkenc.Encoding{chunkenc.EncALPHistogram, chunkenc.EncALPFloatHistogram} {
+		for _, st := range []int64{0, 1} {
+			t.Run(fmt.Sprintf("%s/st=%d", enc, st), func(t *testing.T) {
+				c, err := chunkenc.NewEmptyChunk(enc)
+				require.NoError(t, err)
+				a, err := c.Appender()
+				require.NoError(t, err)
+				for i := range 241 {
+					if enc == chunkenc.EncALPHistogram {
+						_, _, a, err = a.AppendHistogram(nil, st, int64(i), tsdbutil.GenerateTestHistogram(int64(i)), true)
+					} else {
+						_, _, a, err = a.AppendFloatHistogram(nil, st, int64(i), tsdbutil.GenerateTestFloatHistogram(int64(i)), true)
+					}
+					require.NoError(t, err)
+				}
+				css := newMockChunkSeriesSet([]*prompb.ChunkedSeries{{Chunks: []prompb.Chunk{{Type: prompb.Chunk_Encoding(enc), Data: c.Bytes(), MinTimeMs: 0, MaxTimeMs: 240}}}})
+				writer := mockWriter{}
+				_, err = StreamChunkedReadResponses(&writer, 0, css, nil, 1024, &sync.Pool{})
+				require.NoError(t, err)
+				count := 0
+				for _, series := range writer.actual {
+					for _, raw := range series.Chunks {
+						wantType := chunkenc.ValHistogram
+						if enc == chunkenc.EncALPFloatHistogram {
+							wantType = chunkenc.ValFloatHistogram
+						}
+						require.Equal(t, prompb.Chunk_Encoding(wantType.ChunkEncoding(false, st != 0)), raw.Type)
+						decoded, err := chunkenc.FromData(chunkenc.Encoding(raw.Type), raw.Data)
+						require.NoError(t, err)
+						require.LessOrEqual(t, decoded.NumSamples(), 120)
+						it := decoded.Iterator(nil)
+						for typ := it.Next(); typ != chunkenc.ValNone; typ = it.Next() {
+							require.Equal(t, int64(count), it.AtT())
+							require.Equal(t, st, it.AtST())
+							_, got := it.AtFloatHistogram(nil)
+							want := tsdbutil.GenerateTestFloatHistogram(int64(count))
+							want.CounterResetHint = got.CounterResetHint
+							require.Equal(t, want, got)
+							count++
+						}
+						require.NoError(t, it.Err())
+					}
+				}
+				require.Equal(t, 241, count)
+			})
+		}
+	}
 }

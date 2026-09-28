@@ -4189,7 +4189,7 @@ with this feature.
 [ stale_series_compaction_threshold: <float> | default = 0 ]
 
 # Configures the float chunk encoding to use for new chunks.
-# Valid values are 'xor' and 'xor2'. XOR2 gives better disk compression than XOR for
+# Valid values are 'xor', 'xor2', and experimental 'alp'. XOR2 gives better disk compression than XOR for
 # typical Prometheus workloads and can store start timestamps.
 #
 # WARNING: chunks encoded with XOR2 cannot be read by older Prometheus versions that do
@@ -4197,6 +4197,15 @@ with this feature.
 # it yet (e.g. blocks uploaded by the Thanos sidecar). Once XOR2 chunks have been
 # written, downgrading to a version without XOR2 support requires deleting the affected
 # blocks from disk manually, otherwise Prometheus returns an error on all queries.
+#
+# ALP preserves all float bits and start timestamps using independent value blocks.
+# It is experimental and requires ALP-aware readers for persisted blocks, Head mmap
+# chunks, and snapshots. Disabling ALP writes does not make existing ALP data readable
+# by older binaries. ALP also converts finalized XOR/XOR2 chunks during compaction.
+# Switching between ALP and XOR/XOR2 cuts the active chunk on the next append.
+# Streamed remote read transcodes ALP to XOR, or XOR2 when start timestamps are present.
+# SIMD acceleration is optional: build with Go 1.27 and GOEXPERIMENT=simd; ordinary
+# builds read and write the same ALP format using scalar Go.
 #
 # When absent, the encoding is 'xor2' if --enable-feature=xor2-encoding or
 # --enable-feature=st-storage is set, and 'xor' otherwise.
@@ -4212,7 +4221,15 @@ with this feature.
 # For the equivalent ST-capable encoding for native histograms, see the experimental
 # histograms-st-encoding feature flag. The st-storage feature enables that encoding too.
 [ chunk_encoding:
-  [ floats: <string> ] ]
+  [ floats: <string> ]
+  # Independent encoding for integer and float native histograms: 'default' or
+  # experimental 'alp'. ALP preserves start timestamps and bucket layouts.
+  # This also selects ALP for histogram compaction output. It is runtime-reloadable;
+  # switching encodings cuts the active histogram chunk on the next append.
+  # Persisted ALP histogram chunks require ALP-aware readers. Remote read converts
+  # them to standard histogram chunks, using ST variants when ST is present.
+  # An absent field retains the selection resolved at startup.
+  [ histograms: <string> ] ]
 
 # Configures data retention settings for TSDB.
 #

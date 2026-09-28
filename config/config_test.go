@@ -68,6 +68,21 @@ import (
 	"github.com/prometheus/prometheus/util/testutil"
 )
 
+func TestHistogramChunkEncoding(t *testing.T) {
+	for _, encoding := range []string{"", "default", "alp", "invalid"} {
+		t.Run(encoding, func(t *testing.T) {
+			var cfg TSDBConfig
+			err := yaml.Unmarshal([]byte(fmt.Sprintf("chunk_encoding:\n  histograms: %q\n", encoding)), &cfg)
+			if encoding == "invalid" {
+				require.ErrorContains(t, err, "chunk_encoding.histograms")
+			} else {
+				require.NoError(t, err)
+				require.Equal(t, encoding, cfg.ChunkEncoding.Histograms)
+			}
+		})
+	}
+}
+
 func mustParseURL(u string) *config.URL {
 	parsed, err := url.Parse(u)
 	if err != nil {
@@ -2791,15 +2806,15 @@ var expectedErrors = []struct {
 	},
 	{
 		filename: "tsdb_chunk_encoding_floats.bad.yml",
-		errMsg:   `'storage.tsdb.chunk_encoding.floats' must be 'xor' or 'xor2', or the field must be omitted entirely, got "xor3"`,
+		errMsg:   `'storage.tsdb.chunk_encoding.floats' must be 'xor', 'xor2', or 'alp', or the field must be omitted entirely, got "xor3"`,
 	},
 	{
 		filename: "tsdb_chunk_encoding_floats_wrong_case.bad.yml",
-		errMsg:   `'storage.tsdb.chunk_encoding.floats' must be 'xor' or 'xor2', or the field must be omitted entirely, got "XOR"`,
+		errMsg:   `'storage.tsdb.chunk_encoding.floats' must be 'xor', 'xor2', or 'alp', or the field must be omitted entirely, got "XOR"`,
 	},
 	{
 		filename: "tsdb_chunk_encoding_floats_wrong_case_xor2.bad.yml",
-		errMsg:   `'storage.tsdb.chunk_encoding.floats' must be 'xor' or 'xor2', or the field must be omitted entirely, got "XOR2"`,
+		errMsg:   `'storage.tsdb.chunk_encoding.floats' must be 'xor', 'xor2', or 'alp', or the field must be omitted entirely, got "XOR2"`,
 	},
 	{
 		filename: "metric_name_validation_scheme.bad.yml",

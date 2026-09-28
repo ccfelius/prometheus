@@ -206,6 +206,7 @@ func foreachFmtSampleCase(b *testing.B, fn func(b *testing.B, f fmtCase, s sampl
 	for _, f := range []fmtCase{
 		{name: "XOR", newChunkFn: func() Chunk { return NewXORChunk() }, stUnsupported: true},
 		{name: "XOR2", newChunkFn: func() Chunk { return NewXOR2Chunk() }},
+		{name: "ALP", newChunkFn: func() Chunk { return NewALPChunk() }},
 	} {
 		for _, s := range sampleCases {
 			b.Run(fmt.Sprintf("fmt=%s/%s", f.name, s.name), func(b *testing.B) {
@@ -272,15 +273,7 @@ For profiles:
 */
 func BenchmarkIterator(b *testing.B) {
 	foreachFmtSampleCase(b, func(b *testing.B, f fmtCase, s sampleCase) {
-		floatEquals := func(a, b float64) bool {
-			return a == b
-		}
-		if f.name == "ALPBuffered" {
-			// Hack as ALP loses precision.
-			floatEquals = func(a, b float64) bool {
-				return math.Abs(a-b) < 1e-6
-			}
-		}
+		floatEquals := func(a, b float64) bool { return math.Float64bits(a) == math.Float64bits(b) }
 		b.ReportAllocs()
 
 		c := f.newChunkFn()

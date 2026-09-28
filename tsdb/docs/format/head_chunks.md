@@ -41,3 +41,9 @@ is used while replaying the chunks.
 ## OOO encoding
 
 Head chunks use the highest bit of the `encoding` field to indicate whether it is out-of-order (1) or not (0). This bit is not set for chunks in the on-disk blocks.
+
+ALP float chunks use encoding identifier 7 and the same payload as
+[block ALP chunks](alp.md). The reserved out-of-order encoding bit is unchanged.
+
+ALP histogram chunks use identifiers 8 and 9 and the same payload as
+[block ALP histogram chunks](alp_histograms.md), including start timestamps.

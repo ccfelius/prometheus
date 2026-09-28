@@ -2625,7 +2625,7 @@ func testMemSeriesAppend(t *testing.T, useXOR2 bool, stFunc func(ts int64) int64
 		chunkDiskMapper: chunkDiskMapper,
 		chunkRange:      500,
 		samplesPerChunk: DefaultSamplesPerChunk,
-		useXOR2:         useXOR2,
+		floatEncoding:   chunkenc.ValFloat.ChunkEncoding(useXOR2, false),
 	}
 
 	s := newMemSeries(labels.Labels{}, 1, 0, defaultIsolationDisabled, false)
@@ -2728,7 +2728,7 @@ func testMemSeriesAppendHistogram(t *testing.T, useXOR2 bool, stFunc func(ts int
 		chunkDiskMapper: chunkDiskMapper,
 		chunkRange:      int64(1000),
 		samplesPerChunk: DefaultSamplesPerChunk,
-		useXOR2:         useXOR2,
+		floatEncoding:   chunkenc.ValFloat.ChunkEncoding(useXOR2, false),
 	}
 
 	s := newMemSeries(labels.Labels{}, 1, 0, defaultIsolationDisabled, false)

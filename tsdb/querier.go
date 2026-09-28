@@ -1072,15 +1072,14 @@ func (p *populateWithDelChunkSeriesIterator) populateChunksFromIterable() bool {
 		// so currentChunk is non-nil there.
 		cutNewChunk := currentValueType != prevValueType || (!hasTS && needTS)
 		if !cutNewChunk {
-			chunkBytes := len(currentChunk.Bytes())
 			switch currentValueType {
 			case chunkenc.ValFloat:
 				// In the TSDB head we also take into account the number of samples, but here we want to keep it
 				// simple and consistent with histograms. Also the size limit is checked before sample limit in
 				// the head as well.
-				cutNewChunk = chunkBytes > chunkenc.MaxBytesPerXORChunkBeforeAppend
+				cutNewChunk = chunkenc.IsFloatChunkFull(currentChunk)
 			case chunkenc.ValHistogram, chunkenc.ValFloatHistogram:
-				cutNewChunk = chunkBytes > chunkenc.TargetBytesPerHistogramChunk &&
+				cutNewChunk = chunkenc.HistogramChunkSize(currentChunk) > chunkenc.TargetBytesPerHistogramChunk &&
 					currentChunk.NumSamples() > chunkenc.MinSamplesPerHistogramChunk
 			}
 		}

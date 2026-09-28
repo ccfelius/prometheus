@@ -1,0 +1,5 @@
+storage:
+  tsdb:
+    chunk_encoding:
+      floats: alp
+      histograms: alp

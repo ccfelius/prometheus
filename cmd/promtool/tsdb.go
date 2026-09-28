@@ -649,10 +649,10 @@ func analyzeCompaction(ctx context.Context, block tsdb.BlockReader, indexr tsdb.
 				return errors.New("ChunkOrIterable should not return an iterable when reading a block")
 			}
 			switch chk.Encoding() {
-			case chunkenc.EncXOR, chunkenc.EncXOR2:
+			case chunkenc.EncXOR, chunkenc.EncXOR2, chunkenc.EncALP:
 				floatChunkSamplesCount = append(floatChunkSamplesCount, chk.NumSamples())
 				floatChunkSize = append(floatChunkSize, len(chk.Bytes()))
-			case chunkenc.EncFloatHistogram, chunkenc.EncFloatHistogramST:
+			case chunkenc.EncFloatHistogram, chunkenc.EncFloatHistogramST, chunkenc.EncALPFloatHistogram:
 				histogramChunkSamplesCount = append(histogramChunkSamplesCount, chk.NumSamples())
 				histogramChunkSize = append(histogramChunkSize, len(chk.Bytes()))
 				if _, ok := chk.(*chunkenc.FloatHistogramChunk); !ok {
@@ -668,7 +668,7 @@ func analyzeCompaction(ctx context.Context, block tsdb.BlockReader, indexr tsdb.
 					bucketCount += len(f.NegativeBuckets)
 				}
 				histogramChunkBucketsCount = append(histogramChunkBucketsCount, bucketCount)
-			case chunkenc.EncHistogram, chunkenc.EncHistogramST:
+			case chunkenc.EncHistogram, chunkenc.EncHistogramST, chunkenc.EncALPHistogram:
 				histogramChunkSamplesCount = append(histogramChunkSamplesCount, chk.NumSamples())
 				histogramChunkSize = append(histogramChunkSize, len(chk.Bytes()))
 				if _, ok := chk.(*chunkenc.HistogramChunk); !ok {

@@ -234,14 +234,15 @@ func StreamChunkedReadResponses(
 	marshalPool *sync.Pool,
 ) (annotations.Annotations, error) {
 	var (
-		chks []prompb.Chunk
-		lbls []prompb.Label
-		iter chunks.Iterator
+		chks   []prompb.Chunk
+		lbls   []prompb.Label
+		source chunks.Iterator
 	)
 
 	for ss.Next() {
 		series := ss.At()
-		iter = series.Iterator(iter)
+		source = series.Iterator(source)
+		iter := remoteReadChunkIterator{source: source}
 		lbls = MergeLabels(prompb.FromLabels(series.Labels(), lbls), sortedExternalLabels)
 
 		maxDataLength := maxBytesInFrame
@@ -807,6 +808,13 @@ func (it *chunkedSeriesIterator) Seek(t int64) chunkenc.ValueType {
 func (it *chunkedSeriesIterator) resetIterator() {
 	if it.idx < len(it.chunks) {
 		chunk := it.chunks[it.idx]
+		// Local storage codecs are not implicitly part of the remote-read protocol.
+		switch chunk.Type {
+		case prompb.Chunk_XOR, prompb.Chunk_XOR2, prompb.Chunk_HISTOGRAM, prompb.Chunk_FLOAT_HISTOGRAM, prompb.Chunk_HISTOGRAM_ST, prompb.Chunk_FLOAT_HISTOGRAM_ST:
+		default:
+			it.err = fmt.Errorf("invalid chunk encoding %d in remote read", chunk.Type)
+			return
+		}
 
 		decodedChunk, err := chunkenc.FromData(chunkenc.Encoding(chunk.Type), chunk.Data)
 		if err != nil {

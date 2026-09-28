@@ -33,10 +33,19 @@ const (
 	EncXOR2
 	EncHistogramST
 	EncFloatHistogramST
+	EncALP
+	EncALPHistogram
+	EncALPFloatHistogram
 )
 
 func (e Encoding) String() string {
 	switch e {
+	case EncALPHistogram:
+		return "ALPHistogram"
+	case EncALPFloatHistogram:
+		return "ALPFloatHistogram"
+	case EncALP:
+		return "ALP"
 	case EncNone:
 		return "none"
 	case EncXOR:
@@ -57,7 +66,7 @@ func (e Encoding) String() string {
 
 // IsValidEncoding returns true for supported encodings.
 func IsValidEncoding(e Encoding) bool {
-	return e == EncXOR || e == EncHistogram || e == EncFloatHistogram || e == EncXOR2 || e == EncHistogramST || e == EncFloatHistogramST
+	return e == EncALPHistogram || e == EncALPFloatHistogram || e == EncALP || e == EncXOR || e == EncHistogram || e == EncFloatHistogram || e == EncXOR2 || e == EncHistogramST || e == EncFloatHistogramST
 }
 
 const (
@@ -81,7 +90,9 @@ const (
 type Chunk interface {
 	Iterable
 
-	// Bytes returns the underlying byte slice of the chunk.
+	// Bytes returns borrowed encoded bytes, which the caller must not modify.
+	// Callers retaining them across chunk mutation must copy them unless the
+	// implementation documents stronger snapshot guarantees.
 	Bytes() []byte
 
 	// Encoding returns the encoding type of the chunk.
@@ -241,6 +252,29 @@ func (v ValueType) NewChunk(useXOR2, useHistogramST bool) (Chunk, error) {
 	return NewEmptyChunk(v.ChunkEncoding(useXOR2, useHistogramST))
 }
 
+// ChunkEncodingWithFloatEncoding selects a float encoding independently of the
+// histogram start-timestamp setting. Unrecognized float encodings fall back to XOR.
+func (v ValueType) ChunkEncodingWithFloatEncoding(floatEncoding Encoding, useHistogramST bool) Encoding {
+	if v == ValFloat && (floatEncoding == EncALP || floatEncoding == EncXOR2) {
+		return floatEncoding
+	}
+	return v.ChunkEncoding(false, useHistogramST)
+}
+
+// ChunkEncodingWithOptions selects float and histogram codecs independently.
+// ALP histogram encodings preserve start timestamps regardless of useHistogramST.
+func (v ValueType) ChunkEncodingWithOptions(floatEncoding Encoding, useHistogramST, useALPHistograms bool) Encoding {
+	if useALPHistograms {
+		if v == ValHistogram {
+			return EncALPHistogram
+		}
+		if v == ValFloatHistogram {
+			return EncALPFloatHistogram
+		}
+	}
+	return v.ChunkEncodingWithFloatEncoding(floatEncoding, useHistogramST)
+}
+
 // CompatibleValues reports whether two encodings are mutually compatible with
 // respect to sample-value encoding, meaning a chunk opened with one encoding can
 // continue to receive appends even when the desired encoding changes to the other,
@@ -344,17 +378,23 @@ type Pool interface {
 
 // pool is a memory pool of chunk objects.
 type pool struct {
-	xor              sync.Pool
-	histogram        sync.Pool
-	floatHistogram   sync.Pool
-	xo2              sync.Pool
-	histogramST      sync.Pool
-	floatHistogramST sync.Pool
+	alpHistogram      sync.Pool
+	alpFloatHistogram sync.Pool
+	alp               sync.Pool
+	xor               sync.Pool
+	histogram         sync.Pool
+	floatHistogram    sync.Pool
+	xo2               sync.Pool
+	histogramST       sync.Pool
+	floatHistogramST  sync.Pool
 }
 
 // NewPool returns a new pool.
 func NewPool() Pool {
 	return &pool{
+		alpHistogram:      sync.Pool{New: func() any { return NewALPHistogramChunk() }},
+		alpFloatHistogram: sync.Pool{New: func() any { return NewALPFloatHistogramChunk() }},
+		alp:               sync.Pool{New: func() any { return NewALPChunk() }},
 		xor: sync.Pool{
 			New: func() any {
 				return &XORChunk{b: bstream{}}
@@ -391,6 +431,12 @@ func NewPool() Pool {
 func (p *pool) Get(e Encoding, b []byte) (Chunk, error) {
 	var c Chunk
 	switch e {
+	case EncALPHistogram:
+		c = p.alpHistogram.Get().(*ALPHistogramChunk)
+	case EncALPFloatHistogram:
+		c = p.alpFloatHistogram.Get().(*ALPHistogramChunk)
+	case EncALP:
+		c = p.alp.Get().(*ALPChunk)
 	case EncXOR:
 		c = p.xor.Get().(*XORChunk)
 	case EncHistogram:
@@ -415,6 +461,15 @@ func (p *pool) Put(c Chunk) error {
 	var sp *sync.Pool
 	var ok bool
 	switch c.Encoding() {
+	case EncALPHistogram:
+		_, ok = c.(*ALPHistogramChunk)
+		sp = &p.alpHistogram
+	case EncALPFloatHistogram:
+		_, ok = c.(*ALPHistogramChunk)
+		sp = &p.alpFloatHistogram
+	case EncALP:
+		_, ok = c.(*ALPChunk)
+		sp = &p.alp
 	case EncXOR:
 		_, ok = c.(*XORChunk)
 		sp = &p.xor
@@ -453,6 +508,14 @@ func (p *pool) Put(c Chunk) error {
 // bytes.
 func FromData(e Encoding, d []byte) (Chunk, error) {
 	switch e {
+	case EncALPHistogram, EncALPFloatHistogram:
+		c := &ALPHistogramChunk{encoding: e}
+		c.Reset(d)
+		return c, c.err
+	case EncALP:
+		c := NewALPChunk()
+		c.Reset(d)
+		return c, c.err
 	case EncXOR:
 		return &XORChunk{b: bstream{count: 0, stream: d}}, nil
 	case EncHistogram:
@@ -472,6 +535,12 @@ func FromData(e Encoding, d []byte) (Chunk, error) {
 // NewEmptyChunk returns an empty chunk for the given encoding.
 func NewEmptyChunk(e Encoding) (Chunk, error) {
 	switch e {
+	case EncALPHistogram:
+		return NewALPHistogramChunk(), nil
+	case EncALPFloatHistogram:
+		return NewALPFloatHistogramChunk(), nil
+	case EncALP:
+		return NewALPChunk(), nil
 	case EncXOR:
 		return NewXORChunk(), nil
 	case EncHistogram:

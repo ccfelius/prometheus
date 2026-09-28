@@ -313,10 +313,10 @@ func (c *seriesSetToChunkSet) Err() error {
 
 type seriesToChunkEncoder struct {
 	Series
-	// floatEncoding is the chunk encoding used for float samples. Samples
-	// carrying a start timestamp always use XOR2 regardless of this field,
-	// as plain XOR chunks cannot store start timestamps.
+	// floatEncoding is the chunk encoding used for float samples. ALP and XOR2
+	// preserve start timestamps; other selections use XOR2 when ST is present.
 	floatEncoding chunkenc.Encoding
+	alpHistograms bool
 }
 
 const seriesToChunkEncoderSplit = 120
@@ -327,10 +327,16 @@ func NewSeriesToChunkEncoder(series Series) ChunkSeries {
 }
 
 // NewSeriesToChunkEncoderWithFloatEncoding is like NewSeriesToChunkEncoder, but
-// float samples are encoded with floatEncoding (EncXOR or EncXOR2; anything else
-// behaves like EncXOR). Samples carrying a start timestamp always use XOR2.
+// float samples are encoded with floatEncoding (EncXOR, EncXOR2, or EncALP; anything else
+// behaves like EncXOR). Start timestamps use ALP when selected, otherwise XOR2.
 func NewSeriesToChunkEncoderWithFloatEncoding(series Series, floatEncoding chunkenc.Encoding) ChunkSeries {
 	return &seriesToChunkEncoder{Series: series, floatEncoding: floatEncoding}
+}
+
+// NewSeriesToChunkEncoderWithOptions selects scalar and histogram encodings
+// independently. ALP histogram chunks preserve start timestamps.
+func NewSeriesToChunkEncoderWithOptions(series Series, floatEncoding chunkenc.Encoding, alpHistograms bool) ChunkSeries {
+	return &seriesToChunkEncoder{Series: series, floatEncoding: floatEncoding, alpHistograms: alpHistograms}
 }
 
 func (s *seriesToChunkEncoder) Iterator(it chunks.Iterator) chunks.Iterator {
@@ -355,7 +361,11 @@ func (s *seriesToChunkEncoder) Iterator(it chunks.Iterator) chunks.Iterator {
 	for typ := seriesIter.Next(); typ != chunkenc.ValNone; typ = seriesIter.Next() {
 		st := seriesIter.AtST()
 		hasST := st != 0
-		desired := typ.ChunkEncoding(hasST || s.floatEncoding == chunkenc.EncXOR2, hasST)
+		floatEncoding := s.floatEncoding
+		if hasST && floatEncoding != chunkenc.EncALP {
+			floatEncoding = chunkenc.EncXOR2
+		}
+		desired := typ.ChunkEncodingWithOptions(floatEncoding, hasST, s.alpHistograms)
 		cut := typ != lastType || i >= seriesToChunkEncoderSplit
 		if !cut && chk.Encoding() != desired {
 			// XOR and XOR2 are append-compatible, so a change in the desired float

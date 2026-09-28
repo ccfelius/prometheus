@@ -729,7 +729,7 @@ func NewCompactingChunkSeriesMerger(mergeFunc VerticalSeriesMergeFunc) VerticalC
 // NewCompactingChunkSeriesMerger, but chunks re-encoded while compacting overlaps
 // use the float encoding returned by floatEncoding. It is consulted once per merged
 // series, so it may be backed by runtime-reloadable configuration. Nil means EncXOR.
-// Samples carrying a start timestamp always use XOR2 regardless of floatEncoding.
+// Samples carrying a start timestamp use ALP when selected, otherwise XOR2.
 func NewCompactingChunkSeriesMergerWithFloatEncoding(mergeFunc VerticalSeriesMergeFunc, floatEncoding func() chunkenc.Encoding) VerticalChunkSeriesMergeFunc {
 	return func(series ...ChunkSeries) ChunkSeries {
 		if len(series) == 0 {

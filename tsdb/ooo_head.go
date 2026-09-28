@@ -76,6 +76,12 @@ func (o *OOOChunk) NumSamples() int {
 //
 //nolint:revive
 func (o *OOOChunk) ToEncodedChunks(mint, maxt int64, useXOR2, useHistogramST bool) (chks []memChunk, err error) {
+	return o.toEncodedChunksWithFloatEncoding(mint, maxt, chunkenc.ValFloat.ChunkEncoding(useXOR2, false), useHistogramST, false)
+}
+
+// toEncodedChunksWithFloatEncoding materializes sorted samples with the selected
+// float encoding and an independent histogram start-timestamp setting.
+func (o *OOOChunk) toEncodedChunksWithFloatEncoding(mint, maxt int64, floatEncoding chunkenc.Encoding, useHistogramST, useALPHistograms bool) (chks []memChunk, err error) {
 	if len(o.samples) == 0 {
 		return nil, nil
 	}
@@ -95,18 +101,18 @@ func (o *OOOChunk) ToEncodedChunks(mint, maxt int64, useXOR2, useHistogramST boo
 		if s.t > maxt {
 			break
 		}
-		encoding := chunkenc.ValFloat.ChunkEncoding(useXOR2, useHistogramST)
+		encoding := chunkenc.ValFloat.ChunkEncodingWithOptions(floatEncoding, useHistogramST, useALPHistograms)
 		switch {
 		case s.h != nil:
-			encoding = chunkenc.ValHistogram.ChunkEncoding(useXOR2, useHistogramST)
+			encoding = chunkenc.ValHistogram.ChunkEncodingWithOptions(floatEncoding, useHistogramST, useALPHistograms)
 		case s.fh != nil:
-			encoding = chunkenc.ValFloatHistogram.ChunkEncoding(useXOR2, useHistogramST)
+			encoding = chunkenc.ValFloatHistogram.ChunkEncodingWithOptions(floatEncoding, useHistogramST, useALPHistograms)
 		}
 
 		// prevApp is the appender for the previous sample.
 		prevApp := app
 
-		if encoding != prevEncoding { // For the first sample, this will always be true as EncNone != EncXOR | EncXOR2 | EncHistogram | EncFloatHistogram
+		if encoding != prevEncoding || encoding == chunkenc.EncALP && chunkenc.IsFloatChunkFull(chunk) || (encoding == chunkenc.EncALPHistogram || encoding == chunkenc.EncALPFloatHistogram) && chunk.NumSamples() >= chunkenc.MaxSamplesPerALPHistogramChunk {
 			if prevEncoding != chunkenc.EncNone {
 				chks = append(chks, memChunk{chunk, cmint, cmaxt, nil})
 			}
@@ -123,9 +129,9 @@ func (o *OOOChunk) ToEncodedChunks(mint, maxt int64, useXOR2, useHistogramST boo
 			}
 		}
 		switch encoding {
-		case chunkenc.EncXOR, chunkenc.EncXOR2:
+		case chunkenc.EncXOR, chunkenc.EncXOR2, chunkenc.EncALP:
 			app.Append(s.st, s.t, s.f)
-		case chunkenc.EncHistogram, chunkenc.EncHistogramST:
+		case chunkenc.EncHistogram, chunkenc.EncHistogramST, chunkenc.EncALPHistogram:
 			var (
 				newChunk chunkenc.Chunk
 				recoded  bool
@@ -138,7 +144,7 @@ func (o *OOOChunk) ToEncodedChunks(mint, maxt int64, useXOR2, useHistogramST boo
 				}
 				chunk = newChunk
 			}
-		case chunkenc.EncFloatHistogram, chunkenc.EncFloatHistogramST:
+		case chunkenc.EncFloatHistogram, chunkenc.EncFloatHistogramST, chunkenc.EncALPFloatHistogram:
 			var (
 				newChunk chunkenc.Chunk
 				recoded  bool

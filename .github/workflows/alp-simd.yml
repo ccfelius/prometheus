@@ -1,0 +1,49 @@
+name: ALP SIMD
+
+on:
+  pull_request:
+    paths:
+      - 'tsdb/**'
+      - 'storage/**'
+      - 'go.mod'
+      - 'go.sum'
+      - '.github/workflows/alp-simd.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'tsdb/**'
+      - 'storage/**'
+      - 'go.mod'
+      - 'go.sum'
+      - '.github/workflows/alp-simd.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: '1.27.1'
+      - name: Check generated kernels
+        run: |
+          go generate ./tsdb/chunkenc
+          git diff --exit-code -- tsdb/chunkenc
+      - name: Scalar codec tests
+        run: go test ./tsdb/chunkenc
+      - name: SIMD codec and integration tests
+        env:
+          GOEXPERIMENT: simd
+        run: |
+          go test ./tsdb/chunkenc
+          go test ./tsdb ./storage ./storage/remote -run 'Test(DBALP|StreamALP|SeriesToChunk)'
+          go test -race ./tsdb/chunkenc -run 'Test(ALP|Chunk)'
