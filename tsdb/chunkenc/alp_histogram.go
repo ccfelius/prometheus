@@ -228,6 +228,7 @@ type alpHistogramNumbers struct {
 	compactFirst              bool
 	src                       []byte
 	floats                    []float64
+	current                   []float64
 	ints                      []uint64
 	scratch                   alpDecodeScratch
 	remaining, index, decoded int
@@ -320,6 +321,24 @@ func (r *alpHistogramNumbers) readFloats(dst []float64) {
 		r.index += take
 		dst = dst[take:]
 	}
+}
+
+// floatSample lends a view of a decoded vector until the next sample. A sample
+// crossing a vector boundary is assembled in owned scratch before either vector
+// can be overwritten. AtFloatHistogram copies the view into caller-owned output.
+func (r *alpHistogramNumbers) floatSample(fields int) []float64 {
+	if r.index == r.decoded && !r.refill() {
+		r.current = slices.Grow(r.current[:0], fields)[:fields]
+		return r.current
+	}
+	if fields <= r.decoded-r.index {
+		values := r.floats[r.index : r.index+fields]
+		r.index += fields
+		return values
+	}
+	r.current = slices.Grow(r.current[:0], fields)[:fields]
+	r.readFloats(r.current)
+	return r.current
 }
 
 // alpRestoreIntegersScalar predicts independent fields modulo 2^64. Each input
@@ -853,28 +872,16 @@ func (it *alpHistogramIterator) Next() ValueType {
 		h.PositiveSpans, h.NegativeSpans, h.CustomValues = it.layout.PositiveSpans, it.layout.NegativeSpans, it.layout.CustomValues
 		counts := it.numbers.integerSample()
 		h.Count, h.ZeroCount = counts[0], counts[1]
-		counts = counts[2:]
-		h.PositiveBuckets = slices.Grow(h.PositiveBuckets[:0], it.positive)[:it.positive]
-		h.NegativeBuckets = slices.Grow(h.NegativeBuckets[:0], it.negative)[:it.negative]
-		for _, buckets := range [][]int64{h.PositiveBuckets, h.NegativeBuckets} {
-			for i := range buckets {
-				v := counts[i]
-				buckets[i] = int64(v>>1) ^ -int64(v&1)
-			}
-			counts = counts[len(buckets):]
-		}
+
 	} else {
 		h := &it.fh
 		h.Schema, h.ZeroThreshold, h.Sum, h.CounterResetHint = it.layout.Schema, it.layout.ZeroThreshold, sum, hint
 		h.PositiveSpans, h.NegativeSpans, h.CustomValues = it.layout.PositiveSpans, it.layout.NegativeSpans, it.layout.CustomValues
-		var counts [2]float64
-		it.numbers.readFloats(counts[:])
+		counts := it.numbers.floatSample(2 + it.positive + it.negative)
 		h.Count, h.ZeroCount = counts[0], counts[1]
-		h.PositiveBuckets = slices.Grow(h.PositiveBuckets[:0], it.positive)[:it.positive]
-		h.NegativeBuckets = slices.Grow(h.NegativeBuckets[:0], it.negative)[:it.negative]
-		for _, buckets := range [][]float64{h.PositiveBuckets, h.NegativeBuckets} {
-			it.numbers.readFloats(buckets)
-		}
+		h.PositiveBuckets = counts[2 : 2+it.positive]
+		h.NegativeBuckets = counts[2+it.positive:]
+
 	}
 	if it.numbers.err != nil {
 		it.err = it.numbers.err
@@ -923,6 +930,16 @@ func (it *alpHistogramIterator) AtHistogram(h *histogram.Histogram) (int64, *his
 		h = &histogram.Histogram{}
 	}
 	it.h.CopyTo(h)
+	h.PositiveBuckets = slices.Grow(h.PositiveBuckets[:0], it.positive)[:it.positive]
+	h.NegativeBuckets = slices.Grow(h.NegativeBuckets[:0], it.negative)[:it.negative]
+	counts := it.numbers.previous[2:]
+	for _, buckets := range [][]int64{h.PositiveBuckets, h.NegativeBuckets} {
+		for i := range buckets {
+			v := counts[i]
+			buckets[i] = int64(v>>1) ^ -int64(v&1)
+		}
+		counts = counts[len(buckets):]
+	}
 	return it.AtT(), h
 }
 
@@ -935,7 +952,21 @@ func (it *alpHistogramIterator) AtFloatHistogram(h *histogram.FloatHistogram) (i
 			*h = histogram.FloatHistogram{Sum: it.h.Sum}
 			return it.AtT(), h
 		}
-		return it.AtT(), it.h.ToFloat(h)
+		h = it.h.ToFloat(h)
+		h.PositiveBuckets = slices.Grow(h.PositiveBuckets[:0], it.positive)[:it.positive]
+		h.NegativeBuckets = slices.Grow(h.NegativeBuckets[:0], it.negative)[:it.negative]
+		counts := it.numbers.previous[2:]
+		for _, buckets := range [][]float64{h.PositiveBuckets, h.NegativeBuckets} {
+			var total float64
+			for i := range buckets {
+				v := counts[i]
+				// Match Histogram.ToFloat's per-delta conversion and summation.
+				total += float64(int64(v>>1) ^ -int64(v&1))
+				buckets[i] = total
+			}
+			counts = counts[len(buckets):]
+		}
+		return it.AtT(), h
 	}
 	if value.IsStaleNaN(it.fh.Sum) {
 		if h == nil {

@@ -24,6 +24,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"github.com/prometheus/prometheus/model/histogram"
 	"github.com/prometheus/prometheus/model/value"
 	"github.com/prometheus/prometheus/tsdb/tsdbutil"
 )
@@ -257,5 +258,66 @@ func TestALPEncodeReductionsAndPrediction(t *testing.T) {
 		require.Equal(t, int64(math.MaxInt64), lo)
 		require.Equal(t, int64(math.MinInt64), hi)
 		require.Equal(t, n, missing)
+	}
+}
+
+func TestALPHistogramRepeatedMaterialization(t *testing.T) {
+	for _, floating := range []bool{false, true} {
+		for _, wide := range []bool{false, true} {
+			enc := EncHistogramST
+			if floating {
+				enc = EncFloatHistogramST
+			}
+			source, _ := NewEmptyChunk(enc)
+			a, _ := source.Appender()
+			for i := range 129 {
+				h := tsdbutil.GenerateTestHistogram(int64(i))
+				h.CounterResetHint = histogram.GaugeType
+				if wide {
+					h.PositiveSpans = []histogram.Span{{Length: 1031}}
+					h.PositiveBuckets = make([]int64, 1031)
+					for j := range h.PositiveBuckets {
+						h.PositiveBuckets[j] = int64(j % 3)
+					}
+				}
+				var err error
+				if floating {
+					fh := h.ToFloat(nil)
+					for j := range fh.PositiveBuckets {
+						fh.PositiveBuckets[j] += float64((i+j)%7) / 100
+					}
+					_, _, a, err = a.AppendFloatHistogram(nil, 1, int64(i), fh, true)
+				} else {
+					_, _, a, err = a.AppendHistogram(nil, 1, int64(i), h, true)
+				}
+				require.NoError(t, err)
+			}
+			var encoder ALPEncoder
+			c, err := encoder.RecodeHistogramV3(source)
+			require.NoError(t, err)
+			it, ref := c.Iterator(nil), source.Iterator(nil)
+			for ref.Next() != ValNone {
+				require.NotEqual(t, ValNone, it.Next())
+				_, want := ref.AtFloatHistogram(nil)
+				_, first := it.AtFloatHistogram(nil)
+				require.Equal(t, want, first)
+				first.PositiveBuckets[0] = -999
+				first.PositiveSpans[0].Offset = 999
+				_, again := it.AtFloatHistogram(nil)
+				require.Equal(t, want, again)
+				if !floating {
+					_, wantInt := ref.AtHistogram(nil)
+					_, got := it.AtHistogram(nil)
+					require.Equal(t, wantInt, got)
+					got.PositiveBuckets[0] = -888
+					_, got = it.AtHistogram(got)
+					require.Equal(t, wantInt, got)
+					_, again = it.AtFloatHistogram(again)
+					require.Equal(t, want, again)
+				}
+			}
+			require.Equal(t, ValNone, it.Next())
+			require.NoError(t, it.Err())
+		}
 	}
 }
