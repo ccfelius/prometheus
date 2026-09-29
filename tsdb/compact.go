@@ -1045,17 +1045,17 @@ func (p DefaultBlockPopulator) PopulateBlock(ctx context.Context, metrics *Compa
 				if old.Encoding() != chunkenc.EncXOR && old.Encoding() != chunkenc.EncXOR2 {
 					continue
 				}
-				if autoFloats && len(old.Bytes()) <= 40 {
-					continue
+				var c chunkenc.Chunk
+				var err error
+				if autoFloats {
+					c, err = alpEncoder.RecodeFloatIfSmaller(old)
+				} else {
+					c, err = alpEncoder.Recode(old)
 				}
-				c, err := alpEncoder.Recode(old)
 				if err != nil {
 					return fmt.Errorf("transcode ALP chunk: %w", err)
 				}
-				if autoFloats && len(c.Bytes())*100 > len(old.Bytes())*95 {
-					if err := chunkPool.Put(c); err != nil {
-						return err
-					}
+				if c == nil {
 					continue
 				}
 				chks[i].Chunk = c
