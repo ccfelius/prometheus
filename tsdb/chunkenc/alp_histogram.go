@@ -837,6 +837,36 @@ func (it *alpHistogramIterator) reset(src []byte, enc Encoding) {
 			it.err = errInvalidALP
 			return
 		}
+		// Check compact first-sample framing before allocating predictor arrays.
+		// A forged wide layout must not turn a short malformed input into large
+		// allocations merely because later decoding would reject it.
+		if it.numbers.compactFirst {
+			remaining := int(fields)
+			data := src
+			for remaining > 0 {
+				if len(data) < 4 {
+					it.err = errInvalidALP
+					return
+				}
+				size := uint64(binary.LittleEndian.Uint32(data))
+				if size > uint64(len(data)-4) {
+					it.err = errInvalidALP
+					return
+				}
+				block := data[4 : 4+int(size)]
+				take := min(it.numbers.blockSize, remaining)
+				valid := len(block) == 1+8*take && block[0] == 0
+				if len(block) >= 10 && block[0] == 1 && block[1] <= 64 {
+					valid = len(block) == 10+alpPackedSize(take, int(block[1]))
+				}
+				if !valid {
+					it.err = errInvalidALP
+					return
+				}
+				remaining -= take
+				data = data[4+int(size):]
+			}
+		}
 		it.numbers.previous = slices.Grow(it.numbers.previous[:0], int(fields))[:int(fields)]
 		it.numbers.delta = slices.Grow(it.numbers.delta[:0], int(fields))[:int(fields)]
 		clear(it.numbers.delta)

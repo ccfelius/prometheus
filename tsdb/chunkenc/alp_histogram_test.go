@@ -14,6 +14,7 @@
 package chunkenc
 
 import (
+	"encoding/binary"
 	"math"
 	"slices"
 	"strconv"
@@ -391,4 +392,27 @@ func TestALPHistogramV3HintPadding(t *testing.T) {
 	it.hints[0] |= 0x80
 	it.reset(data, EncALPHistogram)
 	require.Error(t, it.Err())
+}
+
+func TestALPHistogramV3RejectsForgedWideLayoutBeforeAllocation(t *testing.T) {
+	times := NewALPChunk()
+	a, _ := times.Appender()
+	a.Append(0, 0, 0)
+	data := []byte{0, 1, alpHistogramMetadataVersion, 0}
+	data = binary.AppendVarint(data, 1)
+	data = binary.LittleEndian.AppendUint64(data, 0)
+	data = alpAppendSpans(data, []histogram.Span{{Length: 4096}})
+	data = alpAppendSpans(data, nil)
+	data = append(data, 0, 0) // No custom bounds and one packed reset hint.
+	data = binary.LittleEndian.AppendUint32(data, uint32(len(times.Bytes())))
+	data = append(data, times.Bytes()...)
+	// Only one 128-field block is supplied for a declared 4,098-field sample.
+	data = binary.LittleEndian.AppendUint32(data, 10)
+	data = append(data, 1, 0)
+	data = binary.LittleEndian.AppendUint64(data, 0)
+	var it alpHistogramIterator
+	it.reset(data, EncALPHistogram)
+	require.Error(t, it.Err())
+	require.Zero(t, cap(it.numbers.previous))
+	require.Zero(t, cap(it.numbers.delta))
 }
