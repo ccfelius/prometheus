@@ -1256,9 +1256,19 @@ func TestStreamALPResponse(t *testing.T) {
 }
 
 func TestStreamALPHistogramResponse(t *testing.T) {
-	for _, enc := range []chunkenc.Encoding{chunkenc.EncALPHistogram, chunkenc.EncALPFloatHistogram, chunkenc.EncHistogramST, chunkenc.EncFloatHistogramST} {
+	for _, variant := range []struct {
+		enc     chunkenc.Encoding
+		version int
+	}{
+		{chunkenc.EncALPHistogram, 1},
+		{chunkenc.EncALPFloatHistogram, 1},
+		{chunkenc.EncHistogramST, 2},
+		{chunkenc.EncHistogramST, 3},
+		{chunkenc.EncFloatHistogramST, 3},
+	} {
+		enc := variant.enc
 		for _, st := range []int64{0, 1} {
-			t.Run(fmt.Sprintf("%s/st=%d", enc, st), func(t *testing.T) {
+			t.Run(fmt.Sprintf("%s/v%d/st=%d", enc, variant.version, st), func(t *testing.T) {
 				c, err := chunkenc.NewEmptyChunk(enc)
 				require.NoError(t, err)
 				a, err := c.Appender()
@@ -1272,8 +1282,12 @@ func TestStreamALPHistogramResponse(t *testing.T) {
 					require.NoError(t, err)
 				}
 				if enc == chunkenc.EncHistogramST || enc == chunkenc.EncFloatHistogramST {
-					var encoder chunkenc.ALPEncoder
-					c, err = encoder.RecodeHistogramV3(c)
+					if variant.version == 2 {
+						c, err = chunkenc.RecodeToALPHistogramV2(c)
+					} else {
+						var encoder chunkenc.ALPEncoder
+						c, err = encoder.RecodeHistogramV3(c)
+					}
 					require.NoError(t, err)
 				}
 				css := newMockChunkSeriesSet([]*prompb.ChunkedSeries{{Chunks: []prompb.Chunk{{Type: prompb.Chunk_Encoding(c.Encoding()), Data: c.Bytes(), MinTimeMs: 0, MaxTimeMs: 240}}}})
