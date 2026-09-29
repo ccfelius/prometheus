@@ -153,37 +153,45 @@ func TestALPHistograms(t *testing.T) {
 				want, got := build(legacy), build(enc)
 				require.Len(t, got, len(want))
 				for i, c := range got {
-					snapshot := c.Iterator(nil)
-					serialized := slices.Clone(c.Bytes())
-					c.Compact()
-					loaded, err := FromData(enc, serialized)
-					require.NoError(t, err)
-					_, err = loaded.Appender()
-					require.NoError(t, err)
-					for _, it := range []Iterator{snapshot, loaded.Iterator(nil), c.Iterator(nil)} {
-						ref := want[i].Iterator(nil)
-						for typ := ref.Next(); typ != ValNone; typ = ref.Next() {
-							require.Equal(t, typ, it.Next())
-							require.Equal(t, ref.AtST(), it.AtST())
-							require.Equal(t, ref.AtT(), it.AtT())
-							if typ == ValHistogram {
-								_, expected := ref.AtHistogram(nil)
-								_, actual := it.AtHistogram(nil)
-								require.Equal(t, math.Float64bits(expected.Sum), math.Float64bits(actual.Sum))
-								expected.Sum, actual.Sum = 0, 0
-								require.Equal(t, expected, actual)
-							} else {
-								_, expected := ref.AtFloatHistogram(nil)
-								_, actual := it.AtFloatHistogram(nil)
-								require.Equal(t, math.Float64bits(expected.Sum), math.Float64bits(actual.Sum))
-								expected.Sum, actual.Sum = 0, 0
-								require.Equal(t, expected, actual)
+					variants := []Chunk{c}
+					if enc == EncALPHistogram {
+						v2, err := RecodeToALPHistogramV2(want[i])
+						require.NoError(t, err)
+						variants = append(variants, v2)
+					}
+					for _, c := range variants {
+						snapshot := c.Iterator(nil)
+						serialized := slices.Clone(c.Bytes())
+						c.Compact()
+						loaded, err := FromData(enc, serialized)
+						require.NoError(t, err)
+						_, err = loaded.Appender()
+						require.NoError(t, err)
+						for _, it := range []Iterator{snapshot, loaded.Iterator(nil), c.Iterator(nil)} {
+							ref := want[i].Iterator(nil)
+							for typ := ref.Next(); typ != ValNone; typ = ref.Next() {
+								require.Equal(t, typ, it.Next())
+								require.Equal(t, ref.AtST(), it.AtST())
+								require.Equal(t, ref.AtT(), it.AtT())
+								if typ == ValHistogram {
+									_, expected := ref.AtHistogram(nil)
+									_, actual := it.AtHistogram(nil)
+									require.Equal(t, math.Float64bits(expected.Sum), math.Float64bits(actual.Sum))
+									expected.Sum, actual.Sum = 0, 0
+									require.Equal(t, expected, actual)
+								} else {
+									_, expected := ref.AtFloatHistogram(nil)
+									_, actual := it.AtFloatHistogram(nil)
+									require.Equal(t, math.Float64bits(expected.Sum), math.Float64bits(actual.Sum))
+									expected.Sum, actual.Sum = 0, 0
+									require.Equal(t, expected, actual)
+								}
 							}
+							// The legacy iterator may lend its current histogram; only its sum was changed above.
+							require.NoError(t, ref.Err())
+							require.Equal(t, ValNone, it.Next())
+							require.NoError(t, it.Err())
 						}
-						// The legacy iterator may lend its current histogram; only its sum was changed above.
-						require.NoError(t, ref.Err())
-						require.Equal(t, ValNone, it.Next())
-						require.NoError(t, it.Err())
 					}
 				}
 			})
@@ -205,18 +213,25 @@ func TestALPHistogramCorruption(t *testing.T) {
 			}
 			require.NoError(t, err)
 		}
-		b := c.Bytes()
-		for size := 1; size < len(b); size++ {
-			broken, err := FromData(enc, b[:size])
-			if err != nil {
-				continue
+		variants := [][]byte{c.Bytes()}
+		if enc == EncALPHistogram {
+			v2, err := RecodeToALPHistogramV2(c.(*ALPHistogramChunk).inner)
+			require.NoError(t, err)
+			variants = append(variants, v2.Bytes())
+		}
+		for _, b := range variants {
+			for size := 1; size < len(b); size++ {
+				broken, err := FromData(enc, b[:size])
+				if err != nil {
+					continue
+				}
+				it := broken.Iterator(nil)
+				for it.Next() != ValNone {
+				}
+				require.Error(t, it.Err(), "size %d", size)
+				_, err = broken.Appender()
+				require.Error(t, err)
 			}
-			it := broken.Iterator(nil)
-			for it.Next() != ValNone {
-			}
-			require.Error(t, it.Err(), "size %d", size)
-			_, err = broken.Appender()
-			require.Error(t, err)
 		}
 	}
 }
@@ -231,6 +246,10 @@ func FuzzALPHistogramDecode(f *testing.F) {
 			_, _, _, _ = a.AppendFloatHistogram(nil, 1, 2, tsdbutil.GenerateTestFloatHistogram(0), true)
 		}
 		f.Add(byte(enc), c.Bytes())
+		if enc == EncALPHistogram {
+			v2, _ := RecodeToALPHistogramV2(c.(*ALPHistogramChunk).inner)
+			f.Add(byte(enc), v2.Bytes())
+		}
 	}
 	f.Fuzz(func(_ *testing.T, e byte, b []byte) {
 		if len(b) > 16384 {
@@ -255,10 +274,21 @@ func FuzzALPHistogramDecode(f *testing.F) {
 func BenchmarkALPHistograms(b *testing.B) {
 	hs := tsdbutil.GenerateTestHistograms(120)
 	fhs := tsdbutil.GenerateTestFloatHistograms(120)
-	for _, enc := range []Encoding{EncHistogramST, EncALPHistogram, EncFloatHistogramST, EncALPFloatHistogram} {
-		b.Run(enc.String(), func(b *testing.B) {
+	for _, variant := range []struct {
+		enc     Encoding
+		compact bool
+	}{{EncHistogramST, false}, {EncALPHistogram, false}, {EncFloatHistogramST, false}, {EncALPFloatHistogram, false}, {EncALPHistogram, true}} {
+		enc := variant.enc
+		name := enc.String()
+		if variant.compact {
+			name += "V2"
+		}
+		b.Run(name, func(b *testing.B) {
 			build := func() Chunk {
 				c, _ := NewEmptyChunk(enc)
+				if variant.compact {
+					c.(*ALPHistogramChunk).version = alpHistogramCompactVersion
+				}
 				a, _ := c.Appender()
 				for i := range 120 {
 					var err error

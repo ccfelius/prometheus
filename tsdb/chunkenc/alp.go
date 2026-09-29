@@ -48,6 +48,7 @@ type ALPChunk struct {
 	numSamples int
 	err        error
 	validated  bool
+	state      alpEncodeState
 }
 
 // NewALPChunk returns an empty ALP chunk.
@@ -89,7 +90,7 @@ func (c *ALPChunk) Bytes() []byte {
 	b[2] = alpVersion
 	b = append(b, c.sealed...)
 	if len(c.pending) > 0 {
-		b = alpEncodeSamples(b, c.pending)
+		b = alpEncodeSamplesWithState(b, c.pending, &c.state)
 	}
 	c.serialized = b
 	return b
@@ -136,7 +137,7 @@ func (a *alpAppender) Append(st, t int64, v float64) {
 	c.numSamples++
 	c.serialized = nil
 	if len(c.pending) == alpBlockSize {
-		c.sealed = alpEncodeSamples(c.sealed, c.pending)
+		c.sealed = alpEncodeSamplesWithState(c.sealed, c.pending, &c.state)
 		c.pending = c.pending[:0]
 	}
 }
@@ -175,6 +176,8 @@ type alpIterator struct {
 	scratch                     alpDecodeScratch
 	err                         error
 	exhausted                   bool
+	constantST                  bool
+	st                          int64
 }
 
 func (it *alpIterator) Next() ValueType {
@@ -208,6 +211,8 @@ func (it *alpIterator) Next() ValueType {
 		}
 		it.decoded = len(it.tail)
 		it.resize(it.decoded)
+		it.constantST = false
+		it.startTimestamps = slices.Grow(it.startTimestamps[:0], it.decoded)[:it.decoded]
 		for i, s := range it.tail {
 			it.timestamps[i], it.startTimestamps[i], it.values[i] = s.t, s.st, s.v
 		}
@@ -220,7 +225,6 @@ func (it *alpIterator) Next() ValueType {
 
 func (it *alpIterator) resize(n int) {
 	it.timestamps = slices.Grow(it.timestamps[:0], n)[:n]
-	it.startTimestamps = slices.Grow(it.startTimestamps[:0], n)[:n]
 	it.values = slices.Grow(it.values[:0], n)[:n]
 }
 
@@ -241,8 +245,13 @@ func (it *alpIterator) Seek(t int64) ValueType {
 
 func (it *alpIterator) At() (int64, float64) { return it.timestamps[it.index], it.values[it.index] }
 func (it *alpIterator) AtT() int64           { return it.timestamps[it.index] }
-func (it *alpIterator) AtST() int64          { return it.startTimestamps[it.index] }
-func (it *alpIterator) Err() error           { return it.err }
+func (it *alpIterator) AtST() int64 {
+	if it.constantST {
+		return it.st
+	}
+	return it.startTimestamps[it.index]
+}
+func (it *alpIterator) Err() error { return it.err }
 func (*alpIterator) AtHistogram(*histogram.Histogram) (int64, *histogram.Histogram) {
 	panic("cannot call ALP iterator AtHistogram")
 }
@@ -251,7 +260,7 @@ func (*alpIterator) AtFloatHistogram(*histogram.FloatHistogram) (int64, *histogr
 	panic("cannot call ALP iterator AtFloatHistogram")
 }
 
-func alpEncodeSamples(dst []byte, samples []alpSample) []byte {
+func alpEncodeSamplesWithState(dst []byte, samples []alpSample, state *alpEncodeState) []byte {
 	start := len(dst)
 	dst = append(dst, make([]byte, alpBlockHeaderSize)...)
 	flags := byte(alpRegularTime)
@@ -299,7 +308,7 @@ func alpEncodeSamples(dst []byte, samples []alpSample) []byte {
 	for i, s := range samples {
 		values[i] = s.v
 	}
-	dst = alpEncodeValues(dst, values[:len(samples)])
+	dst = alpEncodeValuesWithState(dst, values[:len(samples)], state)
 	header := dst[start:]
 	binary.LittleEndian.PutUint16(header, uint16(len(samples)))
 	header[2] = flags
@@ -358,21 +367,21 @@ func alpDecodeSamples(it *alpIterator, src []byte) (int, []byte, error) {
 		}
 	}
 	sts := src[alpBlockHeaderSize+timeSize : alpBlockHeaderSize+timeSize+stSize]
+	it.constantST = true
+	it.st = 0
 	switch {
 	case flags&alpHasST == 0:
 		if len(sts) != 0 {
 			return 0, nil, errInvalidALP
 		}
-		clear(it.startTimestamps[:n])
 	case flags&alpConstantST != 0:
 		if len(sts) != 8 {
 			return 0, nil, errInvalidALP
 		}
-		st := int64(binary.LittleEndian.Uint64(sts))
-		for i := range n {
-			it.startTimestamps[i] = st
-		}
+		it.st = int64(binary.LittleEndian.Uint64(sts))
 	default:
+		it.constantST = false
+		it.startTimestamps = slices.Grow(it.startTimestamps[:0], n)[:n]
 		previous := int64(0)
 		for i := range n {
 			d, consumed := binary.Varint(sts)

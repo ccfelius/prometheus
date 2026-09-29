@@ -99,3 +99,184 @@ func alpDecodeAVX512Generic(dst []float64, words []uint64, width int, base int64
 		}
 	}
 }
+
+// alpConvertAVX512 performs exact candidate conversion in 8 lanes.
+func alpConvertAVX512(values []float64, integers []int64, accepted []uint64, exponent, factor uint8) {
+	power := archsimd.BroadcastFloat64x8(alpPowers[exponent])
+	fraction := archsimd.BroadcastFloat64x8(alpFractions[factor])
+	inverse := archsimd.BroadcastFloat64x8(alpFractions[exponent])
+	magic := archsimd.BroadcastFloat64x8(6755399441055744.0)
+	lower := archsimd.BroadcastInt64x8(alpLower[factor])
+	upper := archsimd.BroadcastInt64x8(alpUpper[factor])
+	domainLo := archsimd.BroadcastFloat64x8(-0x1p63)
+	domainHi := archsimd.BroadcastFloat64x8(0x1p63)
+	i := 0
+	for ; i+8 <= len(values); i += 8 {
+		original := archsimd.LoadFloat64x8(values[i:])
+		y := original.Mul(power).Mul(fraction).Add(magic).Sub(magic)
+		valid := y.GreaterEqual(domainLo).And(y.Less(domainHi))
+		q := y.Masked(valid).ConvertToInt64()
+		valid = valid.And(q.GreaterEqual(lower)).And(q.LessEqual(upper))
+		restored := q.Mul(archsimd.BroadcastInt64x8(alpFactors[factor])).ConvertToFloat64().Mul(inverse)
+		valid = valid.And(restored.ToBits().Equal(original.ToBits()))
+		q.Store(integers[i:])
+		valid.ToInt64x8().ToBits().Store(accepted[i:])
+	}
+	alpConvertScalar(values[i:], integers[i:], accepted[i:], exponent, factor)
+}
+
+// alpConvertAVX2 performs exact candidate conversion in 4 lanes.
+func alpConvertAVX2(values []float64, integers []int64, accepted []uint64, exponent, factor uint8) {
+	power := archsimd.BroadcastFloat64x4(alpPowers[exponent])
+	fraction := archsimd.BroadcastFloat64x4(alpFractions[factor])
+	inverse := archsimd.BroadcastFloat64x4(alpFractions[exponent])
+	magic := archsimd.BroadcastFloat64x4(6755399441055744.0)
+	lower := archsimd.BroadcastInt64x4(alpLower[factor])
+	upper := archsimd.BroadcastInt64x4(alpUpper[factor])
+	domainLo := archsimd.BroadcastFloat64x4(-0x1p63)
+	domainHi := archsimd.BroadcastFloat64x4(0x1p63)
+	i := 0
+	for ; i+4 <= len(values); i += 4 {
+		original := archsimd.LoadFloat64x4(values[i:])
+		y := original.Mul(power).Mul(fraction).Add(magic).Sub(magic)
+		valid := y.GreaterEqual(domainLo).And(y.Less(domainHi))
+		// The bit construction is exact in [-2^51, 2^51). Other lanes
+		// use the full-range scalar oracle; AVX2 has no packed float64/int64 cast.
+		domain := y.GreaterEqual(archsimd.BroadcastFloat64x4(-0x1p51)).And(y.Less(archsimd.BroadcastFloat64x4(0x1p51)))
+		q := y.Masked(domain).Add(magic).ToBits().Sub(archsimd.BroadcastUint64x4(0x4338000000000000)).BitsToInt64()
+		valid = valid.And(domain)
+		valid = valid.And(q.GreaterEqual(lower)).And(q.LessEqual(upper))
+		product := q.ToBits()
+		if factor != 0 {
+			product = alpMultiplyAVX2(product, uint64(alpFactors[factor]))
+		}
+		restored := alpInt64ToFloat64AVX2(product).Mul(inverse)
+		valid = valid.And(restored.ToBits().Equal(original.ToBits()))
+		q.Store(integers[i:])
+		valid.ToInt64x4().ToBits().Store(accepted[i:])
+		var domainWords [4]int64
+		domain.ToInt64x4().Store(domainWords[:])
+		for lane, mask := range domainWords {
+			if mask != 0 {
+				continue
+			}
+			n, ok := alpEncodeNumber(values[i+lane], exponent, factor)
+			integers[i+lane], accepted[i+lane] = n, 0
+			if ok {
+				accepted[i+lane] = 1
+			}
+		}
+	}
+	alpConvertScalar(values[i:], integers[i:], accepted[i:], exponent, factor)
+}
+
+func alpConvertNative(values []float64, integers []int64, accepted []uint64, exponent, factor uint8) {
+	switch alpBackend {
+	case "avx512":
+		alpConvertAVX512(values, integers, accepted, exponent, factor)
+	case "avx2":
+		alpConvertAVX2(values, integers, accepted, exponent, factor)
+	default:
+		alpConvertScalar(values, integers, accepted, exponent, factor)
+	}
+}
+
+// alpDecodeIntegersAVX2 reconstructs independent unsigned integers in vectors.
+func alpDecodeIntegersAVX2(dst, words []uint64, width int, base uint64) {
+	mask := archsimd.BroadcastUint64x4(alpMask(width))
+	frame := archsimd.BroadcastUint64x4(base)
+	for row := 0; row*alpLanes < len(dst); row++ {
+		bit := row * width
+		word, shift := (bit/64)*alpLanes, uint64(bit%64)
+		for lane := 0; lane < alpLanes && row*alpLanes+lane < len(dst); lane += 4 {
+			x := archsimd.LoadUint64x4(words[word+lane:]).ShiftAllRight(shift)
+			if shift+uint64(width) > 64 {
+				x = x.Or(archsimd.LoadUint64x4(words[word+lane+alpLanes:]).ShiftAllLeft(64 - shift))
+			}
+			out := dst[row*alpLanes+lane:]
+			v := x.And(mask).Add(frame)
+			if len(out) >= 4 {
+				v.Store(out)
+			} else {
+				v.StorePart(out)
+			}
+		}
+	}
+}
+
+// alpDecodeIntegersAVX512 reconstructs independent unsigned integers in vectors.
+func alpDecodeIntegersAVX512(dst, words []uint64, width int, base uint64) {
+	mask := archsimd.BroadcastUint64x8(alpMask(width))
+	frame := archsimd.BroadcastUint64x8(base)
+	for row := 0; row*alpLanes < len(dst); row++ {
+		bit := row * width
+		word, shift := (bit/64)*alpLanes, uint64(bit%64)
+		for lane := 0; lane < alpLanes && row*alpLanes+lane < len(dst); lane += 8 {
+			x := archsimd.LoadUint64x8(words[word+lane:]).ShiftAllRight(shift)
+			if shift+uint64(width) > 64 {
+				x = x.Or(archsimd.LoadUint64x8(words[word+lane+alpLanes:]).ShiftAllLeft(64 - shift))
+			}
+			out := dst[row*alpLanes+lane:]
+			v := x.And(mask).Add(frame)
+			if len(out) >= 8 {
+				v.Store(out)
+			} else {
+				v.StorePart(out)
+			}
+		}
+	}
+}
+
+func alpDecodeIntegersNative(dst, words []uint64, width int, base uint64) {
+	switch alpBackend {
+	case "avx512":
+		alpDecodeIntegersAVX512(dst, words, width, base)
+	case "avx2":
+		alpDecodeIntegersAVX2(dst, words, width, base)
+	default:
+		for i := range dst {
+			dst[i] = base + alpUnpackAt(words, i, width)
+		}
+	}
+}
+
+func alpRestoreIntegersAVX2(previous, delta, encoded []uint64) {
+	one := archsimd.BroadcastUint64x4(1)
+	zero := archsimd.BroadcastUint64x4(0)
+	i := 0
+	for ; i+4 <= len(encoded); i += 4 {
+		z := archsimd.LoadUint64x4(encoded[i:])
+		d := z.ShiftAllRight(1).Xor(zero.Sub(z.And(one)))
+		d = d.Add(archsimd.LoadUint64x4(delta[i:]))
+		p := archsimd.LoadUint64x4(previous[i:]).Add(d)
+		d.Store(delta[i:])
+		p.Store(previous[i:])
+	}
+	alpRestoreIntegersScalar(previous[i:], delta[i:], encoded[i:])
+}
+
+func alpRestoreIntegersAVX512(previous, delta, encoded []uint64) {
+	one := archsimd.BroadcastUint64x8(1)
+	zero := archsimd.BroadcastUint64x8(0)
+	i := 0
+	for ; i+8 <= len(encoded); i += 8 {
+		z := archsimd.LoadUint64x8(encoded[i:])
+		d := z.ShiftAllRight(1).Xor(zero.Sub(z.And(one)))
+		d = d.Add(archsimd.LoadUint64x8(delta[i:]))
+		p := archsimd.LoadUint64x8(previous[i:]).Add(d)
+		d.Store(delta[i:])
+		p.Store(previous[i:])
+	}
+	alpRestoreIntegersScalar(previous[i:], delta[i:], encoded[i:])
+}
+
+func alpRestoreIntegersNative(previous, delta, encoded []uint64) {
+	switch alpBackend {
+	case "avx512":
+		alpRestoreIntegersAVX512(previous, delta, encoded)
+	case "avx2":
+		alpRestoreIntegersAVX2(previous, delta, encoded)
+	default:
+		alpRestoreIntegersScalar(previous, delta, encoded)
+	}
+}

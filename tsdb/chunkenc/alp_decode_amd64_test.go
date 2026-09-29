@@ -36,6 +36,11 @@ func TestALPAMD64Backends(t *testing.T) {
 			if !backend.supported {
 				t.Skip("CPU does not support this backend")
 			}
+			if backend.name == "avx2" {
+				testALPEncodeConversions(t, alpConvertAVX2)
+			} else {
+				testALPEncodeConversions(t, alpConvertAVX512)
+			}
 			r := rand.New(rand.NewSource(42))
 			for width := 0; width <= 64; width++ {
 				for _, n := range []int{1, 3, 7, 15, 17, 120, 128, 1024} {

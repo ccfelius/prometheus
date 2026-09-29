@@ -62,7 +62,7 @@ func alpEncodeNumber(x float64, exponent, factor uint8) (int64, bool) {
 	}
 	q := int64(y)
 	p := alpFactors[factor]
-	if q < math.MinInt64/p || q > math.MaxInt64/p {
+	if q < alpLower[factor] || q > alpUpper[factor] {
 		return 0, false
 	}
 	decoded := float64(q*p) * alpFractions[exponent]
@@ -93,9 +93,44 @@ func alpDecimalCost(p alpDecimalPlan, n int) int {
 	return 14 + alpPackedSize(n, int(p.width)) + 10*p.exceptions
 }
 
+// alpEncodeState is a small, optional hint. Blocks remain independently readable.
+// Refreshing regularly prevents a formerly good candidate from hiding a better one.
+type alpEncodeState struct {
+	exponent, factor uint8
+	uses             uint8
+	valid            bool
+}
+
+var alpLower, alpUpper = func() ([19]int64, [19]int64) {
+	var lo, hi [19]int64
+	for i, p := range alpFactors {
+		lo[i], hi[i] = math.MinInt64/p, math.MaxInt64/p
+	}
+	return lo, hi
+}()
+
+// alpEncodeKernel converts into caller-owned buffers and retains no references.
+// Accepted values have a nonzero word, so SIMD backends can store whole masks.
+type alpEncodeKernel func(values []float64, integers []int64, accepted []uint64, exponent, factor uint8)
+
+func alpConvertScalar(values []float64, integers []int64, accepted []uint64, exponent, factor uint8) {
+	for i, v := range values {
+		q, ok := alpEncodeNumber(v, exponent, factor)
+		integers[i], accepted[i] = q, 0
+		if ok {
+			accepted[i] = 1
+		}
+	}
+}
+
 // alpEncodeValues appends one self-contained value block. The wire layout is a
 // compact-tail adaptation of ALP's 16-lane FastLanes layout, not CWI's file format.
 func alpEncodeValues(dst []byte, values []float64) []byte {
+	var state alpEncodeState
+	return alpEncodeValuesWithState(dst, values, &state)
+}
+
+func alpEncodeValuesWithState(dst []byte, values []float64, state *alpEncodeState) []byte {
 	n := len(values)
 	first := math.Float64bits(values[0])
 	constant := true
@@ -109,17 +144,58 @@ func alpEncodeValues(dst []byte, values []float64) []byte {
 		dst = append(dst, alpConstant)
 		return binary.LittleEndian.AppendUint64(dst, first)
 	}
-	// Search a bounded sample, then verify the five best pairs on every value.
-	stride := max(1, (n+31)/32)
-	var candidates [5]alpDecimalPlan
-	var costs [5]int
-	for i := range costs {
-		costs[i] = math.MaxInt
+	// Scratch is bounded and local to encoding, never retained by an active series.
+	var integers [alpMaxBlockSize]int64
+	var accepted [alpMaxBlockSize]uint64
+	var bestIntegers [alpMaxBlockSize]int64
+	var bestAccepted [alpMaxBlockSize]uint64
+	bestSize := 1 + 8*n
+	mode := byte(alpRaw)
+	var best alpDecimalPlan
+	evaluate := func(exponent, factor uint8) int {
+		alpConvertNative(values, integers[:n], accepted[:n], exponent, factor)
+		p := alpDecimalPlan{exponent: exponent, factor: factor, base: math.MaxInt64}
+		hi := int64(math.MinInt64)
+		for i, q := range integers[:n] {
+			if accepted[i] == 0 {
+				p.exceptions++
+				continue
+			}
+			p.base, hi = min(p.base, q), max(hi, q)
+		}
+		if p.exceptions == n {
+			return 1 + 8*n
+		}
+		p.width = uint8(bits.Len64(uint64(hi) - uint64(p.base)))
+		cost := alpDecimalCost(p, n)
+		if cost < bestSize {
+			bestSize, best, mode = cost, p, alpDecimal
+			copy(bestIntegers[:n], integers[:n])
+			copy(bestAccepted[:n], accepted[:n])
+		}
+		return cost
 	}
-	for exponent := range uint8(len(alpPowers)) {
-		for factor := uint8(0); factor <= exponent; factor++ {
+	// A successful hint avoids a search, but every value still passes exact checks.
+	// At least every sixteenth block is sampled again, including changing series.
+	fast := false
+	if state.valid && state.uses < 15 {
+		fast = evaluate(state.exponent, state.factor) <= 14+2*n
+	}
+	if !fast {
+		stride := max(1, (n+7)/8)
+		sampled := (n + stride - 1) / stride
+		var candidates [5]alpDecimalPlan
+		var costs [5]int
+		for i := range costs {
+			costs[i] = math.MaxInt
+		}
+		var seen [19]uint32
+		consider := func(exponent, factor uint8) {
+			if seen[exponent]&(1<<factor) != 0 {
+				return
+			}
+			seen[exponent] |= 1 << factor
 			p := alpAnalyze(values, exponent, factor, stride)
-			sampled := (n + stride - 1) / stride
 			p.exceptions = (p.exceptions*n + sampled - 1) / sampled
 			cost := alpDecimalCost(p, n)
 			for j := range candidates {
@@ -131,16 +207,57 @@ func alpEncodeValues(dst []byte, values []float64) []byte {
 				}
 			}
 		}
-	}
-	bestSize := 1 + 8*n
-	mode := byte(alpRaw)
-	var best alpDecimalPlan
-	for _, candidate := range candidates {
-		p := alpAnalyze(values, candidate.exponent, candidate.factor, 1)
-		cost := alpDecimalCost(p, n)
-		if p.exceptions != n && cost < bestSize {
-			best, bestSize, mode = p, cost, alpDecimal
+		// Common decimal scales avoid exhaustive sampling on ordinary metrics.
+		for exponent := uint8(0); exponent <= 6; exponent++ {
+			consider(exponent, 0)
 		}
+		// Multiplying the integer before converting it back to float can avoid
+		// the rounding error of a small decimal scale. Sample the largest safe
+		// integer-product scales as well as the factor-zero candidates.
+		maxAbs := 0.0
+		fixedSampleExceptions := 0
+		for i := 0; i < n; i += stride {
+			v := math.Abs(values[i])
+			if !math.IsInf(v, 0) && !math.IsNaN(v) {
+				maxAbs = max(maxAbs, v)
+			} else {
+				fixedSampleExceptions++
+			}
+		}
+		productExponent := uint8(18)
+		for productExponent > 0 && maxAbs >= float64(math.MaxInt64)*alpFractions[productExponent] {
+			productExponent--
+		}
+		for offset := uint8(0); offset < 2 && offset <= productExponent; offset++ {
+			exponent := productExponent - offset
+			for digits := uint8(0); digits <= min(exponent, 6); digits++ {
+				factor := exponent - digits
+				if factor != 0 {
+					consider(exponent, factor)
+				}
+			}
+		}
+		if costs[0] <= 14+2*n+10*((fixedSampleExceptions*n+sampled-1)/sampled) {
+			fast = evaluate(candidates[0].exponent, candidates[0].factor) <= 14+2*n
+		}
+		if !fast {
+			for exponent := range uint8(len(alpPowers)) {
+				for factor := uint8(0); factor <= exponent; factor++ {
+					if factor == 0 && exponent <= 6 {
+						continue
+					}
+					consider(exponent, factor)
+				}
+			}
+			for _, candidate := range candidates {
+				// Exact cost decides acceptance; sampling alone never determines losslessness.
+				cost := evaluate(candidate.exponent, candidate.factor)
+				if cost <= 14+2*n {
+					break
+				}
+			}
+		}
+		state.uses = 0
 	}
 	var rd alpRDPlan
 	if bestSize > 6*n {
@@ -149,24 +266,27 @@ func alpEncodeValues(dst []byte, values []float64) []byte {
 			mode = alpRD
 		}
 	}
+	state.valid = mode == alpDecimal
+	if state.valid {
+		state.exponent, state.factor = best.exponent, best.factor
+		state.uses++
+	}
 	switch mode {
 	case alpDecimal:
 		dst = append(dst, alpDecimal, best.width, best.exponent, best.factor)
 		dst = binary.LittleEndian.AppendUint64(dst, uint64(best.base))
 		dst = binary.LittleEndian.AppendUint16(dst, uint16(best.exceptions))
-		var residuals [alpMaxBlockSize]uint64
-		var exceptions [alpMaxBlockSize]bool
-		for i, v := range values {
-			q, ok := alpEncodeNumber(v, best.exponent, best.factor)
-			if ok {
-				residuals[i] = uint64(q) - uint64(best.base)
+		// The conversion masks can now become packed residuals in place.
+		for i, q := range bestIntegers[:n] {
+			if bestAccepted[i] != 0 {
+				accepted[i] = uint64(q) - uint64(best.base)
 			} else {
-				exceptions[i] = true
+				accepted[i] = 0
 			}
 		}
-		dst = alpPack(dst, residuals[:n], int(best.width))
-		for i, exception := range exceptions[:n] {
-			if exception {
+		dst = alpPack(dst, accepted[:n], int(best.width))
+		for i, valid := range bestAccepted[:n] {
+			if valid == 0 {
 				dst = binary.LittleEndian.AppendUint16(dst, uint16(i))
 				dst = binary.LittleEndian.AppendUint64(dst, math.Float64bits(values[i]))
 			}
@@ -197,23 +317,24 @@ func alpAnalyzeRD(values []float64) alpRDPlan {
 	var best alpRDPlan
 	bestSize := math.MaxInt
 	var high [alpMaxBlockSize]uint16
+	for i, v := range values {
+		high[i] = uint16(math.Float64bits(v) >> 48)
+	}
+	slices.Sort(high[:len(values)])
 	for split := uint8(48); split < 64; split++ {
-		for i, v := range values {
-			high[i] = uint16(math.Float64bits(v) >> split)
-		}
-		slices.Sort(high[:len(values)])
+		shift := split - 48
 		var dict [8]uint16
 		var counts [8]int
 		for i := 0; i < len(values); {
 			j := i + 1
-			for j < len(values) && high[j] == high[i] {
+			for j < len(values) && high[j]>>shift == high[i]>>shift {
 				j++
 			}
 			for k := range dict {
 				if j-i > counts[k] {
 					copy(dict[k+1:], dict[k:])
 					copy(counts[k+1:], counts[k:])
-					dict[k], counts[k] = high[i], j-i
+					dict[k], counts[k] = high[i]>>shift, j-i
 					break
 				}
 			}

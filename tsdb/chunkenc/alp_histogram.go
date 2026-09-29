@@ -26,6 +26,8 @@ import (
 // MaxSamplesPerALPHistogramChunk is the limit of its mutable ST histogram codec.
 const MaxSamplesPerALPHistogramChunk = histogramSTSampleCountMask
 
+const alpHistogramCompactVersion = 2
+
 // ALPHistogramChunk stores histogram sums and floating-point counts in ALP
 // vectors. Integer counts use lossless integer frame-of-reference packing.
 // The existing ST-capable histogram appender maintains mutable chunks, including
@@ -33,6 +35,7 @@ const MaxSamplesPerALPHistogramChunk = histogramSTSampleCountMask
 // ALP streams, and persisted chunks decode those streams directly with SIMD.
 type ALPHistogramChunk struct {
 	encoding Encoding
+	version  byte
 	inner    Chunk
 	encoded  []byte
 	err      error
@@ -40,60 +43,38 @@ type ALPHistogramChunk struct {
 
 // NewALPHistogramChunk returns an empty integer-count histogram chunk.
 func NewALPHistogramChunk() *ALPHistogramChunk {
-	return &ALPHistogramChunk{encoding: EncALPHistogram, inner: NewHistogramSTChunk()}
+	return &ALPHistogramChunk{encoding: EncALPHistogram, version: alpVersion, inner: NewHistogramSTChunk()}
 }
 
 // NewALPFloatHistogramChunk returns an empty floating-count histogram chunk.
 func NewALPFloatHistogramChunk() *ALPHistogramChunk {
-	return &ALPHistogramChunk{encoding: EncALPFloatHistogram, inner: NewFloatHistogramSTChunk()}
+	return &ALPHistogramChunk{encoding: EncALPFloatHistogram, version: alpVersion, inner: NewFloatHistogramSTChunk()}
 }
 
 // RecodeToALPHistogram converts a finalized histogram chunk while retaining the
 // counter-reset header, layout, values, and start timestamps.
 func RecodeToALPHistogram(source Chunk) (Chunk, error) {
-	if source.NumSamples() > MaxSamplesPerALPHistogramChunk {
+	var encoder ALPEncoder
+	return encoder.Recode(source)
+}
+
+// RecodeToALPHistogramV2 converts a finalized integer histogram using 128-value
+// integer vectors. Version 2 requires a reader that supports the compact format.
+// The source is unchanged and the result owns its encoded bytes.
+func RecodeToALPHistogramV2(source Chunk) (Chunk, error) {
+	if source.Encoding() != EncHistogram && source.Encoding() != EncHistogramST {
 		return nil, errInvalidALP
 	}
-	var c *ALPHistogramChunk
-	switch source.Encoding() {
-	case EncHistogram, EncHistogramST:
-		c = NewALPHistogramChunk()
-	case EncFloatHistogram, EncFloatHistogramST:
-		c = NewALPFloatHistogramChunk()
-	default:
-		return nil, errInvalidALP
-	}
-	a, err := c.Appender()
+	var state alpEncodeState
+	b, err := alpEncodeHistograms(source, EncALPHistogram, &state, alpHistogramCompactVersion)
 	if err != nil {
 		return nil, err
 	}
-	it := source.Iterator(nil)
-	for typ := it.Next(); typ != ValNone; typ = it.Next() {
-		if typ == ValHistogram {
-			ts, h := it.AtHistogram(nil)
-			_, _, a, err = a.AppendHistogram(nil, it.AtST(), ts, h, true)
-		} else {
-			ts, h := it.AtFloatHistogram(nil)
-			_, _, a, err = a.AppendFloatHistogram(nil, it.AtST(), ts, h, true)
-		}
-		if err != nil {
-			return nil, err
-		}
-	}
-	if err := it.Err(); err != nil {
-		return nil, err
-	}
-	b := source.Bytes()
-	if len(b) < histogramHeaderSize {
-		return nil, errInvalidALP
-	}
-	flagOffset := histogramFlagPos
-	if source.Encoding() == EncHistogramST || source.Encoding() == EncFloatHistogramST {
-		flagOffset = 0
-	}
-	a.(*alpHistogramAppender).inner.(interface{ setCounterResetHeader(CounterResetHeader) }).setCounterResetHeader(CounterResetHeader(b[flagOffset] & CounterResetHeaderMask))
-	c.Compact()
-	return c, nil
+	return &ALPHistogramChunk{encoding: EncALPHistogram, version: alpHistogramCompactVersion, encoded: b}, nil
+}
+
+func alpValidHistogramVersion(version byte, enc Encoding) bool {
+	return version == alpVersion || version == alpHistogramCompactVersion && enc == EncALPHistogram
 }
 
 // Encoding returns the integer- or floating-count ALP histogram encoding.
@@ -125,7 +106,11 @@ func (c *ALPHistogramChunk) NumSamples() int {
 // Reset borrows immutable encoded bytes. Reset(nil) releases retained buffers.
 func (c *ALPHistogramChunk) Reset(b []byte) {
 	c.inner, c.encoded, c.err = nil, slices.Clip(b), nil
-	if len(b) != 0 && (len(b) < 4 || b[2] != alpVersion || b[3]&^CounterResetHeaderMask != 0 || binary.BigEndian.Uint16(b) > MaxSamplesPerALPHistogramChunk) {
+	c.version = alpVersion
+	if len(b) >= 4 {
+		c.version = b[2]
+	}
+	if len(b) != 0 && (len(b) < 4 || !alpValidHistogramVersion(b[2], c.encoding) || b[3]&^CounterResetHeaderMask != 0 || binary.BigEndian.Uint16(b) > MaxSamplesPerALPHistogramChunk) {
 		c.err = errInvalidALP
 	}
 }
@@ -136,9 +121,13 @@ func (c *ALPHistogramChunk) Bytes() []byte {
 		return c.encoded
 	}
 	if c.inner == nil || c.inner.NumSamples() == 0 {
-		return []byte{0, 0, alpVersion, 0}
+		return []byte{0, 0, c.version, 0}
 	}
-	c.encoded = alpEncodeHistograms(c.inner, c.encoding)
+	var state alpEncodeState
+	c.encoded, c.err = alpEncodeHistograms(c.inner, c.encoding, &state, c.version)
+	if c.err != nil {
+		panic(c.err)
+	} // The mutable source is trusted appender output.
 	return c.encoded
 }
 
@@ -213,7 +202,7 @@ func (a *alpHistogramAppender) appended(c Chunk, recoded bool, next Appender, er
 		return nil, false, a, err
 	}
 	if c != nil {
-		wrapped := &ALPHistogramChunk{encoding: a.c.encoding, inner: c}
+		wrapped := &ALPHistogramChunk{encoding: a.c.encoding, version: a.c.version, inner: c}
 		return wrapped, recoded, &alpHistogramAppender{c: wrapped, inner: next}, nil
 	}
 	a.c.encoded = nil
@@ -234,75 +223,88 @@ func (a *alpHistogramAppender) AppendFloatHistogram(prev Appender, st, t int64, 
 // a floating-point conversion.
 type alpHistogramNumbers struct {
 	previous, delta           []uint64
-	field                     int
 	first                     bool
 	src                       []byte
-	floats                    [alpMaxBlockSize]float64
-	ints                      [alpMaxBlockSize]uint64
+	floats                    []float64
+	ints                      []uint64
 	scratch                   alpDecodeScratch
 	remaining, index, decoded int
+	blockSize                 int
 	integer                   bool
 	err                       error
 }
 
-func (r *alpHistogramNumbers) next() uint64 {
+func (r *alpHistogramNumbers) refill() bool {
 	if r.err != nil {
-		return 0
+		return false
 	}
-	if r.integer && r.first {
-		if len(r.src) < 8 {
-			r.err = errInvalidALP
-			return 0
-		}
-		v := binary.LittleEndian.Uint64(r.src)
-		r.src = r.src[8:]
-		r.previous[r.field] = v
-		r.field++
-		if r.field == len(r.previous) {
-			r.field = 0
-			r.first = false
-		}
-		return v
+	if r.remaining == 0 || len(r.src) < 4 {
+		r.err = errInvalidALP
+		return false
 	}
-	if r.index == r.decoded {
-		if r.remaining == 0 || len(r.src) < 4 {
-			r.err = errInvalidALP
-			return 0
-		}
-		size := uint64(binary.LittleEndian.Uint32(r.src))
-		if size > uint64(len(r.src)-4) {
-			r.err = errInvalidALP
-			return 0
-		}
-		b := r.src[4 : 4+int(size)]
-		r.src = r.src[4+int(size):]
-		r.decoded = min(alpMaxBlockSize, r.remaining)
-		r.remaining -= r.decoded
-		r.index = 0
-		if r.integer {
-			r.err = alpDecodeIntegers(r.ints[:r.decoded], b, &r.scratch)
-		} else {
-			r.err = alpDecodeValues(r.floats[:r.decoded], b, &r.scratch, alpDecodeNative)
-		}
-		if r.err != nil {
-			return 0
-		}
+	size := uint64(binary.LittleEndian.Uint32(r.src))
+	if size > uint64(len(r.src)-4) {
+		r.err = errInvalidALP
+		return false
 	}
-	i := r.index
-	r.index++
+	b := r.src[4 : 4+int(size)]
+	r.src = r.src[4+int(size):]
+	r.decoded = min(r.blockSize, r.remaining)
+	r.remaining -= r.decoded
+	r.index = 0
 	if r.integer {
-		z := r.ints[i]
-		d := uint64(int64(z>>1) ^ -int64(z&1))
-		r.delta[r.field] += d
-		r.previous[r.field] += r.delta[r.field]
-		v := r.previous[r.field]
-		r.field++
-		if r.field == len(r.previous) {
-			r.field = 0
-		}
-		return v
+		r.ints = slices.Grow(r.ints[:0], r.decoded)[:r.decoded]
+		r.err = alpDecodeIntegers(r.ints, b, &r.scratch)
+	} else {
+		r.floats = slices.Grow(r.floats[:0], r.decoded)[:r.decoded]
+		r.err = alpDecodeValues(r.floats, b, &r.scratch, alpDecodeNative)
 	}
-	return math.Float64bits(r.floats[i])
+	return r.err == nil
+}
+
+func (r *alpHistogramNumbers) integerSample() []uint64 {
+	if r.first {
+		if len(r.src)/8 < len(r.previous) {
+			r.err = errInvalidALP
+			return r.previous
+		}
+		for i := range r.previous {
+			r.previous[i] = binary.LittleEndian.Uint64(r.src[8*i:])
+		}
+		r.src = r.src[8*len(r.previous):]
+		r.first = false
+		return r.previous
+	}
+	for field := 0; field < len(r.previous); {
+		if r.index == r.decoded && !r.refill() {
+			return r.previous
+		}
+		take := min(len(r.previous)-field, r.decoded-r.index)
+		alpRestoreIntegersNative(r.previous[field:field+take], r.delta[field:field+take], r.ints[r.index:r.index+take])
+		r.index += take
+		field += take
+	}
+	return r.previous
+}
+
+func (r *alpHistogramNumbers) readFloats(dst []float64) {
+	for len(dst) > 0 {
+		if r.index == r.decoded && !r.refill() {
+			return
+		}
+		take := copy(dst, r.floats[r.index:r.decoded])
+		r.index += take
+		dst = dst[take:]
+	}
+}
+
+// alpRestoreIntegersScalar predicts independent fields modulo 2^64. Each input
+// vector ends at a sample boundary, so no lane depends on another lane's result.
+func alpRestoreIntegersScalar(previous, delta, encoded []uint64) {
+	for i, z := range encoded {
+		delta[i] += (z >> 1) ^ (0 - (z & 1))
+		previous[i] += delta[i]
+	}
 }
 
 func alpEncodeIntegers(dst []byte, values []uint64) []byte {
@@ -350,6 +352,10 @@ func alpDecodeIntegers(dst []uint64, src []byte, scratch *alpDecodeScratch) erro
 		return errInvalidALP
 	}
 	scratch.words = alpUnpackWords(scratch.words, src[10:], len(dst), w)
+	if alpMask(w) <= math.MaxUint64-base {
+		alpDecodeIntegersNative(dst, scratch.words, w, base)
+		return nil
+	}
 	for i := range dst {
 		v := alpUnpackAt(scratch.words, i, w)
 		if v > math.MaxUint64-base {
@@ -369,12 +375,35 @@ func alpAppendSpans(dst []byte, spans []histogram.Span) []byte {
 	return dst
 }
 
-func alpEncodeHistograms(inner Chunk, enc Encoding) []byte {
+func alpEncodeHistograms(inner Chunk, enc Encoding, state *alpEncodeState, version byte) ([]byte, error) {
 	n := inner.NumSamples()
+	if !alpValidHistogramVersion(version, enc) {
+		return nil, errInvalidALP
+	}
+	blockSize := alpMaxBlockSize
+	if version == alpHistogramCompactVersion {
+		blockSize = alpBlockSize
+	}
+	if n < 0 || n > MaxSamplesPerALPHistogramChunk {
+		return nil, errInvalidALP
+	}
+	b := inner.Bytes()
+	flagOffset := histogramFlagPos
+	if inner.Encoding() == EncHistogramST || inner.Encoding() == EncFloatHistogramST {
+		flagOffset = 0
+	}
+	if len(b) <= flagOffset {
+		return nil, errInvalidALP
+	}
+	header := b[flagOffset] & CounterResetHeaderMask
+	if n == 0 {
+		return []byte{0, 0, version, header}, nil
+	}
 	times := NewALPChunk()
 	ta, _ := times.Appender()
 	hints := make([]byte, 0, n)
 	var layout histogram.FloatHistogram
+	var positive, negative int
 	var numeric []byte
 	var floats [alpMaxBlockSize]float64
 	var integers [alpMaxBlockSize]uint64
@@ -390,7 +419,7 @@ func alpEncodeHistograms(inner Chunk, enc Encoding) []byte {
 		if enc == EncALPHistogram {
 			numeric = alpEncodeIntegers(numeric, integers[:used])
 		} else {
-			numeric = alpEncodeValues(numeric, floats[:used])
+			numeric = alpEncodeValuesWithState(numeric, floats[:used], state)
 		}
 		binary.LittleEndian.PutUint32(numeric[start:], uint32(len(numeric)-start-4))
 		used = 0
@@ -398,7 +427,7 @@ func alpEncodeHistograms(inner Chunk, enc Encoding) []byte {
 	put := func(v uint64) {
 		if enc == EncALPHistogram {
 			if previous == nil {
-				previous = make([]uint64, 2+len(layout.PositiveBuckets)+len(layout.NegativeBuckets))
+				previous = make([]uint64, 2+positive+negative)
 				delta = make([]uint64, len(previous))
 			}
 			if len(hints) == 0 {
@@ -419,9 +448,13 @@ func alpEncodeHistograms(inner Chunk, enc Encoding) []byte {
 				field = 0
 			}
 		}
-		integers[used], floats[used] = v, math.Float64frombits(v)
+		if enc == EncALPHistogram {
+			integers[used] = v
+		} else {
+			floats[used] = math.Float64frombits(v)
+		}
 		used++
-		if used == alpMaxBlockSize {
+		if used == blockSize {
 			flush()
 		}
 	}
@@ -435,7 +468,9 @@ func alpEncodeHistograms(inner Chunk, enc Encoding) []byte {
 			_, integerHistogram = it.AtHistogram(integerHistogram)
 			h := integerHistogram
 			if len(hints) == 0 {
-				layout = *h.ToFloat(nil)
+				layout.Schema, layout.ZeroThreshold = h.Schema, h.ZeroThreshold
+				layout.PositiveSpans, layout.NegativeSpans, layout.CustomValues = h.PositiveSpans, h.NegativeSpans, h.CustomValues
+				positive, negative = len(h.PositiveBuckets), len(h.NegativeBuckets)
 			}
 			sum, hint = h.Sum, h.CounterResetHint
 			put(h.Count)
@@ -446,7 +481,7 @@ func alpEncodeHistograms(inner Chunk, enc Encoding) []byte {
 				}
 			}
 			if value.IsStaleNaN(sum) {
-				for range len(layout.PositiveBuckets) + len(layout.NegativeBuckets) {
+				for range positive + negative {
 					put(0)
 				}
 			}
@@ -454,7 +489,9 @@ func alpEncodeHistograms(inner Chunk, enc Encoding) []byte {
 			_, floatHistogram = it.AtFloatHistogram(floatHistogram)
 			h := floatHistogram
 			if len(hints) == 0 {
-				layout = *h.Copy()
+				layout.Schema, layout.ZeroThreshold = h.Schema, h.ZeroThreshold
+				layout.PositiveSpans, layout.NegativeSpans, layout.CustomValues = h.PositiveSpans, h.NegativeSpans, h.CustomValues
+				positive, negative = len(h.PositiveBuckets), len(h.NegativeBuckets)
 			}
 			sum, hint = h.Sum, h.CounterResetHint
 			put(math.Float64bits(h.Count))
@@ -465,7 +502,7 @@ func alpEncodeHistograms(inner Chunk, enc Encoding) []byte {
 				}
 			}
 			if value.IsStaleNaN(sum) {
-				for range len(layout.PositiveBuckets) + len(layout.NegativeBuckets) {
+				for range positive + negative {
 					put(0)
 				}
 			}
@@ -474,11 +511,14 @@ func alpEncodeHistograms(inner Chunk, enc Encoding) []byte {
 		ta.Append(it.AtST(), it.AtT(), sum)
 	}
 	if it.Err() != nil {
-		panic(it.Err())
-	} // Mutable chunks contain trusted appender output.
+		return nil, it.Err()
+	}
+	if len(hints) != n {
+		return nil, errInvalidALP
+	}
 	flush()
 	dst := binary.BigEndian.AppendUint16(nil, uint16(n))
-	dst = append(dst, alpVersion, byte(inner.(interface{ GetCounterResetHeader() CounterResetHeader }).GetCounterResetHeader()))
+	dst = append(dst, version, header)
 	dst = binary.AppendVarint(dst, int64(layout.Schema))
 	dst = binary.LittleEndian.AppendUint64(dst, math.Float64bits(layout.ZeroThreshold))
 	dst = alpAppendSpans(dst, layout.PositiveSpans)
@@ -488,14 +528,29 @@ func alpEncodeHistograms(inner Chunk, enc Encoding) []byte {
 		dst = binary.LittleEndian.AppendUint64(dst, math.Float64bits(v))
 	}
 	dst = append(dst, hints...)
-	b := times.Bytes()
+	b = times.Bytes()
 	dst = binary.LittleEndian.AppendUint32(dst, uint32(len(b)))
 	dst = append(dst, b...)
-	return append(dst, numeric...)
+	return append(dst, numeric...), nil
 }
 
 // Iterator captures an immutable serialization; reuse retains only owned buffers.
 func (c *ALPHistogramChunk) Iterator(reuse Iterator) Iterator {
+	if c.inner != nil && c.encoded == nil {
+		// Capture mutable legacy bytes without running a parameter search under the
+		// series lock. The copy also isolates the final partially written byte.
+		it, ok := reuse.(*alpHistogramSnapshotIterator)
+		if !ok {
+			it = &alpHistogramSnapshotIterator{}
+		}
+		it.data = append(it.data[:0], c.inner.Bytes()...)
+		if it.chunk == nil || it.chunk.Encoding() != c.inner.Encoding() {
+			it.chunk, _ = NewEmptyChunk(c.inner.Encoding())
+		}
+		it.chunk.Reset(it.data)
+		it.Iterator = it.chunk.Iterator(it.Iterator)
+		return it
+	}
 	it, ok := reuse.(*alpHistogramIterator)
 	if !ok {
 		it = &alpHistogramIterator{}
@@ -505,6 +560,14 @@ func (c *ALPHistogramChunk) Iterator(reuse Iterator) Iterator {
 		it.err = c.err
 	}
 	return it
+}
+
+// alpHistogramSnapshotIterator owns its mutable-source snapshot and retains no
+// references to the writer. Its buffers may be reused only by its next reset.
+type alpHistogramSnapshotIterator struct {
+	Iterator
+	data  []byte
+	chunk Chunk
 }
 
 type alpHistogramIterator struct {
@@ -526,10 +589,14 @@ func (it *alpHistogramIterator) reset(src []byte, enc Encoding) {
 	it.numbers.src, it.numbers.err = nil, nil
 	it.numbers.remaining, it.numbers.index, it.numbers.decoded = 0, 0, 0
 	it.numbers.integer = enc == EncALPHistogram
-	it.numbers.first, it.numbers.field = it.numbers.integer, 0
-	if len(src) < 4 || src[2] != alpVersion || src[3]&^CounterResetHeaderMask != 0 {
+	it.numbers.first = it.numbers.integer
+	if len(src) < 4 || !alpValidHistogramVersion(src[2], enc) || src[3]&^CounterResetHeaderMask != 0 {
 		it.err = errInvalidALP
 		return
+	}
+	it.numbers.blockSize = alpMaxBlockSize
+	if src[2] == alpHistogramCompactVersion {
+		it.numbers.blockSize = alpBlockSize
 	}
 	it.n = int(binary.BigEndian.Uint16(src))
 	if it.n > MaxSamplesPerALPHistogramChunk {
@@ -668,26 +735,29 @@ func (it *alpHistogramIterator) Next() ValueType {
 		h := &it.h
 		h.Schema, h.ZeroThreshold, h.Sum, h.CounterResetHint = it.layout.Schema, it.layout.ZeroThreshold, sum, hint
 		h.PositiveSpans, h.NegativeSpans, h.CustomValues = it.layout.PositiveSpans, it.layout.NegativeSpans, it.layout.CustomValues
-		h.Count, h.ZeroCount = it.numbers.next(), it.numbers.next()
+		counts := it.numbers.integerSample()
+		h.Count, h.ZeroCount = counts[0], counts[1]
+		counts = counts[2:]
 		h.PositiveBuckets = slices.Grow(h.PositiveBuckets[:0], it.positive)[:it.positive]
 		h.NegativeBuckets = slices.Grow(h.NegativeBuckets[:0], it.negative)[:it.negative]
 		for _, buckets := range [][]int64{h.PositiveBuckets, h.NegativeBuckets} {
 			for i := range buckets {
-				v := it.numbers.next()
+				v := counts[i]
 				buckets[i] = int64(v>>1) ^ -int64(v&1)
 			}
+			counts = counts[len(buckets):]
 		}
 	} else {
 		h := &it.fh
 		h.Schema, h.ZeroThreshold, h.Sum, h.CounterResetHint = it.layout.Schema, it.layout.ZeroThreshold, sum, hint
 		h.PositiveSpans, h.NegativeSpans, h.CustomValues = it.layout.PositiveSpans, it.layout.NegativeSpans, it.layout.CustomValues
-		h.Count, h.ZeroCount = math.Float64frombits(it.numbers.next()), math.Float64frombits(it.numbers.next())
+		var counts [2]float64
+		it.numbers.readFloats(counts[:])
+		h.Count, h.ZeroCount = counts[0], counts[1]
 		h.PositiveBuckets = slices.Grow(h.PositiveBuckets[:0], it.positive)[:it.positive]
 		h.NegativeBuckets = slices.Grow(h.NegativeBuckets[:0], it.negative)[:it.negative]
 		for _, buckets := range [][]float64{h.PositiveBuckets, h.NegativeBuckets} {
-			for i := range buckets {
-				buckets[i] = math.Float64frombits(it.numbers.next())
-			}
+			it.numbers.readFloats(buckets)
 		}
 	}
 	if it.numbers.err != nil {
@@ -727,7 +797,11 @@ func (it *alpHistogramIterator) AtHistogram(h *histogram.Histogram) (int64, *his
 		panic("cannot get integer histogram from float histogram")
 	}
 	if value.IsStaleNaN(it.h.Sum) {
-		return it.AtT(), &histogram.Histogram{Sum: it.h.Sum}
+		if h == nil {
+			h = &histogram.Histogram{}
+		}
+		*h = histogram.Histogram{Sum: it.h.Sum}
+		return it.AtT(), h
 	}
 	if h == nil {
 		h = &histogram.Histogram{}
@@ -739,12 +813,20 @@ func (it *alpHistogramIterator) AtHistogram(h *histogram.Histogram) (int64, *his
 func (it *alpHistogramIterator) AtFloatHistogram(h *histogram.FloatHistogram) (int64, *histogram.FloatHistogram) {
 	if it.enc == EncALPHistogram {
 		if value.IsStaleNaN(it.h.Sum) {
-			return it.AtT(), &histogram.FloatHistogram{Sum: it.h.Sum}
+			if h == nil {
+				h = &histogram.FloatHistogram{}
+			}
+			*h = histogram.FloatHistogram{Sum: it.h.Sum}
+			return it.AtT(), h
 		}
 		return it.AtT(), it.h.ToFloat(h)
 	}
 	if value.IsStaleNaN(it.fh.Sum) {
-		return it.AtT(), &histogram.FloatHistogram{Sum: it.fh.Sum}
+		if h == nil {
+			h = &histogram.FloatHistogram{}
+		}
+		*h = histogram.FloatHistogram{Sum: it.fh.Sum}
+		return it.AtT(), h
 	}
 	if h == nil {
 		h = &histogram.FloatHistogram{}

@@ -18,3 +18,17 @@ package chunkenc
 var alpDecodeNative alpKernel = alpDecodeScalar
 
 const alpBackend = "scalar"
+
+func alpConvertNative(values []float64, integers []int64, accepted []uint64, exponent, factor uint8) {
+	alpConvertScalar(values, integers, accepted, exponent, factor)
+}
+
+func alpDecodeIntegersNative(dst, words []uint64, width int, base uint64) {
+	for i := range dst {
+		dst[i] = base + alpUnpackAt(words, i, width)
+	}
+}
+
+func alpRestoreIntegersNative(previous, delta, encoded []uint64) {
+	alpRestoreIntegersScalar(previous, delta, encoded)
+}

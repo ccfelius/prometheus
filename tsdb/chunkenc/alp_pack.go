@@ -26,11 +26,8 @@ func alpLaneCount(n, lane int) int {
 }
 
 func alpPackedSize(n, width int) int {
-	size := 0
-	for lane := range alpLanes {
-		size += (alpLaneCount(n, lane)*width + 7) / 8
-	}
-	return size
+	short, long := n/alpLanes, n%alpLanes
+	return (alpLanes-long)*((short*width+7)/8) + long*(((short+1)*width+7)/8)
 }
 
 // alpPack emits shared complete word rows followed by byte-rounded lane tails.
@@ -71,7 +68,9 @@ func alpUnpackWords(words []uint64, src []byte, n, width int) []uint64 {
 		words = make([]uint64, length)
 	} else {
 		words = words[:length]
-		clear(words)
+		// All complete rows are overwritten. Only uneven tails and the extra
+		// bounded-load row can contain words not written below.
+		clear(words[max(0, length-2*alpLanes):])
 	}
 	common := (n / alpLanes) * width / 64
 	for i := range common * alpLanes {
