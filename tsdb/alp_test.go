@@ -33,107 +33,117 @@ import (
 func TestDBALPHistograms(t *testing.T) {
 	for _, floating := range []bool{false, true} {
 		for _, initialALP := range []bool{false, true} {
-			t.Run(fmt.Sprintf("float=%v/initialALP=%v", floating, initialALP), func(t *testing.T) {
-				dir := t.TempDir()
-				opts := DefaultOptions()
-				opts.EnableALPHistograms = initialALP
-				opts.EnableSTStorage = true
-				opts.EnableHistogramSTEncoding = true
-				opts.FloatChunkEncoding = chunkenc.EncXOR2
-				opts.EnableMemorySnapshotOnShutdown = true
-				opts.OutOfOrderTimeWindow = 10000
-				db := newTestDB(t, withDir(dir), withOpts(opts))
-				db.DisableCompactions()
-				ctx := context.Background()
-				ls := labels.FromStrings("__name__", "alp_histogram")
-				matcher := labels.MustNewMatcher(labels.MatchEqual, "__name__", "alp_histogram")
-				appendSample := func(i int) {
-					a := db.AppenderV2(ctx)
-					var err error
-					if floating {
-						_, err = a.Append(0, ls, 1, int64(i+100), 0, nil, tsdbutil.GenerateTestFloatHistogram(int64(i)), storage.AOptions{})
-					} else {
-						_, err = a.Append(0, ls, 1, int64(i+100), 0, tsdbutil.GenerateTestHistogram(int64(i)), nil, storage.AOptions{})
-					}
-					require.NoError(t, err)
-					require.NoError(t, a.Commit())
-				}
-				for i := range 160 {
-					if i%10 != 5 {
-						appendSample(i)
-					}
-				}
-				for i := range 160 {
-					if i%10 == 5 {
-						appendSample(i)
-					}
-				}
-				check := func(deleted bool) {
-					q, err := db.Querier(0, 1000)
-					require.NoError(t, err)
-					defer func() { require.NoError(t, q.Close()) }()
-					set := q.Select(ctx, true, nil, matcher)
-					require.True(t, set.Next())
-					it := set.At().Iterator(nil)
-					count := 0
-					for typ := it.Next(); typ != chunkenc.ValNone; typ = it.Next() {
-						i := it.AtT() - 100
-						require.Equal(t, int64(1), it.AtST())
-						if deleted {
-							require.True(t, i < 40 || i >= 80)
-						}
+			for _, mode := range []string{"alp", "auto"} {
+				t.Run(fmt.Sprintf("float=%v/initialALP=%v/mode=%s", floating, initialALP, mode), func(t *testing.T) {
+					dir := t.TempDir()
+					opts := DefaultOptions()
+					opts.EnableALPHistograms = initialALP
+					opts.EnableSTStorage = true
+					opts.EnableHistogramSTEncoding = true
+					opts.FloatChunkEncoding = chunkenc.EncXOR2
+					opts.EnableMemorySnapshotOnShutdown = true
+					opts.OutOfOrderTimeWindow = 10000
+					db := newTestDB(t, withDir(dir), withOpts(opts))
+					db.DisableCompactions()
+					ctx := context.Background()
+					ls := labels.FromStrings("__name__", "alp_histogram")
+					matcher := labels.MustNewMatcher(labels.MatchEqual, "__name__", "alp_histogram")
+					appendSample := func(i int) {
+						a := db.AppenderV2(ctx)
+						var err error
 						if floating {
-							require.Equal(t, chunkenc.ValFloatHistogram, typ)
-							_, h := it.AtFloatHistogram(nil)
-							want := tsdbutil.GenerateTestFloatHistogram(i)
-							want.CounterResetHint = h.CounterResetHint
-							require.Equal(t, want, h)
+							_, err = a.Append(0, ls, 1, int64(i+100), 0, nil, tsdbutil.GenerateTestFloatHistogram(int64(i)), storage.AOptions{})
 						} else {
-							require.Equal(t, chunkenc.ValHistogram, typ)
-							_, h := it.AtHistogram(nil)
-							want := tsdbutil.GenerateTestHistogram(i)
-							want.CounterResetHint = h.CounterResetHint
-							require.Equal(t, want, h)
+							_, err = a.Append(0, ls, 1, int64(i+100), 0, tsdbutil.GenerateTestHistogram(int64(i)), nil, storage.AOptions{})
 						}
-						count++
+						require.NoError(t, err)
+						require.NoError(t, a.Commit())
 					}
-					want := 160
-					if deleted {
-						want = 120
+					for i := range 160 {
+						if i%10 != 5 {
+							appendSample(i)
+						}
 					}
-					require.Equal(t, want, count)
-					require.NoError(t, it.Err())
-					require.False(t, set.Next())
-					require.NoError(t, set.Err())
-				}
-				check(false)
-				require.NoError(t, db.Close())
-				opts.EnableALPHistograms = false
-				db = newTestDB(t, withDir(dir), withOpts(opts))
-				db.DisableCompactions()
-				check(false)
-				require.NoError(t, db.ApplyConfig(&config.Config{StorageConfig: config.StorageConfig{TSDBConfig: &config.TSDBConfig{ChunkEncoding: config.ChunkEncodingConfig{Floats: "xor2", Histograms: "alp"}, OutOfOrderTimeWindow: 10000}}}))
-				require.NoError(t, db.CompactHead(NewRangeHead(db.Head(), 0, 259)))
-				require.NoError(t, db.CompactOOOHead(ctx))
-				check(false)
-				require.NotEmpty(t, db.Blocks())
-				for _, block := range db.Blocks() {
-					q, err := NewBlockChunkQuerier(block, block.MinTime(), block.MaxTime())
-					require.NoError(t, err)
-					result := queryChunks(t, q, matcher)
-					for _, chunks := range result {
-						for _, c := range chunks {
-							want := chunkenc.EncALPHistogram
-							if floating {
-								want = chunkenc.EncALPFloatHistogram
+					for i := range 160 {
+						if i%10 == 5 {
+							appendSample(i)
+						}
+					}
+					check := func(deleted bool) {
+						q, err := db.Querier(0, 1000)
+						require.NoError(t, err)
+						defer func() { require.NoError(t, q.Close()) }()
+						set := q.Select(ctx, true, nil, matcher)
+						require.True(t, set.Next())
+						it := set.At().Iterator(nil)
+						count := 0
+						for typ := it.Next(); typ != chunkenc.ValNone; typ = it.Next() {
+							i := it.AtT() - 100
+							require.Equal(t, int64(1), it.AtST())
+							if deleted {
+								require.True(t, i < 40 || i >= 80)
 							}
-							require.Equal(t, want, c.Chunk.Encoding())
+							if floating {
+								require.Equal(t, chunkenc.ValFloatHistogram, typ)
+								_, h := it.AtFloatHistogram(nil)
+								want := tsdbutil.GenerateTestFloatHistogram(i)
+								want.CounterResetHint = h.CounterResetHint
+								require.Equal(t, want, h)
+							} else {
+								require.Equal(t, chunkenc.ValHistogram, typ)
+								_, h := it.AtHistogram(nil)
+								want := tsdbutil.GenerateTestHistogram(i)
+								want.CounterResetHint = h.CounterResetHint
+								require.Equal(t, want, h)
+							}
+							count++
+						}
+						want := 160
+						if deleted {
+							want = 120
+						}
+						require.Equal(t, want, count)
+						require.NoError(t, it.Err())
+						require.False(t, set.Next())
+						require.NoError(t, set.Err())
+					}
+					check(false)
+					require.NoError(t, db.Close())
+					opts.EnableALPHistograms = false
+					db = newTestDB(t, withDir(dir), withOpts(opts))
+					db.DisableCompactions()
+					check(false)
+					require.NoError(t, db.ApplyConfig(&config.Config{StorageConfig: config.StorageConfig{TSDBConfig: &config.TSDBConfig{ChunkEncoding: config.ChunkEncodingConfig{Floats: "xor2", Histograms: mode}, OutOfOrderTimeWindow: 10000}}}))
+					require.NoError(t, db.CompactHead(NewRangeHead(db.Head(), 0, 259)))
+					require.NoError(t, db.CompactOOOHead(ctx))
+					check(false)
+					require.NotEmpty(t, db.Blocks())
+					for _, block := range db.Blocks() {
+						q, err := NewBlockChunkQuerier(block, block.MinTime(), block.MaxTime())
+						require.NoError(t, err)
+						result := queryChunks(t, q, matcher)
+						for _, chunks := range result {
+							for _, c := range chunks {
+								want := chunkenc.EncALPHistogram
+								if floating {
+									want = chunkenc.EncALPFloatHistogram
+								}
+								if mode == "auto" && c.Chunk.Encoding() != want {
+									require.Contains(t, []chunkenc.Encoding{chunkenc.EncHistogramST, chunkenc.EncFloatHistogramST}, c.Chunk.Encoding())
+								} else {
+									require.Equal(t, want, c.Chunk.Encoding())
+								}
+							}
 						}
 					}
-				}
-				require.NoError(t, db.Delete(ctx, 140, 179, matcher))
-				check(true)
-			})
+					require.NoError(t, db.Close())
+					db = newTestDB(t, withDir(dir), withOpts(opts))
+					db.DisableCompactions()
+					check(false)
+					require.NoError(t, db.Delete(ctx, 140, 179, matcher))
+					check(true)
+				})
+			}
 		}
 	}
 }
@@ -354,4 +364,87 @@ func TestDBALPEncodingReload(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestDBALPAutoCompaction(t *testing.T) {
+	for _, kind := range []string{"decimal", "constant", "integer histogram", "constant integer histogram", "float histogram"} {
+		t.Run(kind, func(t *testing.T) {
+			input := make([]sample, 120)
+			want := chunkenc.EncALP
+			for i := range input {
+				input[i].t = int64(i)
+				switch kind {
+				case "decimal":
+					input[i].f = float64(100000+i) / 100
+				case "constant":
+					input[i].f = 1
+					want = chunkenc.EncXOR
+				case "integer histogram":
+					input[i].h = tsdbutil.GenerateTestHistogram(int64(i))
+					want = chunkenc.EncALPHistogram
+				case "constant integer histogram":
+					input[i].h = tsdbutil.GenerateTestHistogram(0)
+					want = chunkenc.EncHistogram
+				case "float histogram":
+					input[i].fh = tsdbutil.GenerateTestFloatHistogram(int64(i))
+					want = chunkenc.EncALPFloatHistogram
+				}
+			}
+			ir, cr, mint, maxt := createIdxChkReaders(t, []seriesSamples{{lset: map[string]string{"a": "b"}, chunks: [][]sample{input}}})
+			c, err := NewLeveledCompactor(t.Context(), nil, nil, []int64{0}, nil, nil)
+			require.NoError(t, err)
+			meta := &BlockMeta{MinTime: mint, MaxTime: maxt + 1}
+			iw := &mockIndexWriter{}
+			p := DefaultBlockPopulator{ALPAutoFloats: func() bool { return true }, ALPAutoHistograms: func() bool { return true }}
+			require.NoError(t, p.PopulateBlock(c.ctx, c.metrics, c.logger, c.chunkPool, c.mergeFunc, []BlockReader{&mockBReader{ir: ir, cr: cr, mint: mint, maxt: maxt}}, meta, iw, nopChunkWriter{}, AllSortedPostings))
+			require.Len(t, iw.seriesChunks, 1)
+			require.Len(t, iw.seriesChunks[0].chunks, 1)
+			require.Equal(t, want, iw.seriesChunks[0].chunks[0].Chunk.Encoding())
+			it := iw.seriesChunks[0].chunks[0].Chunk.Iterator(nil)
+			for i := range input {
+				require.NotEqual(t, chunkenc.ValNone, it.Next())
+				require.Equal(t, int64(i), it.AtT())
+				if input[i].h != nil || input[i].fh != nil {
+					_, h := it.AtFloatHistogram(nil)
+					expected := tsdbutil.GenerateTestFloatHistogram(int64(i))
+					if kind == "constant integer histogram" {
+						expected = tsdbutil.GenerateTestFloatHistogram(0)
+					}
+					expected.CounterResetHint = h.CounterResetHint
+					require.Equal(t, expected, h)
+				} else {
+					_, v := it.At()
+					require.Equal(t, input[i].f, v)
+				}
+			}
+			require.Equal(t, chunkenc.ValNone, it.Next())
+			require.NoError(t, it.Err())
+			require.Equal(t, uint64(120), meta.Stats.NumSamples)
+		})
+	}
+}
+
+func TestDBALPAutoReload(t *testing.T) {
+	opts := DefaultOptions()
+	opts.EnableALPAutoFloats = true
+	opts.EnableALPAutoHistograms = true
+	db := newTestDB(t, withOpts(opts))
+	for _, mode := range []string{"", "alp", "auto", "default", "auto"} {
+		floats := mode
+		if mode == "default" {
+			floats = "xor2"
+		}
+		require.NoError(t, db.ApplyConfig(&config.Config{StorageConfig: config.StorageConfig{TSDBConfig: &config.TSDBConfig{ChunkEncoding: config.ChunkEncodingConfig{Floats: floats, Histograms: mode}}}}))
+		auto := mode == "auto" || mode == ""
+		require.Equal(t, auto, db.head.opts.EnableALPAutoFloats.Load())
+		require.Equal(t, auto, db.head.opts.EnableALPAutoHistograms.Load())
+		require.Equal(t, mode == "alp", db.head.opts.EnableALPHistograms.Load())
+		want := chunkenc.EncXOR2
+		if mode == "alp" {
+			want = chunkenc.EncALP
+		}
+		require.Equal(t, want, db.floatChunkEncoding())
+	}
+	require.Error(t, db.ApplyConfig(&config.Config{StorageConfig: config.StorageConfig{TSDBConfig: &config.TSDBConfig{ChunkEncoding: config.ChunkEncodingConfig{Floats: "invalid", Histograms: "alp"}}}}))
+	require.True(t, db.head.opts.EnableALPAutoHistograms.Load(), "invalid reload must retain all previous settings")
 }

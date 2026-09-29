@@ -253,6 +253,10 @@ type Options struct {
 	EnableHistogramSTEncoding bool
 	// EnableALPHistograms selects experimental ALP histogram chunks, including ST.
 	EnableALPHistograms bool
+	// EnableALPAutoFloats keeps XOR2 in Head and selects ALP at compaction when smaller.
+	EnableALPAutoFloats bool
+	// EnableALPAutoHistograms keeps legacy histograms in Head and selects ALP at compaction when smaller.
+	EnableALPAutoHistograms bool
 
 	// EnableSTStorage determines whether TSDB should write a Start Timestamp (ST)
 	// per sample to WAL.
@@ -938,6 +942,12 @@ func validateOpts(opts *Options, rngs []int64) (*Options, []int64, error) {
 	if opts == nil {
 		opts = DefaultOptions()
 	}
+	if opts.EnableALPAutoFloats {
+		opts.FloatChunkEncoding = chunkenc.EncXOR2
+	}
+	if opts.EnableALPAutoHistograms {
+		opts.EnableALPHistograms = false
+	}
 	if opts.FloatChunkEncoding == chunkenc.EncNone {
 		opts.FloatChunkEncoding = chunkenc.EncXOR
 	}
@@ -1100,6 +1110,8 @@ func open(dir string, l *slog.Logger, r prometheus.Registerer, opts *Options, rn
 			BlockExcludeFilter:          opts.BlockCompactionExcludeFunc,
 			FloatChunkEncoding:          db.floatChunkEncoding,
 			ALPHistograms:               func() bool { return db.head.opts.EnableALPHistograms.Load() },
+			ALPAutoFloats:               func() bool { return db.head.opts.EnableALPAutoFloats.Load() },
+			ALPAutoHistograms:           func() bool { return db.head.opts.EnableALPAutoHistograms.Load() },
 		})
 	}
 	if err != nil {
@@ -1170,6 +1182,8 @@ func open(dir string, l *slog.Logger, r prometheus.Registerer, opts *Options, rn
 	headOpts.FloatChunkEncoding.Store(uint32(opts.FloatChunkEncoding))
 	headOpts.EnableHistogramSTEncoding.Store(opts.EnableHistogramSTEncoding)
 	headOpts.EnableALPHistograms.Store(opts.EnableALPHistograms)
+	headOpts.EnableALPAutoFloats.Store(opts.EnableALPAutoFloats)
+	headOpts.EnableALPAutoHistograms.Store(opts.EnableALPAutoHistograms)
 	headOpts.EnableMetadataWALRecords = opts.EnableMetadataWALRecords
 	headOpts.EnableFastStartup = opts.EnableFastStartup
 	if opts.WALReplayConcurrency > 0 {
@@ -1389,25 +1403,30 @@ func (db *DB) ApplyConfig(conf *config.Config) error {
 		// An absent chunk_encoding.floats keeps the encoding resolved at startup.
 		effectiveEncoding := db.opts.FloatChunkEncoding
 		alpHistograms := db.opts.EnableALPHistograms
+		autoFloats, autoHistograms := db.opts.EnableALPAutoFloats, db.opts.EnableALPAutoHistograms
 		switch histograms := conf.StorageConfig.TSDBConfig.ChunkEncoding.Histograms; histograms {
 		case "":
 		case "alp":
-			alpHistograms = true
+			alpHistograms, autoHistograms = true, false
+		case "auto":
+			alpHistograms, autoHistograms = false, true
 		case "default":
-			alpHistograms = false
+			alpHistograms, autoHistograms = false, false
 		default:
 			return fmt.Errorf("unsupported histogram chunk encoding %q", histograms)
 		}
 		switch floats := conf.StorageConfig.TSDBConfig.ChunkEncoding.Floats; floats {
 		case "":
 		case config.FloatChunkEncodingXOR:
-			effectiveEncoding = chunkenc.EncXOR
+			effectiveEncoding, autoFloats = chunkenc.EncXOR, false
 		case config.FloatChunkEncodingXOR2:
-			effectiveEncoding = chunkenc.EncXOR2
+			effectiveEncoding, autoFloats = chunkenc.EncXOR2, false
+		case config.FloatChunkEncodingAuto:
+			effectiveEncoding, autoFloats = chunkenc.EncXOR2, true
 		case config.FloatChunkEncodingALP:
-			effectiveEncoding = chunkenc.EncALP
+			effectiveEncoding, autoFloats = chunkenc.EncALP, false
 		default:
-			return fmt.Errorf("unsupported float chunk encoding %q; valid values are %q, %q, and %q", floats, config.FloatChunkEncodingXOR, config.FloatChunkEncodingXOR2, config.FloatChunkEncodingALP)
+			return fmt.Errorf("unsupported float chunk encoding %q; valid values are %q, %q, %q, and %q", floats, config.FloatChunkEncodingXOR, config.FloatChunkEncodingXOR2, config.FloatChunkEncodingALP, config.FloatChunkEncodingAuto)
 		}
 		if db.opts.EnableSTStorage && effectiveEncoding == chunkenc.EncXOR {
 			return errXORIncompatibleWithSTStorage
@@ -1427,10 +1446,14 @@ func (db *DB) ApplyConfig(conf *config.Config) error {
 		}
 		db.head.opts.FloatChunkEncoding.Store(uint32(effectiveEncoding))
 		db.head.opts.EnableALPHistograms.Store(alpHistograms)
+		db.head.opts.EnableALPAutoFloats.Store(autoFloats)
+		db.head.opts.EnableALPAutoHistograms.Store(autoHistograms)
 	} else {
 		db.opts.staleSeriesCompactionThreshold.Store(0)
 		db.head.opts.FloatChunkEncoding.Store(uint32(db.opts.FloatChunkEncoding))
 		db.head.opts.EnableALPHistograms.Store(db.opts.EnableALPHistograms)
+		db.head.opts.EnableALPAutoFloats.Store(db.opts.EnableALPAutoFloats)
+		db.head.opts.EnableALPAutoHistograms.Store(db.opts.EnableALPAutoHistograms)
 	}
 	if oooTimeWindow < 0 {
 		oooTimeWindow = 0

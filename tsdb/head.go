@@ -194,6 +194,10 @@ type HeadOptions struct {
 	EnableHistogramSTEncoding atomic.Bool
 	// EnableALPHistograms selects ALP encoding for integer and float histograms.
 	EnableALPHistograms atomic.Bool
+	// EnableALPAutoFloats selects adaptive float encoding during compaction.
+	EnableALPAutoFloats atomic.Bool
+	// EnableALPAutoHistograms selects adaptive histogram encoding during compaction.
+	EnableALPAutoHistograms atomic.Bool
 
 	ChunkRange int64
 	// ChunkDirRoot is the parent directory of the chunks directory.

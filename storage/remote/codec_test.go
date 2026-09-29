@@ -1256,7 +1256,7 @@ func TestStreamALPResponse(t *testing.T) {
 }
 
 func TestStreamALPHistogramResponse(t *testing.T) {
-	for _, enc := range []chunkenc.Encoding{chunkenc.EncALPHistogram, chunkenc.EncALPFloatHistogram} {
+	for _, enc := range []chunkenc.Encoding{chunkenc.EncALPHistogram, chunkenc.EncALPFloatHistogram, chunkenc.EncHistogramST} {
 		for _, st := range []int64{0, 1} {
 			t.Run(fmt.Sprintf("%s/st=%d", enc, st), func(t *testing.T) {
 				c, err := chunkenc.NewEmptyChunk(enc)
@@ -1264,14 +1264,18 @@ func TestStreamALPHistogramResponse(t *testing.T) {
 				a, err := c.Appender()
 				require.NoError(t, err)
 				for i := range 241 {
-					if enc == chunkenc.EncALPHistogram {
+					if enc != chunkenc.EncALPFloatHistogram {
 						_, _, a, err = a.AppendHistogram(nil, st, int64(i), tsdbutil.GenerateTestHistogram(int64(i)), true)
 					} else {
 						_, _, a, err = a.AppendFloatHistogram(nil, st, int64(i), tsdbutil.GenerateTestFloatHistogram(int64(i)), true)
 					}
 					require.NoError(t, err)
 				}
-				css := newMockChunkSeriesSet([]*prompb.ChunkedSeries{{Chunks: []prompb.Chunk{{Type: prompb.Chunk_Encoding(enc), Data: c.Bytes(), MinTimeMs: 0, MaxTimeMs: 240}}}})
+				if enc == chunkenc.EncHistogramST {
+					c, err = chunkenc.RecodeToALPHistogramV2(c)
+					require.NoError(t, err)
+				}
+				css := newMockChunkSeriesSet([]*prompb.ChunkedSeries{{Chunks: []prompb.Chunk{{Type: prompb.Chunk_Encoding(c.Encoding()), Data: c.Bytes(), MinTimeMs: 0, MaxTimeMs: 240}}}})
 				writer := mockWriter{}
 				_, err = StreamChunkedReadResponses(&writer, 0, css, nil, 1024, &sync.Pool{})
 				require.NoError(t, err)

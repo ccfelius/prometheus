@@ -69,7 +69,12 @@ import (
 )
 
 func TestHistogramChunkEncoding(t *testing.T) {
-	for _, encoding := range []string{"", "default", "alp", "invalid"} {
+	t.Run("auto floats", func(t *testing.T) {
+		var cfg TSDBConfig
+		require.NoError(t, yaml.Unmarshal([]byte("chunk_encoding:\n  floats: auto\n"), &cfg))
+		require.Equal(t, FloatChunkEncodingAuto, cfg.ChunkEncoding.Floats)
+	})
+	for _, encoding := range []string{"", "default", "alp", "auto", "invalid"} {
 		t.Run(encoding, func(t *testing.T) {
 			var cfg TSDBConfig
 			err := yaml.Unmarshal([]byte(fmt.Sprintf("chunk_encoding:\n  histograms: %q\n", encoding)), &cfg)
@@ -2806,15 +2811,15 @@ var expectedErrors = []struct {
 	},
 	{
 		filename: "tsdb_chunk_encoding_floats.bad.yml",
-		errMsg:   `'storage.tsdb.chunk_encoding.floats' must be 'xor', 'xor2', or 'alp', or the field must be omitted entirely, got "xor3"`,
+		errMsg:   `'storage.tsdb.chunk_encoding.floats' must be 'xor', 'xor2', 'alp', or 'auto', or the field must be omitted entirely, got "xor3"`,
 	},
 	{
 		filename: "tsdb_chunk_encoding_floats_wrong_case.bad.yml",
-		errMsg:   `'storage.tsdb.chunk_encoding.floats' must be 'xor', 'xor2', or 'alp', or the field must be omitted entirely, got "XOR"`,
+		errMsg:   `'storage.tsdb.chunk_encoding.floats' must be 'xor', 'xor2', 'alp', or 'auto', or the field must be omitted entirely, got "XOR"`,
 	},
 	{
 		filename: "tsdb_chunk_encoding_floats_wrong_case_xor2.bad.yml",
-		errMsg:   `'storage.tsdb.chunk_encoding.floats' must be 'xor', 'xor2', or 'alp', or the field must be omitted entirely, got "XOR2"`,
+		errMsg:   `'storage.tsdb.chunk_encoding.floats' must be 'xor', 'xor2', 'alp', or 'auto', or the field must be omitted entirely, got "XOR2"`,
 	},
 	{
 		filename: "metric_name_validation_scheme.bad.yml",

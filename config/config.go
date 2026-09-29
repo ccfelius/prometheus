@@ -1156,15 +1156,17 @@ const (
 	FloatChunkEncodingXOR2 = "xor2"
 	// FloatChunkEncodingALP selects experimental lossless ALP encoding for float chunks.
 	FloatChunkEncodingALP = "alp"
+	// FloatChunkEncodingAuto keeps XOR2 in Head and chooses ALP during compaction when smaller.
+	FloatChunkEncodingAuto = "auto"
 )
 
 // ChunkEncodingConfig configures per-chunk-type encoding overrides.
 type ChunkEncodingConfig struct {
 	// Floats selects the encoding used for float chunks.
-	// Valid values are "xor", "xor2", "alp", and "" (empty/absent). When empty, the
+	// Valid values are "xor", "xor2", "alp", "auto", and "" (empty/absent). When empty, the
 	// encoding follows the --enable-feature=xor2-encoding flag.
 	Floats string `yaml:"floats,omitempty"`
-	// Histograms selects "alp" or "default" for both histogram families.
+	// Histograms selects "alp", "auto", or "default" for both histogram families.
 	// Empty retains the encoding selected at startup.
 	Histograms string `yaml:"histograms,omitempty"`
 }
@@ -1203,15 +1205,15 @@ func (t *TSDBConfig) UnmarshalYAML(unmarshal func(any) error) error {
 	t.OutOfOrderTimeWindow = time.Duration(t.OutOfOrderTimeWindowFlag).Milliseconds()
 
 	switch t.ChunkEncoding.Floats {
-	case "", FloatChunkEncodingXOR, FloatChunkEncodingXOR2, FloatChunkEncodingALP:
+	case "", FloatChunkEncodingXOR, FloatChunkEncodingXOR2, FloatChunkEncodingALP, FloatChunkEncodingAuto:
 		// Valid; no action required.
 	default:
-		return fmt.Errorf("'storage.tsdb.chunk_encoding.floats' must be 'xor', 'xor2', or 'alp', or the field must be omitted entirely, got %q", t.ChunkEncoding.Floats)
+		return fmt.Errorf("'storage.tsdb.chunk_encoding.floats' must be 'xor', 'xor2', 'alp', or 'auto', or the field must be omitted entirely, got %q", t.ChunkEncoding.Floats)
 	}
 	switch t.ChunkEncoding.Histograms {
-	case "", "default", "alp":
+	case "", "default", "alp", "auto":
 	default:
-		return fmt.Errorf("'storage.tsdb.chunk_encoding.histograms' must be 'default' or 'alp', got %q", t.ChunkEncoding.Histograms)
+		return fmt.Errorf("'storage.tsdb.chunk_encoding.histograms' must be 'default', 'alp', or 'auto', got %q", t.ChunkEncoding.Histograms)
 	}
 
 	if t.Retention == nil {

@@ -80,6 +80,8 @@ type Compactor interface {
 type LeveledCompactor struct {
 	floatChunkEncoding          func() chunkenc.Encoding
 	alpHistograms               func() bool
+	alpAutoFloats               func() bool
+	alpAutoHistograms           func() bool
 	metrics                     *CompactorMetrics
 	logger                      *slog.Logger
 	ranges                      []int64
@@ -181,6 +183,10 @@ type LeveledCompactorOptions struct {
 	FloatChunkEncoding func() chunkenc.Encoding
 	// ALPHistograms selects ALP conversion of both histogram families at compaction.
 	ALPHistograms func() bool
+	// ALPAutoFloats retains source float chunks unless ALP saves at least 5%.
+	ALPAutoFloats func() bool
+	// ALPAutoHistograms retains source histogram chunks unless ALP saves at least 5%.
+	ALPAutoHistograms func() bool
 
 	// BlockExcludeFilter is used to decide which blocks are excluded from compactions.
 	BlockExcludeFilter BlockExcludeFilterFunc
@@ -238,6 +244,8 @@ func NewLeveledCompactorWithOptions(ctx context.Context, r prometheus.Registerer
 	return &LeveledCompactor{
 		floatChunkEncoding:          opts.FloatChunkEncoding,
 		alpHistograms:               opts.ALPHistograms,
+		alpAutoFloats:               opts.ALPAutoFloats,
+		alpAutoHistograms:           opts.ALPAutoHistograms,
 		ranges:                      ranges,
 		chunkPool:                   pool,
 		logger:                      l,
@@ -589,7 +597,7 @@ func CompactBlockMetas(uid ulid.ULID, blocks ...*BlockMeta) *BlockMeta {
 // Compact creates a new block in the compactor's directory from the blocks in the
 // provided directories.
 func (c *LeveledCompactor) Compact(dest string, dirs []string, open []*Block) ([]ulid.ULID, error) {
-	return c.CompactWithBlockPopulator(dest, dirs, open, DefaultBlockPopulator{FloatChunkEncoding: c.floatChunkEncoding, ALPHistograms: c.alpHistograms})
+	return c.CompactWithBlockPopulator(dest, dirs, open, DefaultBlockPopulator{FloatChunkEncoding: c.floatChunkEncoding, ALPHistograms: c.alpHistograms, ALPAutoFloats: c.alpAutoFloats, ALPAutoHistograms: c.alpAutoHistograms})
 }
 
 func (c *LeveledCompactor) CompactWithBlockPopulator(dest string, dirs []string, open []*Block, blockPopulator BlockPopulator) ([]ulid.ULID, error) {
@@ -718,7 +726,7 @@ func (c *LeveledCompactor) Write(dest string, b BlockReader, mint, maxt int64, b
 		}
 	}
 
-	err := c.write(dest, meta, DefaultBlockPopulator{FloatChunkEncoding: c.floatChunkEncoding, ALPHistograms: c.alpHistograms}, b)
+	err := c.write(dest, meta, DefaultBlockPopulator{FloatChunkEncoding: c.floatChunkEncoding, ALPHistograms: c.alpHistograms, ALPAutoFloats: c.alpAutoFloats, ALPAutoHistograms: c.alpAutoHistograms}, b)
 	if err != nil {
 		return nil, err
 	}
@@ -902,6 +910,10 @@ type DefaultBlockPopulator struct {
 	FloatChunkEncoding func() chunkenc.Encoding
 	// ALPHistograms selects conversion of finalized histogram chunks to ALP.
 	ALPHistograms func() bool
+	// ALPAutoFloats retains source float chunks unless ALP saves at least 5%.
+	ALPAutoFloats func() bool
+	// ALPAutoHistograms retains source histogram chunks unless ALP saves at least 5%.
+	ALPAutoHistograms func() bool
 }
 
 // PopulateBlock fills the index and chunk writers with new data gathered as the union
@@ -1024,39 +1036,45 @@ func (p DefaultBlockPopulator) PopulateBlock(ctx context.Context, metrics *Compa
 			continue
 		}
 
-		if p.FloatChunkEncoding != nil && p.FloatChunkEncoding() == chunkenc.EncALP {
+		var alpEncoder chunkenc.ALPEncoder
+		autoFloats := p.ALPAutoFloats != nil && p.ALPAutoFloats()
+		autoHistograms := p.ALPAutoHistograms != nil && p.ALPAutoHistograms()
+		if autoFloats || p.FloatChunkEncoding != nil && p.FloatChunkEncoding() == chunkenc.EncALP {
 			for i := range chks {
 				old := chks[i].Chunk
 				if old.Encoding() != chunkenc.EncXOR && old.Encoding() != chunkenc.EncXOR2 {
 					continue
 				}
-				c := chunkenc.NewALPChunk()
-				a, err := c.Appender()
+				if autoFloats && len(old.Bytes()) <= 40 {
+					continue
+				}
+				c, err := alpEncoder.Recode(old)
 				if err != nil {
-					return err
-				}
-				it := old.Iterator(nil)
-				for it.Next() != chunkenc.ValNone {
-					ts, v := it.At()
-					a.Append(it.AtST(), ts, v)
-				}
-				if err := it.Err(); err != nil {
 					return fmt.Errorf("transcode ALP chunk: %w", err)
 				}
-				c.Compact()
+				if autoFloats && len(c.Bytes())*100 > len(old.Bytes())*95 {
+					if err := chunkPool.Put(c); err != nil {
+						return err
+					}
+					continue
+				}
 				chks[i].Chunk = c
 				if err := chunkPool.Put(old); err != nil {
 					return fmt.Errorf("return transcoded chunk to pool: %w", err)
 				}
 			}
 		}
-		if p.ALPHistograms != nil && p.ALPHistograms() {
+		if autoHistograms || p.ALPHistograms != nil && p.ALPHistograms() {
 			converted := make([]chunks.Meta, 0, len(chks))
 			for _, meta := range chks {
 				old := meta.Chunk
 				switch old.Encoding() {
 				case chunkenc.EncHistogram, chunkenc.EncHistogramST, chunkenc.EncFloatHistogram, chunkenc.EncFloatHistogramST:
 				default:
+					converted = append(converted, meta)
+					continue
+				}
+				if autoHistograms && (old.NumSamples() > chunkenc.MaxSamplesPerALPHistogramChunk || len(old.Bytes()) <= old.NumSamples()+32) {
 					converted = append(converted, meta)
 					continue
 				}
@@ -1070,9 +1088,22 @@ func (p DefaultBlockPopulator) PopulateBlock(ctx context.Context, metrics *Compa
 						return fmt.Errorf("split ALP histogram: %w", err)
 					}
 				} else {
-					c, err := chunkenc.RecodeToALPHistogram(old)
+					var c chunkenc.Chunk
+					var err error
+					if autoHistograms && (old.Encoding() == chunkenc.EncHistogram || old.Encoding() == chunkenc.EncHistogramST) {
+						c, err = chunkenc.RecodeToALPHistogramV2(old)
+					} else {
+						c, err = alpEncoder.Recode(old)
+					}
 					if err != nil {
 						return fmt.Errorf("transcode ALP histogram: %w", err)
+					}
+					if autoHistograms && len(c.Bytes())*100 > len(old.Bytes())*95 {
+						if err := chunkPool.Put(c); err != nil {
+							return err
+						}
+						converted = append(converted, meta)
+						continue
 					}
 					meta.Chunk = c
 					converted = append(converted, meta)

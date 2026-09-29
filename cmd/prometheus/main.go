@@ -807,10 +807,14 @@ func main() {
 		cfg.tsdb.FloatChunkEncoding = chunkenc.EncXOR
 	case config.FloatChunkEncodingXOR2:
 		cfg.tsdb.FloatChunkEncoding = chunkenc.EncXOR2
+	case config.FloatChunkEncodingAuto:
+		cfg.tsdb.FloatChunkEncoding = chunkenc.EncXOR2
+		cfg.tsdb.EnableALPAutoFloats = true
 	case config.FloatChunkEncodingALP:
 		cfg.tsdb.FloatChunkEncoding = chunkenc.EncALP
 	}
 	cfg.tsdb.EnableALPHistograms = cfgFile.StorageConfig.TSDBConfig.ChunkEncoding.Histograms == "alp"
+	cfg.tsdb.EnableALPAutoHistograms = cfgFile.StorageConfig.TSDBConfig.ChunkEncoding.Histograms == "auto"
 	cfg.tsdb.OutOfOrderTimeWindow = cfgFile.StorageConfig.TSDBConfig.OutOfOrderTimeWindow
 	cfg.tsdb.StaleSeriesCompactionThreshold = cfgFile.StorageConfig.TSDBConfig.StaleSeriesCompactionThreshold
 	cfg.tsdb.RetentionDuration = cfgFile.StorageConfig.TSDBConfig.Retention.Time
@@ -2143,6 +2147,8 @@ type tsdbOptions struct {
 	EnableSTStorage                bool
 	EnableHistogramSTEncoding      bool
 	EnableALPHistograms            bool
+	EnableALPAutoFloats            bool
+	EnableALPAutoHistograms        bool
 	StaleSeriesCompactionThreshold float64
 	EnableFastStartup              bool
 	FloatChunkEncoding             chunkenc.Encoding
@@ -2178,6 +2184,8 @@ func (opts tsdbOptions) ToTSDBOptions() tsdb.Options {
 		EnableSTStorage:                opts.EnableSTStorage,
 		EnableHistogramSTEncoding:      opts.EnableHistogramSTEncoding,
 		EnableALPHistograms:            opts.EnableALPHistograms,
+		EnableALPAutoFloats:            opts.EnableALPAutoFloats,
+		EnableALPAutoHistograms:        opts.EnableALPAutoHistograms,
 		StaleSeriesCompactionThreshold: opts.StaleSeriesCompactionThreshold,
 		EnableFastStartup:              opts.EnableFastStartup,
 		FloatChunkEncoding:             opts.FloatChunkEncoding,

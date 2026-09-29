@@ -4189,7 +4189,7 @@ with this feature.
 [ stale_series_compaction_threshold: <float> | default = 0 ]
 
 # Configures the float chunk encoding to use for new chunks.
-# Valid values are 'xor', 'xor2', and experimental 'alp'. XOR2 gives better disk compression than XOR for
+# Valid values are 'xor', 'xor2', and experimental 'alp' or 'auto'. XOR2 gives better disk compression than XOR for
 # typical Prometheus workloads and can store start timestamps.
 #
 # WARNING: chunks encoded with XOR2 cannot be read by older Prometheus versions that do
@@ -4206,6 +4206,9 @@ with this feature.
 # Streamed remote read transcodes ALP to XOR, or XOR2 when start timestamps are present.
 # SIMD acceleration is optional: build with Go 1.27 and GOEXPERIMENT=simd; ordinary
 # builds read and write the same ALP format using scalar Go.
+# 'auto' keeps XOR2 in Head and considers ALP during compaction. It replaces a
+# finalized chunk only when ALP saves at least 5% of its encoded bytes, including
+# headers. Small chunks can bypass the trial. Existing ALP chunks remain readable.
 #
 # When absent, the encoding is 'xor2' if --enable-feature=xor2-encoding or
 # --enable-feature=st-storage is set, and 'xor' otherwise.
@@ -4222,13 +4225,18 @@ with this feature.
 # histograms-st-encoding feature flag. The st-storage feature enables that encoding too.
 [ chunk_encoding:
   [ floats: <string> ]
-  # Independent encoding for integer and float native histograms: 'default' or
-  # experimental 'alp'. ALP preserves start timestamps and bucket layouts.
+  # Independent encoding for integer and float native histograms: 'default',
+  # experimental 'alp', or 'auto'. ALP preserves start timestamps and bucket layouts.
   # This also selects ALP for histogram compaction output. It is runtime-reloadable;
   # switching encodings cuts the active histogram chunk on the next append.
   # Persisted ALP histogram chunks require ALP-aware readers. Remote read converts
   # them to standard histogram chunks, using ST variants when ST is present.
   # An absent field retains the selection resolved at startup.
+  # 'auto' keeps legacy histograms in Head and selects ALP during compaction only
+  # when it saves at least 5%. Integer candidates use ALP histogram version 2
+  # (128-value numeric vectors); float candidates use version 1. Version 2 chunks
+  # require a version-2-capable reader. Explicit 'alp' continues writing version 1.
+  # Oversized legacy chunks can be retained without a conversion trial.
   [ histograms: <string> ] ]
 
 # Configures data retention settings for TSDB.
