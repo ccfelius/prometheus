@@ -377,12 +377,12 @@ func alpAppendSpans(dst []byte, spans []histogram.Span) []byte {
 
 // alpHistogramWorkspace holds only owned scratch; no published bytes borrow it.
 type alpHistogramWorkspace struct {
-	hints, numeric, times []byte
-	previous, delta       []uint64
-	samples               [alpBlockSize]alpSample
-	sums                  alpEncodeState
-	integerHistogram      *histogram.Histogram
-	floatHistogram        *histogram.FloatHistogram
+	hints, numeric, times   []byte
+	previous, delta, fields []uint64
+	samples                 [alpBlockSize]alpSample
+	sums                    alpEncodeState
+	integerHistogram        *histogram.Histogram
+	floatHistogram          *histogram.FloatHistogram
 }
 
 // releaseLarge bounds retention after unusually wide or long histogram chunks.
@@ -399,6 +399,9 @@ func (w *alpHistogramWorkspace) releaseLarge() {
 	}
 	if cap(w.previous) > bytesLimit/8 {
 		w.previous = nil
+	}
+	if cap(w.fields) > bytesLimit/8 {
+		w.fields = nil
 	}
 	if cap(w.delta) > bytesLimit/8 {
 		w.delta = nil
@@ -452,8 +455,6 @@ func alpEncodeHistogramsWithWorkspace(inner Chunk, enc Encoding, state *alpEncod
 	var floats [alpMaxBlockSize]float64
 	var integers [alpMaxBlockSize]uint64
 	used := 0
-	var previous, delta []uint64
-	field := 0
 	flush := func() {
 		if used == 0 {
 			return
@@ -469,31 +470,7 @@ func alpEncodeHistogramsWithWorkspace(inner Chunk, enc Encoding, state *alpEncod
 		used = 0
 	}
 	put := func(v uint64) {
-		if enc == EncALPHistogram {
-			if previous == nil {
-				previous = slices.Grow(w.previous[:0], 2+positive+negative)[:2+positive+negative]
-				delta = slices.Grow(w.delta[:0], len(previous))[:len(previous)]
-				clear(delta)
-				w.previous, w.delta = previous, delta
-			}
-			if len(hints) == 0 {
-				numeric = binary.LittleEndian.AppendUint64(numeric, v)
-				previous[field] = v
-				field++
-				if field == len(previous) {
-					field = 0
-				}
-				return
-			}
-			d := v - previous[field]
-			dd := int64(d - delta[field])
-			previous[field], delta[field] = v, d
-			v = uint64(dd<<1) ^ uint64(dd>>63)
-			field++
-			if field == len(previous) {
-				field = 0
-			}
-		}
+
 		if enc == EncALPHistogram {
 			integers[used] = v
 		} else {
@@ -520,18 +497,38 @@ func alpEncodeHistogramsWithWorkspace(inner Chunk, enc Encoding, state *alpEncod
 				positive, negative = len(h.PositiveBuckets), len(h.NegativeBuckets)
 			}
 			sum, hint = h.Sum, h.CounterResetHint
-			put(h.Count)
-			put(h.ZeroCount)
+			fields := 2 + positive + negative
+			w.fields = slices.Grow(w.fields[:0], fields)[:fields]
+			w.fields[0], w.fields[1] = h.Count, h.ZeroCount
+			k := 2
 			for _, buckets := range [][]int64{h.PositiveBuckets, h.NegativeBuckets} {
 				for _, v := range buckets {
-					put(uint64(v<<1) ^ uint64(v>>63))
+					w.fields[k] = uint64(v<<1) ^ uint64(v>>63)
+					k++
 				}
 			}
-			if value.IsStaleNaN(sum) {
-				for range positive + negative {
-					put(0)
+			clear(w.fields[k:])
+			if len(hints) == 0 {
+				w.previous = append(w.previous[:0], w.fields...)
+				w.delta = slices.Grow(w.delta[:0], fields)[:fields]
+				clear(w.delta)
+				for _, v := range w.fields {
+					numeric = binary.LittleEndian.AppendUint64(numeric, v)
+				}
+			} else {
+				alpPredictIntegersNative(w.previous, w.delta, w.fields)
+				remaining := w.fields
+				for len(remaining) > 0 {
+					take := min(blockSize-used, len(remaining))
+					copy(integers[used:], remaining[:take])
+					used += take
+					remaining = remaining[take:]
+					if used == blockSize {
+						flush()
+					}
 				}
 			}
+
 		} else {
 			_, floatHistogram = it.AtFloatHistogram(floatHistogram)
 			h := floatHistogram

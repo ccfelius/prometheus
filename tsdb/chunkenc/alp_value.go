@@ -154,15 +154,8 @@ func alpEncodeValuesWithState(dst []byte, values []float64, state *alpEncodeStat
 	var best alpDecimalPlan
 	evaluate := func(exponent, factor uint8) int {
 		alpConvertNative(values, integers[:n], accepted[:n], exponent, factor)
-		p := alpDecimalPlan{exponent: exponent, factor: factor, base: math.MaxInt64}
-		hi := int64(math.MinInt64)
-		for i, q := range integers[:n] {
-			if accepted[i] == 0 {
-				p.exceptions++
-				continue
-			}
-			p.base, hi = min(p.base, q), max(hi, q)
-		}
+		lo, hi, exceptions := alpReduceNative(integers[:n], accepted[:n])
+		p := alpDecimalPlan{exponent: exponent, factor: factor, base: lo, exceptions: exceptions}
 		if p.exceptions == n {
 			return 1 + 8*n
 		}

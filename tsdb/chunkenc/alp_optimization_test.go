@@ -222,3 +222,40 @@ func TestALPHistogramV2Resume(t *testing.T) {
 		require.NoError(t, it.Err())
 	}
 }
+
+func TestALPEncodeReductionsAndPrediction(t *testing.T) {
+	r := rand.New(rand.NewSource(904))
+	for n := 0; n <= 259; n++ {
+		q := make([]int64, n)
+		accepted := make([]uint64, n)
+		previous := make([]uint64, n)
+		delta := make([]uint64, n)
+		fields := make([]uint64, n)
+		for i := range q {
+			q[i] = int64(r.Uint64())
+			accepted[i] = []uint64{0, 1, math.MaxUint64}[r.Intn(3)]
+			previous[i] = r.Uint64()
+			delta[i] = r.Uint64()
+			fields[i] = r.Uint64()
+		}
+		if n > 1 {
+			q[0], q[1] = math.MinInt64, math.MaxInt64
+		}
+		lo, hi, missing := alpReduceScalar(q, accepted)
+		gotLo, gotHi, gotMissing := alpReduceNative(q, accepted)
+		require.Equal(t, lo, gotLo)
+		require.Equal(t, hi, gotHi)
+		require.Equal(t, missing, gotMissing)
+		p, d, v := slices.Clone(previous), slices.Clone(delta), slices.Clone(fields)
+		alpPredictIntegersScalar(p, d, v)
+		alpPredictIntegersNative(previous, delta, fields)
+		require.Equal(t, p, previous)
+		require.Equal(t, d, delta)
+		require.Equal(t, v, fields)
+		clear(accepted)
+		lo, hi, missing = alpReduceNative(q, accepted)
+		require.Equal(t, int64(math.MaxInt64), lo)
+		require.Equal(t, int64(math.MinInt64), hi)
+		require.Equal(t, n, missing)
+	}
+}
