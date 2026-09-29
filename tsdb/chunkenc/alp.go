@@ -178,6 +178,8 @@ type alpIterator struct {
 	exhausted                   bool
 	constantST                  bool
 	st                          int64
+	regularTime, monotonicTime  bool
+	timeStart, timeDelta        int64
 }
 
 func (it *alpIterator) Next() ValueType {
@@ -211,6 +213,8 @@ func (it *alpIterator) Next() ValueType {
 		}
 		it.decoded = len(it.tail)
 		it.resize(it.decoded)
+		it.regularTime = false
+		it.timestamps = slices.Grow(it.timestamps[:0], it.decoded)[:it.decoded]
 		it.constantST = false
 		it.startTimestamps = slices.Grow(it.startTimestamps[:0], it.decoded)[:it.decoded]
 		for i, s := range it.tail {
@@ -224,7 +228,6 @@ func (it *alpIterator) Next() ValueType {
 }
 
 func (it *alpIterator) resize(n int) {
-	it.timestamps = slices.Grow(it.timestamps[:0], n)[:n]
 	it.values = slices.Grow(it.values[:0], n)[:n]
 }
 
@@ -232,19 +235,42 @@ func (it *alpIterator) Seek(t int64) ValueType {
 	if it.err != nil {
 		return ValNone
 	}
-	if it.index >= 0 && it.index < it.decoded && it.timestamps[it.index] >= t {
+	if it.index >= 0 && it.index < it.decoded && it.AtT() >= t {
 		return ValFloat
 	}
 	for it.Next() != ValNone {
-		if it.timestamps[it.index] >= t {
+		if it.AtT() >= t {
+			return ValFloat
+		}
+		if it.regularTime && it.monotonicTime {
+			if it.timeAt(it.decoded-1) < t {
+				it.index = it.decoded - 1
+				continue
+			}
+			// The target is within an increasing block. Unsigned subtraction handles
+			// blocks spanning zero without overflowing signed timestamp arithmetic.
+			distance := uint64(t) - uint64(it.timeStart)
+			delta := uint64(it.timeDelta)
+			index := distance / delta
+			if distance%delta != 0 {
+				index++
+			}
+			it.index = int(index)
 			return ValFloat
 		}
 	}
 	return ValNone
 }
 
-func (it *alpIterator) At() (int64, float64) { return it.timestamps[it.index], it.values[it.index] }
-func (it *alpIterator) AtT() int64           { return it.timestamps[it.index] }
+func (it *alpIterator) timeAt(index int) int64 {
+	if it.regularTime {
+		return it.timeStart + int64(index)*it.timeDelta
+	}
+	return it.timestamps[index]
+}
+
+func (it *alpIterator) At() (int64, float64) { return it.timeAt(it.index), it.values[it.index] }
+func (it *alpIterator) AtT() int64           { return it.timeAt(it.index) }
 func (it *alpIterator) AtST() int64 {
 	if it.constantST {
 		return it.st
@@ -335,7 +361,10 @@ func alpDecodeSamples(it *alpIterator, src []byte) (int, []byte, error) {
 	if len(times) < 8 {
 		return 0, nil, errInvalidALP
 	}
-	it.timestamps[0] = int64(binary.LittleEndian.Uint64(times))
+	it.timeStart = int64(binary.LittleEndian.Uint64(times))
+	it.regularTime = flags&alpRegularTime != 0
+	it.timeDelta = 0
+	it.monotonicTime = false
 	times = times[8:]
 	if flags&alpRegularTime != 0 {
 		if n == 1 {
@@ -346,12 +375,13 @@ func alpDecodeSamples(it *alpIterator, src []byte) (int, []byte, error) {
 			if len(times) != 8 {
 				return 0, nil, errInvalidALP
 			}
-			delta := int64(binary.LittleEndian.Uint64(times))
-			for i := 1; i < n; i++ {
-				it.timestamps[i] = it.timestamps[i-1] + delta
-			}
+			it.timeDelta = int64(binary.LittleEndian.Uint64(times))
 		}
+		// Prove that no addition wraps before enabling arithmetic seeks.
+		it.monotonicTime = it.timeDelta >= 0 && (n == 1 || uint64(it.timeDelta) <= (uint64(math.MaxInt64)-uint64(it.timeStart))/uint64(n-1))
 	} else {
+		it.timestamps = slices.Grow(it.timestamps[:0], n)[:n]
+		it.timestamps[0] = it.timeStart
 		delta := int64(0)
 		for i := 1; i < n; i++ {
 			dd, consumed := binary.Varint(times)

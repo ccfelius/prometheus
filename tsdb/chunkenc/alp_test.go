@@ -322,3 +322,87 @@ func FuzzALPDecode(f *testing.F) {
 		_ = it.Err()
 	})
 }
+
+func TestALPTimestampSeek(t *testing.T) {
+	for _, tc := range []struct {
+		name         string
+		start, delta int64
+		irregular    bool
+	}{
+		{"regular", -900000, 15000, false},
+		{"constant", 42, 0, false},
+		{"descending", 2000, -7, false},
+		{"positive-overflow", math.MaxInt64 - 3, 2, false},
+		{"negative-overflow", math.MinInt64 + 3, -2, false},
+		{"large-delta", math.MinInt64, math.MaxInt64, false},
+		{"irregular", 0, 15000, true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			c := NewALPChunk()
+			a, _ := c.Appender()
+			times := make([]int64, 263)
+			for i := range times {
+				times[i] = tc.start + int64(i)*tc.delta
+				if tc.irregular {
+					times[i] += int64(i % 3)
+				}
+				a.Append(int64(i%7), times[i], float64(i))
+			}
+			for _, serialized := range []bool{false, true} {
+				var source Chunk = c
+				if serialized {
+					var err error
+					source, err = FromData(EncALP, c.Bytes())
+					require.NoError(t, err)
+				}
+				// Match the historical sequential semantics even for wrapped or decreasing timestamps.
+				for _, target := range []int64{math.MinInt64, times[0], times[1], times[126], times[127] + 1, times[128], times[259], math.MaxInt64} {
+					it := source.Iterator(nil)
+					expected := 0
+					for expected < len(times) && times[expected] < target {
+						expected++
+					}
+					got := it.Seek(target)
+					if expected == len(times) {
+						require.Equal(t, ValNone, got)
+					} else {
+						require.Equal(t, ValFloat, got)
+						ts, v := it.At()
+						require.Equal(t, times[expected], ts)
+						require.Equal(t, float64(expected), v)
+						require.Equal(t, int64(expected%7), it.AtST())
+						require.Equal(t, ValFloat, it.Seek(target))
+						for j := expected + 1; j < len(times); j++ {
+							require.Equal(t, ValFloat, it.Next())
+							require.Equal(t, times[j], it.AtT())
+						}
+						require.Equal(t, ValNone, it.Next())
+					}
+					require.NoError(t, it.Err())
+				}
+			}
+		})
+	}
+}
+
+func BenchmarkALPSeek(b *testing.B) {
+	c := NewALPChunk()
+	a, _ := c.Appender()
+	for i := range 1024 {
+		a.Append(1, int64(i*15000), float64(i)/100)
+	}
+	c.Compact()
+	for _, target := range []int64{119 * 15000, 1000 * 15000} {
+		b.Run(strconv.FormatInt(target, 10), func(b *testing.B) {
+			var it Iterator
+			b.ReportAllocs()
+			for b.Loop() {
+				it = c.Iterator(it)
+				if it.Seek(target) != ValFloat {
+					b.Fatal(it.Err())
+				}
+				alpBenchSink = float64(it.AtT())
+			}
+		})
+	}
+}
