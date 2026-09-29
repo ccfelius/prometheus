@@ -999,9 +999,10 @@ func (p DefaultBlockPopulator) PopulateBlock(ctx context.Context, metrics *Compa
 	}
 
 	var (
-		ref      = storage.SeriesRef(0)
-		chks     []chunks.Meta
-		chksIter chunks.Iterator
+		ref        = storage.SeriesRef(0)
+		chks       []chunks.Meta
+		chksIter   chunks.Iterator
+		alpEncoder chunkenc.ALPEncoder
 	)
 
 	set := sets[0]
@@ -1036,7 +1037,7 @@ func (p DefaultBlockPopulator) PopulateBlock(ctx context.Context, metrics *Compa
 			continue
 		}
 
-		var alpEncoder chunkenc.ALPEncoder
+		alpEncoder.ResetSeries()
 		autoFloats := p.ALPAutoFloats != nil && p.ALPAutoFloats()
 		autoHistograms := p.ALPAutoHistograms != nil && p.ALPAutoHistograms()
 		if autoFloats || p.FloatChunkEncoding != nil && p.FloatChunkEncoding() == chunkenc.EncALP {
@@ -1091,7 +1092,7 @@ func (p DefaultBlockPopulator) PopulateBlock(ctx context.Context, metrics *Compa
 					var c chunkenc.Chunk
 					var err error
 					if autoHistograms && (old.Encoding() == chunkenc.EncHistogram || old.Encoding() == chunkenc.EncHistogramST) {
-						c, err = chunkenc.RecodeToALPHistogramV2(old)
+						c, err = alpEncoder.RecodeHistogramV2(old)
 					} else {
 						c, err = alpEncoder.Recode(old)
 					}

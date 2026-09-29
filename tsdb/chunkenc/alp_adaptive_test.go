@@ -18,6 +18,7 @@ import (
 	"slices"
 	"testing"
 
+	"github.com/prometheus/prometheus/tsdb/tsdbutil"
 	"github.com/stretchr/testify/require"
 )
 
@@ -111,6 +112,85 @@ func BenchmarkALPAdaptiveFloat(b *testing.B) {
 					if c != nil {
 						alpBenchSink = float64(len(c.Bytes()))
 					}
+				}
+			})
+		}
+	}
+}
+
+func TestALPEncoderOwnedOutputs(t *testing.T) {
+	var e ALPEncoder
+	var outputs []Chunk
+	var snapshots [][]byte
+	for round := range 4 {
+		e.ResetSeries()
+		for _, enc := range []Encoding{EncXOR2, EncHistogramST, EncFloatHistogramST} {
+			c, _ := NewEmptyChunk(enc)
+			a, _ := c.Appender()
+			for i := range 263 {
+				switch enc {
+				case EncXOR2:
+					a.Append(int64(round), int64(i), float64(i+round)/100)
+				case EncHistogramST:
+					_, _, a, _ = a.AppendHistogram(nil, int64(round), int64(i), tsdbutil.GenerateTestHistogram(int64(i+round)), true)
+				default:
+					_, _, a, _ = a.AppendFloatHistogram(nil, int64(round), int64(i), tsdbutil.GenerateTestFloatHistogram(int64(i+round)), true)
+				}
+			}
+			got, err := e.Recode(c)
+			require.NoError(t, err)
+			outputs = append(outputs, got)
+			snapshots = append(snapshots, slices.Clone(got.Bytes()))
+		}
+	}
+	for i, c := range outputs {
+		require.Equal(t, snapshots[i], c.Bytes())
+		it := c.Iterator(nil)
+		count := 0
+		for it.Next() != ValNone {
+			count++
+		}
+		require.NoError(t, it.Err())
+		require.Equal(t, 263, count)
+	}
+	e.skipFloats = 7
+	e.ResetSeries()
+	got, err := e.RecodeFloatIfSmaller(alpAdaptiveSource("decimal"))
+	require.NoError(t, err)
+	require.NotNil(t, got)
+}
+
+func BenchmarkALPWorkspace(b *testing.B) {
+	for _, enc := range []Encoding{EncXOR2, EncHistogramST, EncFloatHistogramST} {
+		c, _ := NewEmptyChunk(enc)
+		a, _ := c.Appender()
+		for i := range 120 {
+			switch enc {
+			case EncXOR2:
+				a.Append(1, int64(i), float64(100000+i)/100)
+			case EncHistogramST:
+				_, _, a, _ = a.AppendHistogram(nil, 1, int64(i), tsdbutil.GenerateTestHistogram(int64(i)), true)
+			default:
+				_, _, a, _ = a.AppendFloatHistogram(nil, 1, int64(i), tsdbutil.GenerateTestFloatHistogram(int64(i)), true)
+			}
+		}
+		for _, reuse := range []bool{false, true} {
+			name := "cold"
+			if reuse {
+				name = "reuse"
+			}
+			b.Run(enc.String()+"/"+name, func(b *testing.B) {
+				var e ALPEncoder
+				b.ReportAllocs()
+				for b.Loop() {
+					if !reuse {
+						e = ALPEncoder{}
+					}
+					got, err := e.Recode(c)
+					if err != nil {
+						b.Fatal(err)
+					}
+					alpBenchSink = float64(len(got.Bytes()))
 				}
 			})
 		}

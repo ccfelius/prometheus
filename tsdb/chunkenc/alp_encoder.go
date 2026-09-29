@@ -13,14 +13,20 @@
 
 package chunkenc
 
-import "math"
+import (
+	"encoding/binary"
+	"math"
+)
 
-// ALPEncoder reuses small encoding hints across finalized chunks of one series.
-// The zero value is ready to use. It retains no source or output buffers and is
-// not safe for concurrent use. Use a new encoder at each series boundary.
+// ALPEncoder reuses bounded temporary storage while converting finalized chunks.
+// The zero value is ready to use. It retains no source or published output buffers.
+// It is not safe for concurrent use. Call ResetSeries at every series boundary.
+// Returned chunks own their bytes and remain valid after reuse of the encoder.
 type ALPEncoder struct {
 	values, counts alpEncodeState
 	skipFloats     uint8
+	samples        [alpBlockSize]alpSample
+	hist           alpHistogramWorkspace
 }
 
 // Recode converts a finalized XOR or histogram chunk into an independent ALP
@@ -28,28 +34,13 @@ type ALPEncoder struct {
 func (e *ALPEncoder) Recode(source Chunk) (Chunk, error) {
 	switch source.Encoding() {
 	case EncXOR, EncXOR2:
-		c := NewALPChunk()
-		c.state = e.values
-		c.pending = make([]alpSample, 0, min(source.NumSamples(), alpBlockSize))
-		a, _ := c.Appender()
-		it := source.Iterator(nil)
-		for it.Next() != ValNone {
-			ts, v := it.At()
-			a.Append(it.AtST(), ts, v)
-		}
-		if err := it.Err(); err != nil {
-			return nil, err
-		}
-		c.Bytes()
-		e.values = c.state
-		c.Compact()
-		return c, nil
+		return e.recodeFloats(source, source.Iterator(nil), 0)
 	case EncHistogram, EncHistogramST, EncFloatHistogram, EncFloatHistogramST:
 		enc := EncALPHistogram
 		if source.Encoding() == EncFloatHistogram || source.Encoding() == EncFloatHistogramST {
 			enc = EncALPFloatHistogram
 		}
-		b, err := alpEncodeHistograms(source, enc, &e.counts, alpVersion)
+		b, err := alpEncodeHistogramsWithWorkspace(source, enc, &e.counts, alpVersion, &e.hist)
 		if err != nil {
 			return nil, err
 		}
@@ -79,7 +70,9 @@ func (e *ALPEncoder) RecodeFloatIfSmaller(source Chunk) (Chunk, error) {
 	it := source.Iterator(nil)
 	n := 0
 	for n < len(sample) && it.Next() != ValNone {
-		_, sample[n] = it.At()
+		ts, v := it.At()
+		sample[n] = v
+		e.samples[n] = alpSample{st: it.AtST(), t: ts, v: v}
 		n++
 	}
 	if err := it.Err(); err != nil {
@@ -89,7 +82,7 @@ func (e *ALPEncoder) RecodeFloatIfSmaller(source Chunk) (Chunk, error) {
 		e.skipFloats = 7
 		return nil, nil
 	}
-	c, err := e.Recode(source)
+	c, err := e.recodeFloats(source, it, n)
 	if err != nil {
 		return nil, err
 	}
@@ -131,4 +124,58 @@ func alpPromisingDecimal(values []float64) bool {
 		}
 	}
 	return false
+}
+
+// ResetSeries forgets prediction and rejection hints while retaining bounded
+// scratch buffers. It must be called before converting a different series.
+func (e *ALPEncoder) ResetSeries() {
+	e.values, e.counts, e.hist.sums = alpEncodeState{}, alpEncodeState{}, alpEncodeState{}
+	e.skipFloats = 0
+}
+
+func (e *ALPEncoder) recodeFloats(source Chunk, it Iterator, used int) (Chunk, error) {
+	n := source.NumSamples()
+	if n < 0 || n > math.MaxUint16 {
+		return nil, errInvalidALP
+	}
+	dst := make([]byte, alpHeaderSize, max(alpHeaderSize, len(source.Bytes())))
+	binary.BigEndian.PutUint16(dst, uint16(n))
+	dst[2] = alpVersion
+	count := used
+	for it.Next() != ValNone {
+		ts, v := it.At()
+		e.samples[used] = alpSample{st: it.AtST(), t: ts, v: v}
+		used++
+		count++
+		if used == alpBlockSize {
+			dst = alpEncodeSamplesWithState(dst, e.samples[:used], &e.values)
+			used = 0
+		}
+	}
+	if err := it.Err(); err != nil {
+		return nil, err
+	}
+	if count != n {
+		return nil, errInvalidALP
+	}
+	if used != 0 {
+		dst = alpEncodeSamplesWithState(dst, e.samples[:used], &e.values)
+	}
+	c := NewALPChunk()
+	c.Reset(dst)
+	c.validated = true
+	return c, nil
+}
+
+// RecodeHistogramV2 converts a finalized integer histogram using compact numeric
+// vectors and reuses temporary storage. The result owns its bytes.
+func (e *ALPEncoder) RecodeHistogramV2(source Chunk) (Chunk, error) {
+	if source.Encoding() != EncHistogram && source.Encoding() != EncHistogramST {
+		return nil, errInvalidALP
+	}
+	b, err := alpEncodeHistogramsWithWorkspace(source, EncALPHistogram, &e.counts, alpHistogramCompactVersion, &e.hist)
+	if err != nil {
+		return nil, err
+	}
+	return &ALPHistogramChunk{encoding: EncALPHistogram, version: alpHistogramCompactVersion, encoded: b}, nil
 }
