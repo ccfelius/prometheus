@@ -69,18 +69,22 @@ func (e *ALPEncoder) RecodeFloatIfSmaller(source Chunk) (Chunk, error) {
 	var sample [16]float64
 	it := source.Iterator(nil)
 	n := 0
-	for n < len(sample) && it.Next() != ValNone {
-		ts, v := it.At()
-		sample[n] = v
-		e.samples[n] = alpSample{st: it.AtST(), t: ts, v: v}
-		n++
-	}
-	if err := it.Err(); err != nil {
-		return nil, err
-	}
-	if n == 0 || !alpPromisingDecimal(sample[:n]) {
-		e.skipFloats = 7
-		return nil, nil
+	// A recently successful decimal plan is already a positive series hint.
+	// The writer still validates all values and complete output size below.
+	if !e.values.valid || e.values.uses >= 15 {
+		for n < len(sample) && it.Next() != ValNone {
+			ts, v := it.At()
+			sample[n] = v
+			e.samples[n] = alpSample{st: it.AtST(), t: ts, v: v}
+			n++
+		}
+		if err := it.Err(); err != nil {
+			return nil, err
+		}
+		if n == 0 || !alpPromisingDecimal(sample[:n]) {
+			e.skipFloats = 7
+			return nil, nil
+		}
 	}
 	c, err := e.recodeFloats(source, it, n)
 	if err != nil {

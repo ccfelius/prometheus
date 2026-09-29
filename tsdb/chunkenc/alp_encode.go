@@ -33,5 +33,5 @@ func alpReduceScalar(integers []int64, accepted []uint64) (lo, hi int64, excepti
 		}
 		lo, hi = min(lo, q), max(hi, q)
 	}
-	return
+	return lo, hi, exceptions
 }

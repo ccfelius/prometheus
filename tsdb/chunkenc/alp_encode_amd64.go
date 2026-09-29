@@ -17,6 +17,7 @@ package chunkenc
 
 import (
 	"math"
+
 	"simd/archsimd"
 )
 
@@ -59,7 +60,7 @@ func alpReduceAVX2(integers []int64, accepted []uint64) (lo, hi int64, exception
 		hi = max(hi, highs[j])
 		exceptions += int(missing[j])
 	}
-	return
+	return lo, hi, exceptions
 }
 
 // alpPredictIntegersAVX512 predicts independent fields modulo 2^64 in 8 lanes.
@@ -101,7 +102,7 @@ func alpReduceAVX512(integers []int64, accepted []uint64) (lo, hi int64, excepti
 		hi = max(hi, highs[j])
 		exceptions += int(missing[j])
 	}
-	return
+	return lo, hi, exceptions
 }
 
 func alpPredictIntegersNative(previous, delta, fields []uint64) {

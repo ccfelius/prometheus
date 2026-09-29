@@ -26,8 +26,10 @@ import (
 // MaxSamplesPerALPHistogramChunk is the limit of its mutable ST histogram codec.
 const MaxSamplesPerALPHistogramChunk = histogramSTSampleCountMask
 
-const alpHistogramCompactVersion = 2
-const alpHistogramMetadataVersion = 3
+const (
+	alpHistogramCompactVersion  = 2
+	alpHistogramMetadataVersion = 3
+)
 
 // ALPHistogramChunk stores histogram sums and floating-point counts in ALP
 // vectors. Integer counts use lossless integer frame-of-reference packing.
@@ -513,7 +515,6 @@ func alpEncodeHistogramsWithWorkspace(inner Chunk, enc Encoding, state *alpEncod
 		used = 0
 	}
 	put := func(v uint64) {
-
 		if enc == EncALPHistogram {
 			integers[used] = v
 		} else {
@@ -582,7 +583,6 @@ func alpEncodeHistogramsWithWorkspace(inner Chunk, enc Encoding, state *alpEncod
 					}
 				}
 			}
-
 		} else {
 			_, floatHistogram = it.AtFloatHistogram(floatHistogram)
 			h := floatHistogram
@@ -872,7 +872,6 @@ func (it *alpHistogramIterator) Next() ValueType {
 		h.PositiveSpans, h.NegativeSpans, h.CustomValues = it.layout.PositiveSpans, it.layout.NegativeSpans, it.layout.CustomValues
 		counts := it.numbers.integerSample()
 		h.Count, h.ZeroCount = counts[0], counts[1]
-
 	} else {
 		h := &it.fh
 		h.Schema, h.ZeroThreshold, h.Sum, h.CounterResetHint = it.layout.Schema, it.layout.ZeroThreshold, sum, hint
@@ -881,7 +880,6 @@ func (it *alpHistogramIterator) Next() ValueType {
 		h.Count, h.ZeroCount = counts[0], counts[1]
 		h.PositiveBuckets = counts[2 : 2+it.positive]
 		h.NegativeBuckets = counts[2+it.positive:]
-
 	}
 	if it.numbers.err != nil {
 		it.err = it.numbers.err

@@ -373,3 +373,22 @@ func TestALPHistogramV3WideFirstSample(t *testing.T) {
 		require.NoError(t, it.Err())
 	}
 }
+
+func TestALPHistogramV3HintPadding(t *testing.T) {
+	c := NewHistogramSTChunk()
+	a, _ := c.Appender()
+	_, _, _, err := a.AppendHistogram(nil, 1, 1, tsdbutil.GenerateTestHistogram(0), true)
+	require.NoError(t, err)
+	var e ALPEncoder
+	encoded, err := e.RecodeHistogramV3(c)
+	require.NoError(t, err)
+	data := slices.Clone(encoded.Bytes())
+	var it alpHistogramIterator
+	it.reset(data, EncALPHistogram)
+	require.NoError(t, it.Err())
+	require.Len(t, it.hints, 1)
+	// Hints borrow the input bytes, so this corrupts only the unused high bits.
+	it.hints[0] |= 0x80
+	it.reset(data, EncALPHistogram)
+	require.Error(t, it.Err())
+}

@@ -17,6 +17,7 @@ package chunkenc
 
 import (
 	"math"
+
 	"simd/archsimd"
 )
 
@@ -59,7 +60,7 @@ func alpReduceNEON(integers []int64, accepted []uint64) (lo, hi int64, exception
 		hi = max(hi, highs[j])
 		exceptions += int(missing[j])
 	}
-	return
+	return lo, hi, exceptions
 }
 
 func alpPredictIntegersNative(previous, delta, fields []uint64) {

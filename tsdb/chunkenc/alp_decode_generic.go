@@ -36,6 +36,7 @@ func alpRestoreIntegersNative(previous, delta, encoded []uint64) {
 func alpPredictIntegersNative(previous, delta, fields []uint64) {
 	alpPredictIntegersScalar(previous, delta, fields)
 }
+
 func alpReduceNative(integers []int64, accepted []uint64) (int64, int64, int) {
 	return alpReduceScalar(integers, accepted)
 }

@@ -18,8 +18,10 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/prometheus/prometheus/tsdb/tsdbutil"
 	"github.com/stretchr/testify/require"
+
+	"github.com/prometheus/prometheus/model/histogram"
+	"github.com/prometheus/prometheus/tsdb/tsdbutil"
 )
 
 func alpAdaptiveSource(pattern string) Chunk {
@@ -68,6 +70,21 @@ func TestALPAdaptiveFloat(t *testing.T) {
 			require.NoError(t, actual.Err())
 		})
 	}
+	t.Run("positive hint still checks changed data", func(t *testing.T) {
+		var e ALPEncoder
+		for range 3 {
+			c, err := e.RecodeFloatIfSmaller(alpAdaptiveSource("decimal"))
+			require.NoError(t, err)
+			require.NotNil(t, c)
+		}
+		c, err := e.RecodeFloatIfSmaller(alpAdaptiveSource("random"))
+		require.NoError(t, err)
+		require.Nil(t, c)
+		e.ResetSeries()
+		c, err = e.RecodeFloatIfSmaller(alpAdaptiveSource("decimal"))
+		require.NoError(t, err)
+		require.NotNil(t, c)
+	})
 	t.Run("retry changing series", func(t *testing.T) {
 		var e ALPEncoder
 		c, err := e.RecodeFloatIfSmaller(alpAdaptiveSource("random"))
@@ -195,4 +212,25 @@ func BenchmarkALPWorkspace(b *testing.B) {
 			})
 		}
 	}
+}
+
+func TestALPEncoderBoundsRetainedScratch(t *testing.T) {
+	c := NewHistogramSTChunk()
+	a, _ := c.Appender()
+	h := &histogram.Histogram{Schema: 1, CounterResetHint: histogram.GaugeType, PositiveSpans: []histogram.Span{{Length: 16384}}, PositiveBuckets: make([]int64, 16384)}
+	_, _, _, err := a.AppendHistogram(nil, 1, 1, h, true)
+	require.NoError(t, err)
+	var e ALPEncoder
+	output, err := e.RecodeHistogramV3(c)
+	require.NoError(t, err)
+	for _, capacity := range []int{cap(e.hist.previous) * 8, cap(e.hist.delta) * 8, cap(e.hist.fields) * 8, cap(e.hist.numeric), cap(e.hist.times), cap(e.hist.hints)} {
+		require.LessOrEqual(t, capacity, 64*1024)
+	}
+	require.Nil(t, e.hist.integerHistogram)
+	it := output.Iterator(nil)
+	require.Equal(t, ValHistogram, it.Next())
+	_, got := it.AtHistogram(nil)
+	require.Len(t, got.PositiveBuckets, 16384)
+	require.Equal(t, ValNone, it.Next())
+	require.NoError(t, it.Err())
 }
