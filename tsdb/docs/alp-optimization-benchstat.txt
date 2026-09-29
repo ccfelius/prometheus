@@ -1,0 +1,265 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+                                                          │ before (606f11f67) │    after (tsdb-alp-optimization)     │
+                                                          │              sec/op              │    sec/op     vs base               │
+ALPChunk/constant/XOR/read-18                                                   310.4n ±  6%    307.8n ± 7%        ~ (p=0.331 n=6)
+ALPChunk/constant/XOR/write-18                                                  682.8n ±  0%    680.2n ± 0%   -0.38% (p=0.009 n=6)
+ALPChunk/constant/XOR2/read-18                                                  393.2n ± 89%    378.7n ± 3%        ~ (p=0.855 n=6)
+ALPChunk/constant/XOR2/write-18                                                 537.6n ±  0%    533.9n ± 1%   -0.68% (p=0.002 n=6)
+ALPChunk/constant/ALP/read-18                                                   334.4n ±  7%    330.6n ± 0%        ~ (p=0.058 n=6)
+ALPChunk/constant/ALP/write-18                                                  1.315µ ±  7%    1.325µ ± 6%        ~ (p=0.950 n=6)
+ALPChunk/decimal/XOR/read-18                                                    996.2n ±  1%   1003.5n ± 0%        ~ (p=0.087 n=6)
+ALPChunk/decimal/XOR/write-18                                                   2.047µ ±  1%    2.085µ ± 2%   +1.86% (p=0.015 n=6)
+ALPChunk/decimal/XOR2/read-18                                                   861.3n ±  1%    875.4n ± 1%   +1.64% (p=0.002 n=6)
+ALPChunk/decimal/XOR2/write-18                                                  1.764µ ±  2%    1.763µ ± 1%        ~ (p=0.513 n=6)
+ALPChunk/decimal/ALP/read-18                                                    424.4n ±  0%    443.5n ± 0%   +4.50% (p=0.002 n=6)
+ALPChunk/decimal/ALP/write-18                                                  16.953µ ±  1%    2.590µ ± 3%  -84.72% (p=0.002 n=6)
+ALPChunk/exceptions/XOR/read-18                                                 1.074µ ±  1%    1.073µ ± 3%        ~ (p=0.714 n=6)
+ALPChunk/exceptions/XOR/write-18                                                2.583µ ±  1%    2.646µ ± 2%   +2.40% (p=0.002 n=6)
+ALPChunk/exceptions/XOR2/read-18                                                844.8n ±  1%    859.6n ± 1%   +1.76% (p=0.002 n=6)
+ALPChunk/exceptions/XOR2/write-18                                               1.760µ ±  1%    1.761µ ± 5%        ~ (p=1.000 n=6)
+ALPChunk/exceptions/ALP/read-18                                                 429.9n ±  0%    450.3n ± 2%   +4.75% (p=0.002 n=6)
+ALPChunk/exceptions/ALP/write-18                                               16.724µ ±  1%    2.614µ ± 3%  -84.37% (p=0.002 n=6)
+ALPChunk/computed/XOR/read-18                                                   1.032µ ±  0%    1.053µ ± 0%   +2.03% (p=0.002 n=6)
+ALPChunk/computed/XOR/write-18                                                  2.364µ ±  1%    2.384µ ± 1%   +0.82% (p=0.004 n=6)
+ALPChunk/computed/XOR2/read-18                                                  920.0n ±  3%    893.5n ± 0%   -2.89% (p=0.002 n=6)
+ALPChunk/computed/XOR2/write-18                                                 1.832µ ±  0%    1.821µ ± 1%   -0.63% (p=0.037 n=6)
+ALPChunk/computed/ALP/read-18                                                   612.9n ±  4%    623.7n ± 0%        ~ (p=0.310 n=6)
+ALPChunk/computed/ALP/write-18                                                 20.571µ ±  3%    8.763µ ± 0%  -57.40% (p=0.002 n=6)
+ALPChunk/random/XOR/read-18                                                     1.114µ ±  2%    1.113µ ± 0%        ~ (p=0.812 n=6)
+ALPChunk/random/XOR/write-18                                                    2.284µ ±  5%    2.268µ ± 2%        ~ (p=0.310 n=6)
+ALPChunk/random/XOR2/read-18                                                    952.1n ±  2%    962.8n ± 1%        ~ (p=0.132 n=6)
+ALPChunk/random/XOR2/write-18                                                   2.192µ ±  0%    2.197µ ± 1%        ~ (p=0.437 n=6)
+ALPChunk/random/ALP/read-18                                                     367.8n ±  8%    372.9n ± 0%        ~ (p=0.394 n=6)
+ALPChunk/random/ALP/write-18                                                    31.69µ ±  1%    11.48µ ± 5%  -63.76% (p=0.002 n=6)
+ALPEncode/120-18                                                               15.999µ ±  5%    1.466µ ± 0%  -90.84% (p=0.002 n=6)
+ALPEncode/128-18                                                               17.055µ ±  1%    1.493µ ± 0%  -91.25% (p=0.002 n=6)
+ALPEncode/1024-18                                                              28.035µ ±  1%    4.097µ ± 1%  -85.39% (p=0.002 n=6)
+ALPHistograms/histogramST/read-18                                               5.173µ ±  2%    5.125µ ± 1%   -0.93% (p=0.026 n=6)
+ALPHistograms/histogramST/write-18                                              13.59µ ±  1%    13.75µ ± 3%   +1.18% (p=0.004 n=6)
+ALPHistograms/ALPHistogram/read-18                                              5.705µ ±  0%    3.917µ ± 1%  -31.35% (p=0.002 n=6)
+ALPHistograms/ALPHistogram/write-18                                             41.68µ ±  1%    31.70µ ± 3%  -23.96% (p=0.002 n=6)
+ALPHistograms/floathistogramST/read-18                                          8.909µ ±  1%    8.899µ ± 2%        ~ (p=0.818 n=6)
+ALPHistograms/floathistogramST/write-18                                         25.73µ ±  0%    25.78µ ± 2%        ~ (p=1.000 n=6)
+ALPHistograms/ALPFloatHistogram/read-18                                         4.665µ ±  0%    3.692µ ± 0%  -20.86% (p=0.002 n=6)
+ALPHistograms/ALPFloatHistogram/write-18                                       100.00µ ±  0%    50.86µ ± 0%  -49.14% (p=0.002 n=6)
+ALPHistogramPaths/ALPHistogram/recode-18                                        51.61µ ± 22%    17.47µ ± 1%  -66.16% (p=0.002 n=6)
+ALPHistogramPaths/ALPHistogram/query-after-append-18                          2372.40µ ±  1%    32.94µ ± 1%  -98.61% (p=0.002 n=6)
+ALPHistogramPaths/ALPFloatHistogram/recode-18                                  112.29µ ±  4%    24.61µ ± 1%  -78.08% (p=0.002 n=6)
+ALPHistogramPaths/ALPFloatHistogram/query-after-append-18                     5448.84µ ±  2%    45.37µ ± 1%  -99.17% (p=0.002 n=6)
+ALPColdRead/ALP-18                                                              541.3n ±  6%    457.6n ± 2%  -15.47% (p=0.002 n=6)
+ALPColdRead/ALPHistogram-18                                                    2172.0n ±  1%    763.6n ± 5%  -64.85% (p=0.002 n=6)
+ALPColdRead/ALPFloatHistogram-18                                                3.006µ ± 14%    2.325µ ± 1%  -22.64% (p=0.002 n=6)
+ALPHistograms/ALPHistogramV2/read-18                                                            4.094µ ± 1%
+ALPHistograms/ALPHistogramV2/write-18                                                           31.80µ ± 2%
+ALPIntegerVectorSize/64-18                                                                      3.008µ ± 1%
+ALPIntegerVectorSize/128-18                                                                     2.216µ ± 1%
+ALPIntegerVectorSize/256-18                                                                     1.784µ ± 2%
+ALPIntegerVectorSize/512-18                                                                     1.788µ ± 3%
+ALPIntegerVectorSize/1024-18                                                                    2.116µ ± 3%
+geomean                                                                         4.054µ          2.436µ       -42.91%
+
+                                 │ before (606f11f67) │    after (tsdb-alp-optimization)     │
+                                 │               B/s                │      B/s       vs base              │
+ALPChunk/constant/XOR/read-18                         2.880Gi ±  6%    2.905Gi ± 7%       ~ (p=0.310 n=6)
+ALPChunk/constant/XOR2/read-18                        2.278Gi ± 47%    2.361Gi ± 3%       ~ (p=0.937 n=6)
+ALPChunk/constant/ALP/read-18                         2.673Gi ±  7%    2.704Gi ± 0%       ~ (p=0.065 n=6)
+ALPChunk/decimal/XOR/read-18                          919.0Mi ±  1%    912.3Mi ± 0%       ~ (p=0.093 n=6)
+ALPChunk/decimal/XOR2/read-18                         1.038Gi ±  1%    1.021Gi ± 1%  -1.61% (p=0.002 n=6)
+ALPChunk/decimal/ALP/read-18                          2.106Gi ±  0%    2.016Gi ± 0%  -4.31% (p=0.002 n=6)
+ALPChunk/exceptions/XOR/read-18                       852.7Mi ±  1%    853.3Mi ± 3%       ~ (p=0.699 n=6)
+ALPChunk/exceptions/XOR2/read-18                      1.058Gi ±  1%    1.040Gi ± 1%  -1.73% (p=0.002 n=6)
+ALPChunk/exceptions/ALP/read-18                       2.080Gi ±  0%    1.986Gi ± 2%  -4.53% (p=0.002 n=6)
+ALPChunk/computed/XOR/read-18                         887.1Mi ±  0%    869.5Mi ± 0%  -1.98% (p=0.002 n=6)
+ALPChunk/computed/XOR2/read-18                        995.1Mi ±  3%   1024.7Mi ± 0%  +2.97% (p=0.002 n=6)
+ALPChunk/computed/ALP/read-18                         1.459Gi ±  4%    1.433Gi ± 0%       ~ (p=0.310 n=6)
+ALPChunk/random/XOR/read-18                           822.1Mi ±  2%    822.8Mi ± 0%       ~ (p=0.818 n=6)
+ALPChunk/random/XOR2/read-18                          961.6Mi ±  2%    951.0Mi ± 1%       ~ (p=0.132 n=6)
+ALPChunk/random/ALP/read-18                           2.431Gi ±  8%    2.398Gi ± 0%       ~ (p=0.394 n=6)
+geomean                                               1.391Gi          1.382Gi       -0.71%
+
+                                         │ before (606f11f67) │       after (tsdb-alp-optimization)       │
+                                         │         encoded-B/sample         │ encoded-B/sample  vs base                │
+ALPChunk/constant/XOR/read-18                                   0.4000 ± 0%        0.4000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/constant/XOR/write-18                                  0.4000 ± 0%        0.4000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/constant/XOR2/read-18                                  0.2833 ± 0%        0.2833 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/constant/XOR2/write-18                                 0.2833 ± 0%        0.2833 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/constant/ALP/read-18                                   0.3333 ± 0%        0.3333 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/constant/ALP/write-18                                  0.3333 ± 0%        0.3333 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/decimal/XOR/read-18                                     5.767 ± 0%         5.767 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/decimal/XOR/write-18                                    5.767 ± 0%         5.767 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/decimal/XOR2/read-18                                    5.775 ± 0%         5.775 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/decimal/XOR2/write-18                                   5.775 ± 0%         5.775 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/decimal/ALP/read-18                                     1.308 ± 0%         1.308 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/decimal/ALP/write-18                                    1.308 ± 0%         1.308 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/exceptions/XOR/read-18                                  7.700 ± 0%         7.700 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/exceptions/XOR/write-18                                 7.700 ± 0%         7.700 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/exceptions/XOR2/read-18                                 5.700 ± 0%         5.700 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/exceptions/XOR2/write-18                                5.700 ± 0%         5.700 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/exceptions/ALP/read-18                                  1.808 ± 0%         1.808 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/exceptions/ALP/write-18                                 1.808 ± 0%         1.808 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/computed/XOR/read-18                                    7.108 ± 0%         7.108 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/computed/XOR/write-18                                   7.108 ± 0%         7.108 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/computed/XOR2/read-18                                   7.117 ± 0%         7.117 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/computed/XOR2/write-18                                  7.117 ± 0%         7.117 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/computed/ALP/read-18                                    6.742 ± 0%         6.742 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/computed/ALP/write-18                                   6.742 ± 0%         6.742 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/random/XOR/read-18                                      8.475 ± 0%         8.475 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/random/XOR/write-18                                     8.475 ± 0%         8.475 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/random/XOR2/read-18                                     8.483 ± 0%         8.483 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/random/XOR2/write-18                                    8.483 ± 0%         8.483 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/random/ALP/read-18                                      8.267 ± 0%         8.267 ± 0%       ~ (p=1.000 n=6) ¹
+ALPChunk/random/ALP/write-18                                     8.267 ± 0%         8.267 ± 0%       ~ (p=1.000 n=6) ¹
+ALPHistograms/histogramST/read-18                                8.800 ± 0%         8.800 ± 0%       ~ (p=1.000 n=6) ¹
+ALPHistograms/histogramST/write-18                               8.800 ± 0%         8.800 ± 0%       ~ (p=1.000 n=6) ¹
+ALPHistograms/ALPHistogram/read-18                               10.68 ± 0%         10.68 ± 0%       ~ (p=1.000 n=6) ¹
+ALPHistograms/ALPHistogram/write-18                              10.68 ± 0%         10.68 ± 0%       ~ (p=1.000 n=6) ¹
+ALPHistograms/floathistogramST/read-18                           19.39 ± 0%         19.39 ± 0%       ~ (p=1.000 n=6) ¹
+ALPHistograms/floathistogramST/write-18                          19.39 ± 0%         19.39 ± 0%       ~ (p=1.000 n=6) ¹
+ALPHistograms/ALPFloatHistogram/read-18                          17.27 ± 0%         17.27 ± 0%       ~ (p=1.000 n=6) ¹
+ALPHistograms/ALPFloatHistogram/write-18                         17.27 ± 0%         17.27 ± 0%       ~ (p=1.000 n=6) ¹
+ALPHistograms/ALPHistogramV2/read-18                                                6.942 ± 0%
+ALPHistograms/ALPHistogramV2/write-18                                               6.942 ± 0%
+geomean                                                          4.240              4.346       +0.00%
+¹ all samples are equal
+
+                                                          │ before (606f11f67) │     after (tsdb-alp-optimization)      │
+                                                          │               B/op               │     B/op      vs base                 │
+ALPChunk/constant/XOR/read-18                                                   0.000 ± 0%       0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/constant/XOR/write-18                                                  208.0 ± 0%       208.0 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/constant/XOR2/read-18                                                  0.000 ± 0%       0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/constant/XOR2/write-18                                                 224.0 ± 0%       224.0 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/constant/ALP/read-18                                                   0.000 ± 0%       0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/constant/ALP/write-18                                                7.094Ki ± 0%     7.094Ki ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/decimal/XOR/read-18                                                    0.000 ± 0%       0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/decimal/XOR/write-18                                                 1.828Ki ± 0%     1.828Ki ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/decimal/XOR2/read-18                                                   0.000 ± 0%       0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/decimal/XOR2/write-18                                                1.844Ki ± 0%     1.844Ki ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/decimal/ALP/read-18                                                    0.000 ± 0%       0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/decimal/ALP/write-18                                                 7.094Ki ± 0%     7.094Ki ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/exceptions/XOR/read-18                                                 0.000 ± 0%       0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/exceptions/XOR/write-18                                              3.203Ki ± 0%     3.203Ki ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/exceptions/XOR2/read-18                                                0.000 ± 0%       0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/exceptions/XOR2/write-18                                             1.844Ki ± 0%     1.844Ki ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/exceptions/ALP/read-18                                                 0.000 ± 0%       0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/exceptions/ALP/write-18                                              7.094Ki ± 0%     7.094Ki ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/computed/XOR/read-18                                                   0.000 ± 0%       0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/computed/XOR/write-18                                                1.828Ki ± 0%     1.828Ki ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/computed/XOR2/read-18                                                  0.000 ± 0%       0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/computed/XOR2/write-18                                               1.844Ki ± 0%     1.844Ki ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/computed/ALP/read-18                                                   0.000 ± 0%       0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/computed/ALP/write-18                                                7.094Ki ± 0%     7.094Ki ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/random/XOR/read-18                                                     0.000 ± 0%       0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/random/XOR/write-18                                                  3.203Ki ± 0%     3.203Ki ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/random/XOR2/read-18                                                    0.000 ± 0%       0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/random/XOR2/write-18                                                 3.219Ki ± 0%     3.219Ki ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/random/ALP/read-18                                                     0.000 ± 0%       0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/random/ALP/write-18                                                  8.469Ki ± 0%     8.469Ki ± 0%        ~ (p=1.000 n=6) ¹
+ALPEncode/120-18                                                                0.000 ± 0%       0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPEncode/128-18                                                                0.000 ± 0%       0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPEncode/1024-18                                                               0.000 ± 0%       0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPHistograms/histogramST/read-18                                               32.00 ± 0%       32.00 ± 0%        ~ (p=1.000 n=6) ¹
+ALPHistograms/histogramST/write-18                                            3.594Ki ± 0%     3.594Ki ± 0%        ~ (p=1.000 n=6) ¹
+ALPHistograms/ALPHistogram/read-18                                              0.000 ± 0%       0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPHistograms/ALPHistogram/write-18                                           16.41Ki ± 0%     16.16Ki ± 0%   -1.52% (p=0.002 n=6)
+ALPHistograms/floathistogramST/read-18                                          32.00 ± 0%       32.00 ± 0%        ~ (p=1.000 n=6) ¹
+ALPHistograms/floathistogramST/write-18                                       8.547Ki ± 0%     8.547Ki ± 0%        ~ (p=1.000 n=6) ¹
+ALPHistograms/ALPFloatHistogram/read-18                                         0.000 ± 0%       0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPHistograms/ALPFloatHistogram/write-18                                      25.41Ki ± 0%     25.16Ki ± 0%   -0.98% (p=0.002 n=6)
+ALPHistogramPaths/ALPHistogram/recode-18                                      46.94Ki ± 0%     12.54Ki ± 0%  -73.29% (p=0.002 n=6)
+ALPHistogramPaths/ALPHistogram/query-after-append-18                        1026.27Ki ± 0%     10.76Ki ± 0%  -98.95% (p=0.002 n=6)
+ALPHistogramPaths/ALPFloatHistogram/recode-18                                 55.85Ki ± 0%     16.59Ki ± 0%  -70.29% (p=0.002 n=6)
+ALPHistogramPaths/ALPFloatHistogram/query-after-append-18                   1164.14Ki ± 0%     20.12Ki ± 0%  -98.27% (p=0.002 n=6)
+ALPColdRead/ALP-18                                                            3.469Ki ± 0%     2.469Ki ± 0%  -28.83% (p=0.002 n=6)
+ALPColdRead/ALPHistogram-18                                                  21.844Ki ± 0%     3.719Ki ± 0%  -82.98% (p=0.002 n=6)
+ALPColdRead/ALPFloatHistogram-18                                              23.06Ki ± 0%     12.94Ki ± 0%  -43.90% (p=0.002 n=6)
+ALPHistograms/ALPHistogramV2/read-18                                                             0.000 ± 0%
+ALPHistograms/ALPHistogramV2/write-18                                                          14.91Ki ± 0%
+ALPIntegerVectorSize/64-18                                                                       0.000 ± 0%
+ALPIntegerVectorSize/128-18                                                                      0.000 ± 0%
+ALPIntegerVectorSize/256-18                                                                      0.000 ± 0%
+ALPIntegerVectorSize/512-18                                                                      0.000 ± 0%
+ALPIntegerVectorSize/1024-18                                                                     0.000 ± 0%
+geomean                                                                                    ²                 -25.09%               ²
+¹ all samples are equal
+² summaries must be >0 to compute geomean
+
+                                                          │ before (606f11f67) │    after (tsdb-alp-optimization)     │
+                                                          │            allocs/op             │ allocs/op   vs base                 │
+ALPChunk/constant/XOR/read-18                                                   0.000 ± 0%     0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/constant/XOR/write-18                                                  3.000 ± 0%     3.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/constant/XOR2/read-18                                                  0.000 ± 0%     0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/constant/XOR2/write-18                                                 3.000 ± 0%     3.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/constant/ALP/read-18                                                   0.000 ± 0%     0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/constant/ALP/write-18                                                  11.00 ± 0%     11.00 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/decimal/XOR/read-18                                                    0.000 ± 0%     0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/decimal/XOR/write-18                                                   6.000 ± 0%     6.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/decimal/XOR2/read-18                                                   0.000 ± 0%     0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/decimal/XOR2/write-18                                                  6.000 ± 0%     6.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/decimal/ALP/read-18                                                    0.000 ± 0%     0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/decimal/ALP/write-18                                                   11.00 ± 0%     11.00 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/exceptions/XOR/read-18                                                 0.000 ± 0%     0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/exceptions/XOR/write-18                                                7.000 ± 0%     7.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/exceptions/XOR2/read-18                                                0.000 ± 0%     0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/exceptions/XOR2/write-18                                               6.000 ± 0%     6.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/exceptions/ALP/read-18                                                 0.000 ± 0%     0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/exceptions/ALP/write-18                                                11.00 ± 0%     11.00 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/computed/XOR/read-18                                                   0.000 ± 0%     0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/computed/XOR/write-18                                                  6.000 ± 0%     6.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/computed/XOR2/read-18                                                  0.000 ± 0%     0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/computed/XOR2/write-18                                                 6.000 ± 0%     6.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/computed/ALP/read-18                                                   0.000 ± 0%     0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/computed/ALP/write-18                                                  11.00 ± 0%     11.00 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/random/XOR/read-18                                                     0.000 ± 0%     0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/random/XOR/write-18                                                    7.000 ± 0%     7.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/random/XOR2/read-18                                                    0.000 ± 0%     0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/random/XOR2/write-18                                                   7.000 ± 0%     7.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/random/ALP/read-18                                                     0.000 ± 0%     0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPChunk/random/ALP/write-18                                                    12.00 ± 0%     12.00 ± 0%        ~ (p=1.000 n=6) ¹
+ALPEncode/120-18                                                                0.000 ± 0%     0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPEncode/128-18                                                                0.000 ± 0%     0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPEncode/1024-18                                                               0.000 ± 0%     0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPHistograms/histogramST/read-18                                               2.000 ± 0%     2.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPHistograms/histogramST/write-18                                              13.00 ± 0%     13.00 ± 0%        ~ (p=1.000 n=6) ¹
+ALPHistograms/ALPHistogram/read-18                                              0.000 ± 0%     0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPHistograms/ALPHistogram/write-18                                             60.00 ± 0%     55.00 ± 0%   -8.33% (p=0.002 n=6)
+ALPHistograms/floathistogramST/read-18                                          2.000 ± 0%     2.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPHistograms/floathistogramST/write-18                                         13.00 ± 0%     13.00 ± 0%        ~ (p=1.000 n=6) ¹
+ALPHistograms/ALPFloatHistogram/read-18                                         0.000 ± 0%     0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPHistograms/ALPFloatHistogram/write-18                                        63.00 ± 0%     58.00 ± 0%   -7.94% (p=0.002 n=6)
+ALPHistogramPaths/ALPHistogram/recode-18                                       665.00 ± 0%     41.00 ± 0%  -93.83% (p=0.002 n=6)
+ALPHistogramPaths/ALPHistogram/query-after-append-18                           5098.0 ± 0%     271.0 ± 0%  -94.68% (p=0.002 n=6)
+ALPHistogramPaths/ALPFloatHistogram/recode-18                                  668.00 ± 0%     44.00 ± 0%  -93.41% (p=0.002 n=6)
+ALPHistogramPaths/ALPFloatHistogram/query-after-append-18                      5303.0 ± 0%     272.0 ± 0%  -94.87% (p=0.002 n=6)
+ALPColdRead/ALP-18                                                              5.000 ± 0%     4.000 ± 0%  -20.00% (p=0.002 n=6)
+ALPColdRead/ALPHistogram-18                                                     12.00 ± 0%     11.00 ± 0%   -8.33% (p=0.002 n=6)
+ALPColdRead/ALPFloatHistogram-18                                                11.00 ± 0%     11.00 ± 0%        ~ (p=1.000 n=6) ¹
+ALPHistograms/ALPHistogramV2/read-18                                                           0.000 ± 0%
+ALPHistograms/ALPHistogramV2/write-18                                                          54.00 ± 0%
+ALPIntegerVectorSize/64-18                                                                     0.000 ± 0%
+ALPIntegerVectorSize/128-18                                                                    0.000 ± 0%
+ALPIntegerVectorSize/256-18                                                                    0.000 ± 0%
+ALPIntegerVectorSize/512-18                                                                    0.000 ± 0%
+ALPIntegerVectorSize/1024-18                                                                   0.000 ± 0%
+geomean                                                                                    ²               -21.94%               ²
+¹ all samples are equal
+² summaries must be >0 to compute geomean
+
+                  │ before (606f11f67) │      after (tsdb-alp-optimization)       │
+                  │         encoded-B/value          │ encoded-B/value  vs base                │
+ALPEncode/120-18                          1.050 ± 0%        1.050 ± 0%       ~ (p=1.000 n=6) ¹
+ALPEncode/128-18                         0.9844 ± 0%       0.9844 ± 0%       ~ (p=1.000 n=6) ¹
+ALPEncode/1024-18                         1.264 ± 0%        1.264 ± 0%       ~ (p=1.000 n=6) ¹
+geomean                                   1.093             1.093       +0.00%
+¹ all samples are equal
+
+                             │ after (tsdb-alp-optimization) │
+                             │       numeric-B/sample       │
+ALPIntegerVectorSize/64-18                       3.283 ± 0%
+ALPIntegerVectorSize/128-18                      2.500 ± 0%
+ALPIntegerVectorSize/256-18                      2.583 ± 0%
+ALPIntegerVectorSize/512-18                      3.683 ± 0%
+ALPIntegerVectorSize/1024-18                     6.233 ± 0%
+geomean                                          3.447

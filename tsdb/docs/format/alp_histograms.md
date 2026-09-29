@@ -6,6 +6,12 @@ floating-count native histograms. This is independent of `chunk_encoding.floats`
 encoding identifiers **8** (integer counts) and **9** (floating counts), and
 always support start timestamps. They remain experimental and opt-in.
 
+`histograms: auto` keeps the existing histogram codec in Head and trials ALP
+at compaction, retaining the source unless the candidate saves at least 5%
+including headers. Integer candidates use version 2; float candidates use version
+1. Small or oversized legacy chunks can bypass the trial. Explicit `alp` continues
+writing version 1.
+
 The mutable representation uses the existing ST histogram appender to maintain
 schema changes, bucket expansion, counter resets, gauge semantics, and staleness.
 Serialization converts numeric fields to independent ALP/packed integer streams.
@@ -17,7 +23,10 @@ This first implementation therefore pays for both the mutable histogram encoding
 and ALP serialization. `Bytes()` caches serialization until append, and chunk
 size checks use the mutable representation instead of re-encoding ALP per append.
 `Compact()` drops mutable state; resuming append restores it from serialized data.
-Readers have separate buffers, and iterators retain immutable snapshots.
+Readers have separate buffers, and iterators retain immutable snapshots. Mutable
+histogram iterators copy the legacy bytes and read that snapshot directly, without
+triggering ALP serialization. Finalized histogram conversion consumes the source
+iterator directly rather than constructing an intermediate ST histogram chunk.
 
 ## Format, version 1
 
@@ -65,8 +74,9 @@ range. Pack vectors of at most 1,024 resulting integers using:
   the unsigned frame. The writer picks mode 1 only when smaller than mode 0.
 
 Each integer vector also has a uint32 byte-length prefix. Decoding inverts the
-predictor per field and then the bucket zigzag transform. Integer reconstruction
-is scalar; float counts, buckets, and decimal sums use SIMD when enabled.
+predictor per field and then the bucket zigzag transform. Integer unpacking and
+predictor reconstruction across independent fields use SIMD when enabled.
+Float counts, buckets, and decimal sums also use SIMD.
 
 Readers check header flags, counts, varint ranges, stream lengths, dictionary
 references, and numeric payload lengths. Span and numeric allocation bounds are
@@ -74,6 +84,27 @@ derived from the supplied payload. All section counts must agree, and trailing
 bytes are rejected. The 16,383-sample write limit follows the mutable ST codec;
 Head and OOO writers cut at that limit. Compaction splits larger legacy chunks
 before converting them.
+
+## Format, version 2
+
+Version 2 is currently defined only for integer histograms (encoding 8). The
+header version byte is 2. Every other field and the integer predictor have the
+same semantics as version 1, except that integer vectors contain at most **128**
+values rather than 1,024. The first sample remains raw uint64 fields. For the
+subsequent fields, each length-prefixed block reconstructs `min(128, remaining)`
+values. There is no additional sample count, changed lane order, or CPU-dependent
+format. The embedded timestamp/sum chunk still uses ALP float version 1.
+
+Shorter integer vectors confine large initial differences and other outliers to
+fewer values. On the eight-bucket fixture, the numeric stream falls from 6.233 to
+2.500 B/sample. This tradeoff can differ for other distributions; adaptive
+compaction compares complete bytes and retains the legacy source when it wins.
+
+Both versions support append resumption, snapshots, scalar/SIMD reads, and remote
+read conversion. Resuming a version 2 chunk preserves that version, including a
+new chunk created by layout/reset handling. Version 1-only readers reject version
+2. Selecting the new `auto` mode opts into version 2 integer histogram output.
+Version 2 is rejected for floating-count histograms (encoding 9).
 
 ## Integration and compatibility
 
@@ -125,10 +156,10 @@ GOTOOLCHAIN=go1.27.1 GOEXPERIMENT=simd go test ./tsdb/chunkenc \
   -run '^$' -count=6 -benchmem -bench '^BenchmarkALPHistograms$' -benchtime=100ms
 ```
 
-Encoding remains scalar. The decimal parameter search evaluates 190 candidate
-exponent/factor pairs on a bounded sample and validates a shortlist. Reusing
-search candidates, avoiding the intermediate mutable encoding, and vectorizing
-candidate evaluation are further opportunities to reduce write cost.
+These are the original measurements at `606f11f67`. The optimization branch
+adds sampled shortcuts, reusable parameter hints, SIMD candidate conversion,
+direct immutable transcoding, and compact integer vectors. See the
+[optimization report](../alp-optimization-results.md) for updated results.
 
 Six-run before/after benchmarks of the existing ST histogram codecs showed no
 significant slowdown or allocation increase: integer read 4.655 to 4.633 µs,

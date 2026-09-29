@@ -5,6 +5,12 @@ Go's experimental `simd/archsimd` package. The default float encoding is unchang
 The [wire-format specification](format/alp.md) describes the architecture-independent
 format and compatibility requirements.
 
+The [optimization plan](alp-optimization-plan.md) prioritizes encoding cost,
+mutable histogram reads, allocation, SIMD encoding, and adaptive storage choices.
+The [optimization results](alp-optimization-results.md) describe the implemented
+changes, current measurements, adaptive configuration, and histogram version 2.
+The measurements below are the original implementation baseline.
+
 ## Build and enable
 
 Ordinary builds use the scalar decoder and retain the repository's Go 1.26.7
@@ -163,8 +169,8 @@ AVX-512; the added SIMD CI workflow runs each supported backend on its runner.
 An AVX-512-capable runner is still needed to establish AVX-512 runtime results.
 The generated kernels reproduce byte for byte.
 
-Further optimization work includes timestamp/RD vectorization, amortizing the
-encoder's parameter search across blocks, and reducing mutable-tail allocation.
+At this baseline, further optimization work included timestamp/RD vectorization,
+amortizing the encoder's parameter search across blocks, and reducing mutable-tail allocation.
 Seek currently scans forward through decoded blocks; there is no on-disk block
 directory. Production-scale memory, cold-cache, first-sample latency, and PromQL
 performance measurements are still required before considering ALP as a default.
