@@ -4,6 +4,13 @@ Implemented on `tsdb-alp-optimization`, based on `606f11f67` (`tsdb-alp-simd`).
 This report records the completed portion of the [optimization plan](alp-optimization-plan.md).
 ALP remains experimental and opt-in; default encodings are unchanged.
 
+A separate [ALP versus XOR2 benchmark](benchmarks/alp-xor2-20260929/report.md)
+compares the optimized codec with XOR2 and measures process CPU time per sample.
+The [histogram comparison](benchmarks/alp-histograms-20260929/report.md) covers
+integer v1/v2 and floating-count histograms against their existing codecs.
+The [detailed implementation report](alp-implementation-details.md) explains
+the code paths, formats, SIMD arithmetic, integration, and remaining limits.
+
 ## Changes
 
 - Sample common decimal scales first, precompute safe integer bounds, retain the

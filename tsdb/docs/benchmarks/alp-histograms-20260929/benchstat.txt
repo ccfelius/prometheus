@@ -1,0 +1,43 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+                                  │ /tmp/alp-histograms-20260929-095803/legacy.txt │ /tmp/alp-histograms-20260929-095803/ALPv1.txt │ /tmp/alp-histograms-20260929-095803/ALPv2.txt │
+                                  │                     sec/op                     │        sec/op          vs base                │       sec/op         vs base                  │
+ALPHistograms/integer/codec/write                                     13.51µ ±  0%             33.08µ ± 1%  +144.76% (p=0.002 n=6)           33.54µ ± 2%  +148.22% (p=0.002 n=6)
+ALPHistograms/integer/codec/read                                      4.954µ ±  1%             3.716µ ± 1%   -25.00% (p=0.002 n=6)           4.039µ ± 5%   -18.47% (p=0.002 n=6)
+ALPHistograms/float/codec/write                                       26.08µ ± 12%             53.08µ ± 0%  +103.48% (p=0.002 n=6)
+ALPHistograms/float/codec/read                                        8.742µ ±  1%             3.714µ ± 1%   -57.52% (p=0.002 n=6)
+geomean                                                               11.12µ                   12.48µ        +12.24%                         11.64µ        +42.26%               ¹
+¹ benchmark set differs from baseline; geomeans may not be comparable
+
+                                  │ /tmp/alp-histograms-20260929-095803/legacy.txt │ /tmp/alp-histograms-20260929-095803/ALPv1.txt │ /tmp/alp-histograms-20260929-095803/ALPv2.txt │
+                                  │                encoded-B/sample                │    encoded-B/sample     vs base               │   encoded-B/sample    vs base                 │
+ALPHistograms/integer/codec/write                                       8.800 ± 0%              10.680 ± 0%  +21.36% (p=0.002 n=6)             6.942 ± 0%  -21.11% (p=0.002 n=6)
+ALPHistograms/integer/codec/read                                        8.800 ± 0%              10.680 ± 0%  +21.36% (p=0.002 n=6)             6.942 ± 0%  -21.11% (p=0.002 n=6)
+ALPHistograms/float/codec/write                                         19.39 ± 0%               17.27 ± 0%  -10.93% (p=0.002 n=6)
+ALPHistograms/float/codec/read                                          19.39 ± 0%               17.27 ± 0%  -10.93% (p=0.002 n=6)
+geomean                                                                 13.06                    13.58        +3.97%                           6.942       -21.11%               ¹
+¹ benchmark set differs from baseline; geomeans may not be comparable
+
+                                  │ /tmp/alp-histograms-20260929-095803/legacy.txt │ /tmp/alp-histograms-20260929-095803/ALPv1.txt │ /tmp/alp-histograms-20260929-095803/ALPv2.txt │
+                                  │                      B/op                      │       B/op         vs base                    │      B/op        vs base                      │
+ALPHistograms/integer/codec/write                                     3.594Ki ± 0%       16.156Ki ± 0%  +349.57% (p=0.002 n=6)         14.906Ki ± 0%  +314.78% (p=0.002 n=6)
+ALPHistograms/integer/codec/read                                        32.00 ± 0%           0.00 ± 0%  -100.00% (p=0.002 n=6)             0.00 ± 0%  -100.00% (p=0.002 n=6)
+ALPHistograms/float/codec/write                                       8.547Ki ± 0%       25.164Ki ± 0%  +194.42% (p=0.002 n=6)
+ALPHistograms/float/codec/read                                          32.00 ± 0%           0.00 ± 0%  -100.00% (p=0.002 n=6)
+geomean                                                                 426.2                           ?                      ¹ ²                    ?                      ³ ¹ ²
+¹ summaries must be >0 to compute geomean
+² ratios must be >0 to compute geomean
+³ benchmark set differs from baseline; geomeans may not be comparable
+
+                                  │ /tmp/alp-histograms-20260929-095803/legacy.txt │ /tmp/alp-histograms-20260929-095803/ALPv1.txt │ /tmp/alp-histograms-20260929-095803/ALPv2.txt │
+                                  │                   allocs/op                    │     allocs/op      vs base                    │    allocs/op     vs base                      │
+ALPHistograms/integer/codec/write                                       13.00 ± 0%          55.00 ± 0%  +323.08% (p=0.002 n=6)            54.00 ± 0%  +315.38% (p=0.002 n=6)
+ALPHistograms/integer/codec/read                                        2.000 ± 0%          0.000 ± 0%  -100.00% (p=0.002 n=6)            0.000 ± 0%  -100.00% (p=0.002 n=6)
+ALPHistograms/float/codec/write                                         13.00 ± 0%          58.00 ± 0%  +346.15% (p=0.002 n=6)
+ALPHistograms/float/codec/read                                          2.000 ± 0%          0.000 ± 0%  -100.00% (p=0.002 n=6)
+geomean                                                                 5.099                           ?                      ¹ ²                    ?                      ³ ¹ ²
+¹ summaries must be >0 to compute geomean
+² ratios must be >0 to compute geomean
+³ benchmark set differs from baseline; geomeans may not be comparable

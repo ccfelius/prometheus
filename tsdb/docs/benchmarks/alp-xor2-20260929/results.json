@@ -1,0 +1,1362 @@
+[
+  {
+    "pattern": "constant",
+    "codec": "XOR2",
+    "operation": "write",
+    "command": [
+      "/tmp/alp-xor2-benchmark.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPChunk$/^constant$/^XOR2$/^write$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=1s",
+      "-test.cpu=1"
+    ],
+    "samples": [
+      {
+        "iterations": 2112361,
+        "ns/op": 565.7,
+        "encoded-B/sample": 0.2833,
+        "B/op": 224.0,
+        "allocs/op": 3.0
+      },
+      {
+        "iterations": 2133426,
+        "ns/op": 562.5,
+        "encoded-B/sample": 0.2833,
+        "B/op": 224.0,
+        "allocs/op": 3.0
+      },
+      {
+        "iterations": 2133483,
+        "ns/op": 562.3,
+        "encoded-B/sample": 0.2833,
+        "B/op": 224.0,
+        "allocs/op": 3.0
+      },
+      {
+        "iterations": 2137615,
+        "ns/op": 562.3,
+        "encoded-B/sample": 0.2833,
+        "B/op": 224.0,
+        "allocs/op": 3.0
+      },
+      {
+        "iterations": 2136390,
+        "ns/op": 561.9,
+        "encoded-B/sample": 0.2833,
+        "B/op": 224.0,
+        "allocs/op": 3.0
+      },
+      {
+        "iterations": 2131053,
+        "ns/op": 565.7,
+        "encoded-B/sample": 0.2833,
+        "B/op": 224.0,
+        "allocs/op": 3.0
+      }
+    ],
+    "wall_seconds": 7.3216428339999995,
+    "user_cpu_seconds": 7.14923,
+    "system_cpu_seconds": 0.042793,
+    "cpu_percent_of_one_core": 98.22963456509959,
+    "cpu_seconds_per_million_samples": 0.004688046567641256,
+    "median_ns_per_chunk": 562.4,
+    "encoded_bytes_per_sample": 0.2833
+  },
+  {
+    "pattern": "constant",
+    "codec": "ALP",
+    "operation": "write",
+    "command": [
+      "/tmp/alp-xor2-benchmark.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPChunk$/^constant$/^ALP$/^write$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=1s",
+      "-test.cpu=1"
+    ],
+    "samples": [
+      {
+        "iterations": 980361,
+        "ns/op": 1203.0,
+        "encoded-B/sample": 0.3333,
+        "B/op": 7264.0,
+        "allocs/op": 11.0
+      },
+      {
+        "iterations": 1000000,
+        "ns/op": 1199.0,
+        "encoded-B/sample": 0.3333,
+        "B/op": 7264.0,
+        "allocs/op": 11.0
+      },
+      {
+        "iterations": 999902,
+        "ns/op": 1203.0,
+        "encoded-B/sample": 0.3333,
+        "B/op": 7264.0,
+        "allocs/op": 11.0
+      },
+      {
+        "iterations": 944395,
+        "ns/op": 1206.0,
+        "encoded-B/sample": 0.3333,
+        "B/op": 7264.0,
+        "allocs/op": 11.0
+      },
+      {
+        "iterations": 1000000,
+        "ns/op": 1228.0,
+        "encoded-B/sample": 0.3333,
+        "B/op": 7264.0,
+        "allocs/op": 11.0
+      },
+      {
+        "iterations": 985288,
+        "ns/op": 1201.0,
+        "encoded-B/sample": 0.3333,
+        "B/op": 7264.0,
+        "allocs/op": 11.0
+      }
+    ],
+    "wall_seconds": 7.140236874999999,
+    "user_cpu_seconds": 6.7095329999999995,
+    "system_cpu_seconds": 0.14060799999999998,
+    "cpu_percent_of_one_core": 95.93716735062799,
+    "cpu_seconds_per_million_samples": 0.009659057516487178,
+    "median_ns_per_chunk": 1203.0,
+    "encoded_bytes_per_sample": 0.3333
+  },
+  {
+    "pattern": "constant",
+    "codec": "ALP",
+    "operation": "read",
+    "command": [
+      "/tmp/alp-xor2-benchmark.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPChunk$/^constant$/^ALP$/^read$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=1s",
+      "-test.cpu=1"
+    ],
+    "samples": [
+      {
+        "iterations": 3628868,
+        "ns/op": 330.3,
+        "MB/s": 2906.57,
+        "encoded-B/sample": 0.3333,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 3623356,
+        "ns/op": 330.7,
+        "MB/s": 2903.03,
+        "encoded-B/sample": 0.3333,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 3619356,
+        "ns/op": 331.1,
+        "MB/s": 2899.08,
+        "encoded-B/sample": 0.3333,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 3603649,
+        "ns/op": 332.3,
+        "MB/s": 2888.99,
+        "encoded-B/sample": 0.3333,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 3613844,
+        "ns/op": 332.0,
+        "MB/s": 2891.76,
+        "encoded-B/sample": 0.3333,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 3579891,
+        "ns/op": 333.6,
+        "MB/s": 2877.77,
+        "encoded-B/sample": 0.3333,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      }
+    ],
+    "wall_seconds": 7.195078541999999,
+    "user_cpu_seconds": 7.151582999999999,
+    "system_cpu_seconds": 0.041906,
+    "cpu_percent_of_one_core": 99.97790792705428,
+    "cpu_seconds_per_million_samples": 0.002766433211420106,
+    "median_ns_per_chunk": 331.55,
+    "encoded_bytes_per_sample": 0.3333
+  },
+  {
+    "pattern": "constant",
+    "codec": "XOR2",
+    "operation": "read",
+    "command": [
+      "/tmp/alp-xor2-benchmark.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPChunk$/^constant$/^XOR2$/^read$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=1s",
+      "-test.cpu=1"
+    ],
+    "samples": [
+      {
+        "iterations": 3245439,
+        "ns/op": 371.9,
+        "MB/s": 2581.15,
+        "encoded-B/sample": 0.2833,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 3208234,
+        "ns/op": 367.4,
+        "MB/s": 2613.28,
+        "encoded-B/sample": 0.2833,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 3278120,
+        "ns/op": 368.2,
+        "MB/s": 2607.22,
+        "encoded-B/sample": 0.2833,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 3264266,
+        "ns/op": 378.3,
+        "MB/s": 2537.4,
+        "encoded-B/sample": 0.2833,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 3044025,
+        "ns/op": 392.9,
+        "MB/s": 2443.47,
+        "encoded-B/sample": 0.2833,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 3073953,
+        "ns/op": 382.2,
+        "MB/s": 2511.92,
+        "encoded-B/sample": 0.2833,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      }
+    ],
+    "wall_seconds": 7.2069817910000005,
+    "user_cpu_seconds": 7.165962,
+    "system_cpu_seconds": 0.03878300000000001,
+    "cpu_percent_of_one_core": 99.96896355416364,
+    "cpu_seconds_per_million_samples": 0.0031411230221363847,
+    "median_ns_per_chunk": 375.1,
+    "encoded_bytes_per_sample": 0.2833
+  },
+  {
+    "pattern": "decimal",
+    "codec": "ALP",
+    "operation": "write",
+    "command": [
+      "/tmp/alp-xor2-benchmark.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPChunk$/^decimal$/^ALP$/^write$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=1s",
+      "-test.cpu=1"
+    ],
+    "samples": [
+      {
+        "iterations": 439923,
+        "ns/op": 2679.0,
+        "encoded-B/sample": 1.308,
+        "B/op": 7264.0,
+        "allocs/op": 11.0
+      },
+      {
+        "iterations": 454218,
+        "ns/op": 2666.0,
+        "encoded-B/sample": 1.308,
+        "B/op": 7264.0,
+        "allocs/op": 11.0
+      },
+      {
+        "iterations": 441435,
+        "ns/op": 2673.0,
+        "encoded-B/sample": 1.308,
+        "B/op": 7264.0,
+        "allocs/op": 11.0
+      },
+      {
+        "iterations": 441702,
+        "ns/op": 2684.0,
+        "encoded-B/sample": 1.308,
+        "B/op": 7264.0,
+        "allocs/op": 11.0
+      },
+      {
+        "iterations": 462872,
+        "ns/op": 2667.0,
+        "encoded-B/sample": 1.308,
+        "B/op": 7264.0,
+        "allocs/op": 11.0
+      },
+      {
+        "iterations": 446848,
+        "ns/op": 2675.0,
+        "encoded-B/sample": 1.308,
+        "B/op": 7264.0,
+        "allocs/op": 11.0
+      }
+    ],
+    "wall_seconds": 7.193168332999999,
+    "user_cpu_seconds": 6.967983000000004,
+    "system_cpu_seconds": 0.07935700000000001,
+    "cpu_percent_of_one_core": 97.9726828811863,
+    "cpu_seconds_per_million_samples": 0.021856299607715884,
+    "median_ns_per_chunk": 2674.0,
+    "encoded_bytes_per_sample": 1.308
+  },
+  {
+    "pattern": "decimal",
+    "codec": "XOR2",
+    "operation": "write",
+    "command": [
+      "/tmp/alp-xor2-benchmark.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPChunk$/^decimal$/^XOR2$/^write$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=1s",
+      "-test.cpu=1"
+    ],
+    "samples": [
+      {
+        "iterations": 633694,
+        "ns/op": 1834.0,
+        "encoded-B/sample": 5.775,
+        "B/op": 1888.0,
+        "allocs/op": 6.0
+      },
+      {
+        "iterations": 660073,
+        "ns/op": 1828.0,
+        "encoded-B/sample": 5.775,
+        "B/op": 1888.0,
+        "allocs/op": 6.0
+      },
+      {
+        "iterations": 668284,
+        "ns/op": 1821.0,
+        "encoded-B/sample": 5.775,
+        "B/op": 1888.0,
+        "allocs/op": 6.0
+      },
+      {
+        "iterations": 663518,
+        "ns/op": 1823.0,
+        "encoded-B/sample": 5.775,
+        "B/op": 1888.0,
+        "allocs/op": 6.0
+      },
+      {
+        "iterations": 659089,
+        "ns/op": 1828.0,
+        "encoded-B/sample": 5.775,
+        "B/op": 1888.0,
+        "allocs/op": 6.0
+      },
+      {
+        "iterations": 660174,
+        "ns/op": 1827.0,
+        "encoded-B/sample": 5.775,
+        "B/op": 1888.0,
+        "allocs/op": 6.0
+      }
+    ],
+    "wall_seconds": 7.213598125000004,
+    "user_cpu_seconds": 7.104065999999996,
+    "system_cpu_seconds": 0.05277699999999996,
+    "cpu_percent_of_one_core": 99.21322030952467,
+    "cpu_seconds_per_million_samples": 0.015118605388856433,
+    "median_ns_per_chunk": 1827.5,
+    "encoded_bytes_per_sample": 5.775
+  },
+  {
+    "pattern": "decimal",
+    "codec": "XOR2",
+    "operation": "read",
+    "command": [
+      "/tmp/alp-xor2-benchmark.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPChunk$/^decimal$/^XOR2$/^read$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=1s",
+      "-test.cpu=1"
+    ],
+    "samples": [
+      {
+        "iterations": 1361378,
+        "ns/op": 879.2,
+        "MB/s": 1091.89,
+        "encoded-B/sample": 5.775,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 1372940,
+        "ns/op": 874.0,
+        "MB/s": 1098.44,
+        "encoded-B/sample": 5.775,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 1375347,
+        "ns/op": 873.3,
+        "MB/s": 1099.33,
+        "encoded-B/sample": 5.775,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 1375803,
+        "ns/op": 872.8,
+        "MB/s": 1099.95,
+        "encoded-B/sample": 5.775,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 1372624,
+        "ns/op": 874.9,
+        "MB/s": 1097.22,
+        "encoded-B/sample": 5.775,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 1369231,
+        "ns/op": 875.8,
+        "MB/s": 1096.11,
+        "encoded-B/sample": 5.775,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      }
+    ],
+    "wall_seconds": 7.207364124999998,
+    "user_cpu_seconds": 7.168271000000004,
+    "system_cpu_seconds": 0.03672800000000004,
+    "cpu_percent_of_one_core": 99.96718460509315,
+    "cpu_seconds_per_million_samples": 0.00729783652997863,
+    "median_ns_per_chunk": 874.45,
+    "encoded_bytes_per_sample": 5.775
+  },
+  {
+    "pattern": "decimal",
+    "codec": "ALP",
+    "operation": "read",
+    "command": [
+      "/tmp/alp-xor2-benchmark.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPChunk$/^decimal$/^ALP$/^read$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=1s",
+      "-test.cpu=1"
+    ],
+    "samples": [
+      {
+        "iterations": 2732874,
+        "ns/op": 438.8,
+        "MB/s": 2187.91,
+        "encoded-B/sample": 1.308,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 2718063,
+        "ns/op": 441.5,
+        "MB/s": 2174.48,
+        "encoded-B/sample": 1.308,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 2725225,
+        "ns/op": 446.6,
+        "MB/s": 2149.62,
+        "encoded-B/sample": 1.308,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 2586874,
+        "ns/op": 462.0,
+        "MB/s": 2078.12,
+        "encoded-B/sample": 1.308,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 2643730,
+        "ns/op": 453.9,
+        "MB/s": 2114.78,
+        "encoded-B/sample": 1.308,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 2587326,
+        "ns/op": 464.1,
+        "MB/s": 2068.45,
+        "encoded-B/sample": 1.308,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      }
+    ],
+    "wall_seconds": 7.220762334,
+    "user_cpu_seconds": 7.188651,
+    "system_cpu_seconds": 0.02964599999999995,
+    "cpu_percent_of_one_core": 99.96585770468596,
+    "cpu_seconds_per_million_samples": 0.003760918406621645,
+    "median_ns_per_chunk": 450.25,
+    "encoded_bytes_per_sample": 1.308
+  },
+  {
+    "pattern": "exceptions",
+    "codec": "XOR2",
+    "operation": "write",
+    "command": [
+      "/tmp/alp-xor2-benchmark.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPChunk$/^exceptions$/^XOR2$/^write$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=1s",
+      "-test.cpu=1"
+    ],
+    "samples": [
+      {
+        "iterations": 648742,
+        "ns/op": 1839.0,
+        "encoded-B/sample": 5.7,
+        "B/op": 1888.0,
+        "allocs/op": 6.0
+      },
+      {
+        "iterations": 661893,
+        "ns/op": 1824.0,
+        "encoded-B/sample": 5.7,
+        "B/op": 1888.0,
+        "allocs/op": 6.0
+      },
+      {
+        "iterations": 662408,
+        "ns/op": 1823.0,
+        "encoded-B/sample": 5.7,
+        "B/op": 1888.0,
+        "allocs/op": 6.0
+      },
+      {
+        "iterations": 659976,
+        "ns/op": 1825.0,
+        "encoded-B/sample": 5.7,
+        "B/op": 1888.0,
+        "allocs/op": 6.0
+      },
+      {
+        "iterations": 663771,
+        "ns/op": 1825.0,
+        "encoded-B/sample": 5.7,
+        "B/op": 1888.0,
+        "allocs/op": 6.0
+      },
+      {
+        "iterations": 652316,
+        "ns/op": 1821.0,
+        "encoded-B/sample": 5.7,
+        "B/op": 1888.0,
+        "allocs/op": 6.0
+      }
+    ],
+    "wall_seconds": 7.219747333000001,
+    "user_cpu_seconds": 7.112313,
+    "system_cpu_seconds": 0.05156800000000006,
+    "cpu_percent_of_one_core": 99.22620099536383,
+    "cpu_seconds_per_million_samples": 0.015117094434369028,
+    "median_ns_per_chunk": 1824.5,
+    "encoded_bytes_per_sample": 5.7
+  },
+  {
+    "pattern": "exceptions",
+    "codec": "ALP",
+    "operation": "write",
+    "command": [
+      "/tmp/alp-xor2-benchmark.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPChunk$/^exceptions$/^ALP$/^write$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=1s",
+      "-test.cpu=1"
+    ],
+    "samples": [
+      {
+        "iterations": 431755,
+        "ns/op": 2738.0,
+        "encoded-B/sample": 1.808,
+        "B/op": 7264.0,
+        "allocs/op": 11.0
+      },
+      {
+        "iterations": 448448,
+        "ns/op": 2729.0,
+        "encoded-B/sample": 1.808,
+        "B/op": 7264.0,
+        "allocs/op": 11.0
+      },
+      {
+        "iterations": 443054,
+        "ns/op": 2725.0,
+        "encoded-B/sample": 1.808,
+        "B/op": 7264.0,
+        "allocs/op": 11.0
+      },
+      {
+        "iterations": 435752,
+        "ns/op": 2728.0,
+        "encoded-B/sample": 1.808,
+        "B/op": 7264.0,
+        "allocs/op": 11.0
+      },
+      {
+        "iterations": 439432,
+        "ns/op": 2728.0,
+        "encoded-B/sample": 1.808,
+        "B/op": 7264.0,
+        "allocs/op": 11.0
+      },
+      {
+        "iterations": 441950,
+        "ns/op": 2733.0,
+        "encoded-B/sample": 1.808,
+        "B/op": 7264.0,
+        "allocs/op": 11.0
+      }
+    ],
+    "wall_seconds": 7.216735374999999,
+    "user_cpu_seconds": 6.994595999999994,
+    "system_cpu_seconds": 0.078565,
+    "cpu_percent_of_one_core": 98.01053568491135,
+    "cpu_seconds_per_million_samples": 0.02232359083686215,
+    "median_ns_per_chunk": 2728.5,
+    "encoded_bytes_per_sample": 1.808
+  },
+  {
+    "pattern": "exceptions",
+    "codec": "ALP",
+    "operation": "read",
+    "command": [
+      "/tmp/alp-xor2-benchmark.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPChunk$/^exceptions$/^ALP$/^read$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=1s",
+      "-test.cpu=1"
+    ],
+    "samples": [
+      {
+        "iterations": 2677298,
+        "ns/op": 446.0,
+        "MB/s": 2152.4,
+        "encoded-B/sample": 1.808,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 2692615,
+        "ns/op": 444.7,
+        "MB/s": 2158.57,
+        "encoded-B/sample": 1.808,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 2717128,
+        "ns/op": 443.4,
+        "MB/s": 2164.89,
+        "encoded-B/sample": 1.808,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 2676159,
+        "ns/op": 448.3,
+        "MB/s": 2141.24,
+        "encoded-B/sample": 1.808,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 2683964,
+        "ns/op": 448.3,
+        "MB/s": 2141.64,
+        "encoded-B/sample": 1.808,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 2639724,
+        "ns/op": 455.2,
+        "MB/s": 2108.92,
+        "encoded-B/sample": 1.808,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      }
+    ],
+    "wall_seconds": 7.209254291999997,
+    "user_cpu_seconds": 7.169032999999999,
+    "system_cpu_seconds": 0.038439,
+    "cpu_percent_of_one_core": 99.97527772044363,
+    "cpu_seconds_per_million_samples": 0.0037336162635474715,
+    "median_ns_per_chunk": 447.15,
+    "encoded_bytes_per_sample": 1.808
+  },
+  {
+    "pattern": "exceptions",
+    "codec": "XOR2",
+    "operation": "read",
+    "command": [
+      "/tmp/alp-xor2-benchmark.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPChunk$/^exceptions$/^XOR2$/^read$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=1s",
+      "-test.cpu=1"
+    ],
+    "samples": [
+      {
+        "iterations": 1392762,
+        "ns/op": 861.2,
+        "MB/s": 1114.78,
+        "encoded-B/sample": 5.7,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 1395188,
+        "ns/op": 860.3,
+        "MB/s": 1115.9,
+        "encoded-B/sample": 5.7,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 1394202,
+        "ns/op": 861.0,
+        "MB/s": 1114.94,
+        "encoded-B/sample": 5.7,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 1389336,
+        "ns/op": 862.3,
+        "MB/s": 1113.36,
+        "encoded-B/sample": 5.7,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 1397119,
+        "ns/op": 859.8,
+        "MB/s": 1116.56,
+        "encoded-B/sample": 5.7,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 1395424,
+        "ns/op": 859.4,
+        "MB/s": 1117.0,
+        "encoded-B/sample": 5.7,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      }
+    ],
+    "wall_seconds": 7.207040500000005,
+    "user_cpu_seconds": 7.165366000000006,
+    "system_cpu_seconds": 0.039497000000000004,
+    "cpu_percent_of_one_core": 99.96978648864261,
+    "cpu_seconds_per_million_samples": 0.0071784197117394765,
+    "median_ns_per_chunk": 860.65,
+    "encoded_bytes_per_sample": 5.7
+  },
+  {
+    "pattern": "computed",
+    "codec": "ALP",
+    "operation": "write",
+    "command": [
+      "/tmp/alp-xor2-benchmark.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPChunk$/^computed$/^ALP$/^write$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=1s",
+      "-test.cpu=1"
+    ],
+    "samples": [
+      {
+        "iterations": 130544,
+        "ns/op": 9052.0,
+        "encoded-B/sample": 6.742,
+        "B/op": 7264.0,
+        "allocs/op": 11.0
+      },
+      {
+        "iterations": 132951,
+        "ns/op": 9081.0,
+        "encoded-B/sample": 6.742,
+        "B/op": 7264.0,
+        "allocs/op": 11.0
+      },
+      {
+        "iterations": 125192,
+        "ns/op": 9072.0,
+        "encoded-B/sample": 6.742,
+        "B/op": 7264.0,
+        "allocs/op": 11.0
+      },
+      {
+        "iterations": 132847,
+        "ns/op": 9000.0,
+        "encoded-B/sample": 6.742,
+        "B/op": 7264.0,
+        "allocs/op": 11.0
+      },
+      {
+        "iterations": 133622,
+        "ns/op": 8997.0,
+        "encoded-B/sample": 6.742,
+        "B/op": 7264.0,
+        "allocs/op": 11.0
+      },
+      {
+        "iterations": 133600,
+        "ns/op": 9012.0,
+        "encoded-B/sample": 6.742,
+        "B/op": 7264.0,
+        "allocs/op": 11.0
+      }
+    ],
+    "wall_seconds": 7.134790417000005,
+    "user_cpu_seconds": 7.0377069999999975,
+    "system_cpu_seconds": 0.04872199999999993,
+    "cpu_percent_of_one_core": 99.32217466563871,
+    "cpu_seconds_per_million_samples": 0.07486925614511963,
+    "median_ns_per_chunk": 9032.0,
+    "encoded_bytes_per_sample": 6.742
+  },
+  {
+    "pattern": "computed",
+    "codec": "XOR2",
+    "operation": "write",
+    "command": [
+      "/tmp/alp-xor2-benchmark.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPChunk$/^computed$/^XOR2$/^write$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=1s",
+      "-test.cpu=1"
+    ],
+    "samples": [
+      {
+        "iterations": 627368,
+        "ns/op": 1888.0,
+        "encoded-B/sample": 7.117,
+        "B/op": 1888.0,
+        "allocs/op": 6.0
+      },
+      {
+        "iterations": 641166,
+        "ns/op": 1888.0,
+        "encoded-B/sample": 7.117,
+        "B/op": 1888.0,
+        "allocs/op": 6.0
+      },
+      {
+        "iterations": 639517,
+        "ns/op": 1888.0,
+        "encoded-B/sample": 7.117,
+        "B/op": 1888.0,
+        "allocs/op": 6.0
+      },
+      {
+        "iterations": 638001,
+        "ns/op": 1888.0,
+        "encoded-B/sample": 7.117,
+        "B/op": 1888.0,
+        "allocs/op": 6.0
+      },
+      {
+        "iterations": 637258,
+        "ns/op": 1887.0,
+        "encoded-B/sample": 7.117,
+        "B/op": 1888.0,
+        "allocs/op": 6.0
+      },
+      {
+        "iterations": 643192,
+        "ns/op": 1890.0,
+        "encoded-B/sample": 7.117,
+        "B/op": 1888.0,
+        "allocs/op": 6.0
+      }
+    ],
+    "wall_seconds": 7.2326347500000026,
+    "user_cpu_seconds": 7.123587000000001,
+    "system_cpu_seconds": 0.05467299999999997,
+    "cpu_percent_of_one_core": 99.24820273828978,
+    "cpu_seconds_per_million_samples": 0.0156327720025583,
+    "median_ns_per_chunk": 1888.0,
+    "encoded_bytes_per_sample": 7.117
+  },
+  {
+    "pattern": "computed",
+    "codec": "XOR2",
+    "operation": "read",
+    "command": [
+      "/tmp/alp-xor2-benchmark.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPChunk$/^computed$/^XOR2$/^read$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=1s",
+      "-test.cpu=1"
+    ],
+    "samples": [
+      {
+        "iterations": 1345141,
+        "ns/op": 892.5,
+        "MB/s": 1075.63,
+        "encoded-B/sample": 7.117,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 1342526,
+        "ns/op": 893.8,
+        "MB/s": 1074.01,
+        "encoded-B/sample": 7.117,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 1335703,
+        "ns/op": 900.0,
+        "MB/s": 1066.7,
+        "encoded-B/sample": 7.117,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 1338498,
+        "ns/op": 895.4,
+        "MB/s": 1072.19,
+        "encoded-B/sample": 7.117,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 1342635,
+        "ns/op": 894.2,
+        "MB/s": 1073.6,
+        "encoded-B/sample": 7.117,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 1338772,
+        "ns/op": 897.0,
+        "MB/s": 1070.23,
+        "encoded-B/sample": 7.117,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      }
+    ],
+    "wall_seconds": 7.210882959000003,
+    "user_cpu_seconds": 7.170951000000002,
+    "system_cpu_seconds": 0.038118000000000096,
+    "cpu_percent_of_one_core": 99.97484414862487,
+    "cpu_seconds_per_million_samples": 0.007469044015031193,
+    "median_ns_per_chunk": 894.8,
+    "encoded_bytes_per_sample": 7.117
+  },
+  {
+    "pattern": "computed",
+    "codec": "ALP",
+    "operation": "read",
+    "command": [
+      "/tmp/alp-xor2-benchmark.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPChunk$/^computed$/^ALP$/^read$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=1s",
+      "-test.cpu=1"
+    ],
+    "samples": [
+      {
+        "iterations": 1914235,
+        "ns/op": 625.1,
+        "MB/s": 1535.83,
+        "encoded-B/sample": 6.742,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 1915202,
+        "ns/op": 626.2,
+        "MB/s": 1532.95,
+        "encoded-B/sample": 6.742,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 1918036,
+        "ns/op": 626.4,
+        "MB/s": 1532.5,
+        "encoded-B/sample": 6.742,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 1909640,
+        "ns/op": 628.8,
+        "MB/s": 1526.61,
+        "encoded-B/sample": 6.742,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 1906594,
+        "ns/op": 630.8,
+        "MB/s": 1521.98,
+        "encoded-B/sample": 6.742,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 1906448,
+        "ns/op": 629.9,
+        "MB/s": 1523.98,
+        "encoded-B/sample": 6.742,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      }
+    ],
+    "wall_seconds": 7.210458750000001,
+    "user_cpu_seconds": 7.173124000000001,
+    "system_cpu_seconds": 0.03464299999999998,
+    "cpu_percent_of_one_core": 99.96266881077436,
+    "cpu_seconds_per_million_samples": 0.005236609705797351,
+    "median_ns_per_chunk": 627.5999999999999,
+    "encoded_bytes_per_sample": 6.742
+  },
+  {
+    "pattern": "random",
+    "codec": "XOR2",
+    "operation": "write",
+    "command": [
+      "/tmp/alp-xor2-benchmark.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPChunk$/^random$/^XOR2$/^write$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=1s",
+      "-test.cpu=1"
+    ],
+    "samples": [
+      {
+        "iterations": 510272,
+        "ns/op": 2260.0,
+        "encoded-B/sample": 8.483,
+        "B/op": 3296.0,
+        "allocs/op": 7.0
+      },
+      {
+        "iterations": 532923,
+        "ns/op": 2257.0,
+        "encoded-B/sample": 8.483,
+        "B/op": 3296.0,
+        "allocs/op": 7.0
+      },
+      {
+        "iterations": 534916,
+        "ns/op": 2251.0,
+        "encoded-B/sample": 8.483,
+        "B/op": 3296.0,
+        "allocs/op": 7.0
+      },
+      {
+        "iterations": 537164,
+        "ns/op": 2271.0,
+        "encoded-B/sample": 8.483,
+        "B/op": 3296.0,
+        "allocs/op": 7.0
+      },
+      {
+        "iterations": 533898,
+        "ns/op": 2253.0,
+        "encoded-B/sample": 8.483,
+        "B/op": 3296.0,
+        "allocs/op": 7.0
+      },
+      {
+        "iterations": 537343,
+        "ns/op": 2255.0,
+        "encoded-B/sample": 8.483,
+        "B/op": 3296.0,
+        "allocs/op": 7.0
+      }
+    ],
+    "wall_seconds": 7.2025963330000025,
+    "user_cpu_seconds": 7.068227999999991,
+    "system_cpu_seconds": 0.044333999999999985,
+    "cpu_percent_of_one_core": 98.74997391444107,
+    "cpu_seconds_per_million_samples": 0.018600675471267026,
+    "median_ns_per_chunk": 2256.0,
+    "encoded_bytes_per_sample": 8.483
+  },
+  {
+    "pattern": "random",
+    "codec": "ALP",
+    "operation": "write",
+    "command": [
+      "/tmp/alp-xor2-benchmark.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPChunk$/^random$/^ALP$/^write$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=1s",
+      "-test.cpu=1"
+    ],
+    "samples": [
+      {
+        "iterations": 101277,
+        "ns/op": 11815.0,
+        "encoded-B/sample": 8.267,
+        "B/op": 8672.0,
+        "allocs/op": 12.0
+      },
+      {
+        "iterations": 101847,
+        "ns/op": 11848.0,
+        "encoded-B/sample": 8.267,
+        "B/op": 8672.0,
+        "allocs/op": 12.0
+      },
+      {
+        "iterations": 101600,
+        "ns/op": 11846.0,
+        "encoded-B/sample": 8.267,
+        "B/op": 8672.0,
+        "allocs/op": 12.0
+      },
+      {
+        "iterations": 101500,
+        "ns/op": 11838.0,
+        "encoded-B/sample": 8.267,
+        "B/op": 8672.0,
+        "allocs/op": 12.0
+      },
+      {
+        "iterations": 101232,
+        "ns/op": 11904.0,
+        "encoded-B/sample": 8.267,
+        "B/op": 8672.0,
+        "allocs/op": 12.0
+      },
+      {
+        "iterations": 101665,
+        "ns/op": 11851.0,
+        "encoded-B/sample": 8.267,
+        "B/op": 8672.0,
+        "allocs/op": 12.0
+      }
+    ],
+    "wall_seconds": 7.226421125000002,
+    "user_cpu_seconds": 7.140304,
+    "system_cpu_seconds": 0.04649899999999996,
+    "cpu_percent_of_one_core": 99.45176008545998,
+    "cpu_seconds_per_million_samples": 0.09832204931368316,
+    "median_ns_per_chunk": 11847.0,
+    "encoded_bytes_per_sample": 8.267
+  },
+  {
+    "pattern": "random",
+    "codec": "ALP",
+    "operation": "read",
+    "command": [
+      "/tmp/alp-xor2-benchmark.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPChunk$/^random$/^ALP$/^read$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=1s",
+      "-test.cpu=1"
+    ],
+    "samples": [
+      {
+        "iterations": 3180614,
+        "ns/op": 373.8,
+        "MB/s": 2568.28,
+        "encoded-B/sample": 8.267,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 3199264,
+        "ns/op": 374.6,
+        "MB/s": 2562.48,
+        "encoded-B/sample": 8.267,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 3209072,
+        "ns/op": 374.2,
+        "MB/s": 2565.5,
+        "encoded-B/sample": 8.267,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 3197833,
+        "ns/op": 375.6,
+        "MB/s": 2556.16,
+        "encoded-B/sample": 8.267,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 3193554,
+        "ns/op": 374.7,
+        "MB/s": 2562.31,
+        "encoded-B/sample": 8.267,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 3202100,
+        "ns/op": 374.2,
+        "MB/s": 2565.45,
+        "encoded-B/sample": 8.267,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      }
+    ],
+    "wall_seconds": 7.192659708999997,
+    "user_cpu_seconds": 7.153706000000014,
+    "system_cpu_seconds": 0.036542000000000074,
+    "cpu_percent_of_one_core": 99.96646985819494,
+    "cpu_seconds_per_million_samples": 0.0031236246642349693,
+    "median_ns_per_chunk": 374.4,
+    "encoded_bytes_per_sample": 8.267
+  },
+  {
+    "pattern": "random",
+    "codec": "XOR2",
+    "operation": "read",
+    "command": [
+      "/tmp/alp-xor2-benchmark.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPChunk$/^random$/^XOR2$/^read$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=1s",
+      "-test.cpu=1"
+    ],
+    "samples": [
+      {
+        "iterations": 1258782,
+        "ns/op": 953.1,
+        "MB/s": 1007.19,
+        "encoded-B/sample": 8.483,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 1254966,
+        "ns/op": 955.7,
+        "MB/s": 1004.54,
+        "encoded-B/sample": 8.483,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 1256187,
+        "ns/op": 956.5,
+        "MB/s": 1003.66,
+        "encoded-B/sample": 8.483,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 1254578,
+        "ns/op": 956.4,
+        "MB/s": 1003.77,
+        "encoded-B/sample": 8.483,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 1255182,
+        "ns/op": 956.5,
+        "MB/s": 1003.63,
+        "encoded-B/sample": 8.483,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      },
+      {
+        "iterations": 1254517,
+        "ns/op": 956.7,
+        "MB/s": 1003.48,
+        "encoded-B/sample": 8.483,
+        "B/op": 0.0,
+        "allocs/op": 0.0
+      }
+    ],
+    "wall_seconds": 7.209770375000005,
+    "user_cpu_seconds": 7.168745000000001,
+    "system_cpu_seconds": 0.03879099999999991,
+    "cpu_percent_of_one_core": 99.9690090684753,
+    "cpu_seconds_per_million_samples": 0.00797200822063409,
+    "median_ns_per_chunk": 956.45,
+    "encoded_bytes_per_sample": 8.483
+  }
+]

@@ -1,0 +1,44 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+BenchmarkALPHistograms/integer/codec/write   	   35620	     33441 ns/op	        10.68 encoded-B/sample	   16544 B/op	      55 allocs/op
+BenchmarkALPHistograms/integer/codec/write   	   36279	     32999 ns/op	        10.68 encoded-B/sample	   16544 B/op	      55 allocs/op
+BenchmarkALPHistograms/integer/codec/write   	   36420	     33050 ns/op	        10.68 encoded-B/sample	   16544 B/op	      55 allocs/op
+BenchmarkALPHistograms/integer/codec/write   	   36318	     33140 ns/op	        10.68 encoded-B/sample	   16544 B/op	      55 allocs/op
+BenchmarkALPHistograms/integer/codec/write   	   36578	     33043 ns/op	        10.68 encoded-B/sample	   16544 B/op	      55 allocs/op
+BenchmarkALPHistograms/integer/codec/write   	   36168	     33102 ns/op	        10.68 encoded-B/sample	   16544 B/op	      55 allocs/op
+PASS
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+BenchmarkALPHistograms/integer/codec/read    	  314191	      3713 ns/op	        10.68 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/integer/codec/read    	  324114	      3706 ns/op	        10.68 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/integer/codec/read    	  322651	      3712 ns/op	        10.68 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/integer/codec/read    	  322080	      3720 ns/op	        10.68 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/integer/codec/read    	  323811	      3718 ns/op	        10.68 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/integer/codec/read    	  319401	      3750 ns/op	        10.68 encoded-B/sample	       0 B/op	       0 allocs/op
+PASS
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+BenchmarkALPHistograms/float/codec/write   	   22695	     52879 ns/op	        17.27 encoded-B/sample	   25768 B/op	      58 allocs/op
+BenchmarkALPHistograms/float/codec/write   	   22766	     53088 ns/op	        17.27 encoded-B/sample	   25768 B/op	      58 allocs/op
+BenchmarkALPHistograms/float/codec/write   	   22330	     53296 ns/op	        17.27 encoded-B/sample	   25768 B/op	      58 allocs/op
+BenchmarkALPHistograms/float/codec/write   	   22653	     52977 ns/op	        17.27 encoded-B/sample	   25768 B/op	      58 allocs/op
+BenchmarkALPHistograms/float/codec/write   	   22604	     53088 ns/op	        17.27 encoded-B/sample	   25768 B/op	      58 allocs/op
+BenchmarkALPHistograms/float/codec/write   	   22573	     53064 ns/op	        17.27 encoded-B/sample	   25768 B/op	      58 allocs/op
+PASS
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+BenchmarkALPHistograms/float/codec/read    	  323272	      3705 ns/op	        17.27 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/float/codec/read    	  324514	      3674 ns/op	        17.27 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/float/codec/read    	  325502	      3665 ns/op	        17.27 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/float/codec/read    	  321272	      3722 ns/op	        17.27 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/float/codec/read    	  320133	      3737 ns/op	        17.27 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/float/codec/read    	  318004	      3746 ns/op	        17.27 encoded-B/sample	       0 B/op	       0 allocs/op
+PASS

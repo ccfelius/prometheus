@@ -1,0 +1,110 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+BenchmarkALPChunk/constant/codec/write   	 2112361	       565.7 ns/op	         0.2833 encoded-B/sample	     224 B/op	       3 allocs/op
+BenchmarkALPChunk/constant/codec/write   	 2133426	       562.5 ns/op	         0.2833 encoded-B/sample	     224 B/op	       3 allocs/op
+BenchmarkALPChunk/constant/codec/write   	 2133483	       562.3 ns/op	         0.2833 encoded-B/sample	     224 B/op	       3 allocs/op
+BenchmarkALPChunk/constant/codec/write   	 2137615	       562.3 ns/op	         0.2833 encoded-B/sample	     224 B/op	       3 allocs/op
+BenchmarkALPChunk/constant/codec/write   	 2136390	       561.9 ns/op	         0.2833 encoded-B/sample	     224 B/op	       3 allocs/op
+BenchmarkALPChunk/constant/codec/write   	 2131053	       565.7 ns/op	         0.2833 encoded-B/sample	     224 B/op	       3 allocs/op
+PASS
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+BenchmarkALPChunk/constant/codec/read    	 3245439	       371.9 ns/op	2581.15 MB/s	         0.2833 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/constant/codec/read    	 3208234	       367.4 ns/op	2613.28 MB/s	         0.2833 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/constant/codec/read    	 3278120	       368.2 ns/op	2607.22 MB/s	         0.2833 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/constant/codec/read    	 3264266	       378.3 ns/op	2537.40 MB/s	         0.2833 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/constant/codec/read    	 3044025	       392.9 ns/op	2443.47 MB/s	         0.2833 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/constant/codec/read    	 3073953	       382.2 ns/op	2511.92 MB/s	         0.2833 encoded-B/sample	       0 B/op	       0 allocs/op
+PASS
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+BenchmarkALPChunk/decimal/codec/write   	  633694	      1834 ns/op	         5.775 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/decimal/codec/write   	  660073	      1828 ns/op	         5.775 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/decimal/codec/write   	  668284	      1821 ns/op	         5.775 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/decimal/codec/write   	  663518	      1823 ns/op	         5.775 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/decimal/codec/write   	  659089	      1828 ns/op	         5.775 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/decimal/codec/write   	  660174	      1827 ns/op	         5.775 encoded-B/sample	    1888 B/op	       6 allocs/op
+PASS
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+BenchmarkALPChunk/decimal/codec/read    	 1361378	       879.2 ns/op	1091.89 MB/s	         5.775 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/decimal/codec/read    	 1372940	       874.0 ns/op	1098.44 MB/s	         5.775 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/decimal/codec/read    	 1375347	       873.3 ns/op	1099.33 MB/s	         5.775 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/decimal/codec/read    	 1375803	       872.8 ns/op	1099.95 MB/s	         5.775 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/decimal/codec/read    	 1372624	       874.9 ns/op	1097.22 MB/s	         5.775 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/decimal/codec/read    	 1369231	       875.8 ns/op	1096.11 MB/s	         5.775 encoded-B/sample	       0 B/op	       0 allocs/op
+PASS
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+BenchmarkALPChunk/exceptions/codec/write   	  648742	      1839 ns/op	         5.700 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/exceptions/codec/write   	  661893	      1824 ns/op	         5.700 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/exceptions/codec/write   	  662408	      1823 ns/op	         5.700 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/exceptions/codec/write   	  659976	      1825 ns/op	         5.700 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/exceptions/codec/write   	  663771	      1825 ns/op	         5.700 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/exceptions/codec/write   	  652316	      1821 ns/op	         5.700 encoded-B/sample	    1888 B/op	       6 allocs/op
+PASS
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+BenchmarkALPChunk/exceptions/codec/read    	 1392762	       861.2 ns/op	1114.78 MB/s	         5.700 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/exceptions/codec/read    	 1395188	       860.3 ns/op	1115.90 MB/s	         5.700 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/exceptions/codec/read    	 1394202	       861.0 ns/op	1114.94 MB/s	         5.700 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/exceptions/codec/read    	 1389336	       862.3 ns/op	1113.36 MB/s	         5.700 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/exceptions/codec/read    	 1397119	       859.8 ns/op	1116.56 MB/s	         5.700 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/exceptions/codec/read    	 1395424	       859.4 ns/op	1117.00 MB/s	         5.700 encoded-B/sample	       0 B/op	       0 allocs/op
+PASS
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+BenchmarkALPChunk/computed/codec/write   	  627368	      1888 ns/op	         7.117 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/computed/codec/write   	  641166	      1888 ns/op	         7.117 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/computed/codec/write   	  639517	      1888 ns/op	         7.117 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/computed/codec/write   	  638001	      1888 ns/op	         7.117 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/computed/codec/write   	  637258	      1887 ns/op	         7.117 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/computed/codec/write   	  643192	      1890 ns/op	         7.117 encoded-B/sample	    1888 B/op	       6 allocs/op
+PASS
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+BenchmarkALPChunk/computed/codec/read    	 1345141	       892.5 ns/op	1075.63 MB/s	         7.117 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/computed/codec/read    	 1342526	       893.8 ns/op	1074.01 MB/s	         7.117 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/computed/codec/read    	 1335703	       900.0 ns/op	1066.70 MB/s	         7.117 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/computed/codec/read    	 1338498	       895.4 ns/op	1072.19 MB/s	         7.117 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/computed/codec/read    	 1342635	       894.2 ns/op	1073.60 MB/s	         7.117 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/computed/codec/read    	 1338772	       897.0 ns/op	1070.23 MB/s	         7.117 encoded-B/sample	       0 B/op	       0 allocs/op
+PASS
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+BenchmarkALPChunk/random/codec/write   	  510272	      2260 ns/op	         8.483 encoded-B/sample	    3296 B/op	       7 allocs/op
+BenchmarkALPChunk/random/codec/write   	  532923	      2257 ns/op	         8.483 encoded-B/sample	    3296 B/op	       7 allocs/op
+BenchmarkALPChunk/random/codec/write   	  534916	      2251 ns/op	         8.483 encoded-B/sample	    3296 B/op	       7 allocs/op
+BenchmarkALPChunk/random/codec/write   	  537164	      2271 ns/op	         8.483 encoded-B/sample	    3296 B/op	       7 allocs/op
+BenchmarkALPChunk/random/codec/write   	  533898	      2253 ns/op	         8.483 encoded-B/sample	    3296 B/op	       7 allocs/op
+BenchmarkALPChunk/random/codec/write   	  537343	      2255 ns/op	         8.483 encoded-B/sample	    3296 B/op	       7 allocs/op
+PASS
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+BenchmarkALPChunk/random/codec/read    	 1258782	       953.1 ns/op	1007.19 MB/s	         8.483 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/random/codec/read    	 1254966	       955.7 ns/op	1004.54 MB/s	         8.483 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/random/codec/read    	 1256187	       956.5 ns/op	1003.66 MB/s	         8.483 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/random/codec/read    	 1254578	       956.4 ns/op	1003.77 MB/s	         8.483 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/random/codec/read    	 1255182	       956.5 ns/op	1003.63 MB/s	         8.483 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/random/codec/read    	 1254517	       956.7 ns/op	1003.48 MB/s	         8.483 encoded-B/sample	       0 B/op	       0 allocs/op
+PASS

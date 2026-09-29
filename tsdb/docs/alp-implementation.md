@@ -11,6 +11,9 @@ The [optimization results](alp-optimization-results.md) describe the implemented
 changes, current measurements, adaptive configuration, and histogram version 2.
 The measurements below are the original implementation baseline.
 
+For the complete current code walkthrough, see the
+[detailed implementation report](alp-implementation-details.md).
+
 ## Build and enable
 
 Ordinary builds use the scalar decoder and retain the repository's Go 1.26.7
