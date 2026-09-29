@@ -179,3 +179,22 @@ func (e *ALPEncoder) RecodeHistogramV2(source Chunk) (Chunk, error) {
 	}
 	return &ALPHistogramChunk{encoding: EncALPHistogram, version: alpHistogramCompactVersion, encoded: b}, nil
 }
+
+// RecodeHistogramV3 converts a finalized integer or float histogram using packed
+// reset hints and, for integer histograms, a packed first sample. Readers must
+// support histogram version 3. The result owns its bytes; scratch is reused.
+func (e *ALPEncoder) RecodeHistogramV3(source Chunk) (Chunk, error) {
+	enc := EncALPHistogram
+	switch source.Encoding() {
+	case EncHistogram, EncHistogramST:
+	case EncFloatHistogram, EncFloatHistogramST:
+		enc = EncALPFloatHistogram
+	default:
+		return nil, errInvalidALP
+	}
+	b, err := alpEncodeHistogramsWithWorkspace(source, enc, &e.counts, alpHistogramMetadataVersion, &e.hist)
+	if err != nil {
+		return nil, err
+	}
+	return &ALPHistogramChunk{encoding: enc, version: alpHistogramMetadataVersion, encoded: b}, nil
+}

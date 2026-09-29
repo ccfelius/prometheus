@@ -1256,7 +1256,7 @@ func TestStreamALPResponse(t *testing.T) {
 }
 
 func TestStreamALPHistogramResponse(t *testing.T) {
-	for _, enc := range []chunkenc.Encoding{chunkenc.EncALPHistogram, chunkenc.EncALPFloatHistogram, chunkenc.EncHistogramST} {
+	for _, enc := range []chunkenc.Encoding{chunkenc.EncALPHistogram, chunkenc.EncALPFloatHistogram, chunkenc.EncHistogramST, chunkenc.EncFloatHistogramST} {
 		for _, st := range []int64{0, 1} {
 			t.Run(fmt.Sprintf("%s/st=%d", enc, st), func(t *testing.T) {
 				c, err := chunkenc.NewEmptyChunk(enc)
@@ -1264,15 +1264,16 @@ func TestStreamALPHistogramResponse(t *testing.T) {
 				a, err := c.Appender()
 				require.NoError(t, err)
 				for i := range 241 {
-					if enc != chunkenc.EncALPFloatHistogram {
+					if enc != chunkenc.EncALPFloatHistogram && enc != chunkenc.EncFloatHistogramST {
 						_, _, a, err = a.AppendHistogram(nil, st, int64(i), tsdbutil.GenerateTestHistogram(int64(i)), true)
 					} else {
 						_, _, a, err = a.AppendFloatHistogram(nil, st, int64(i), tsdbutil.GenerateTestFloatHistogram(int64(i)), true)
 					}
 					require.NoError(t, err)
 				}
-				if enc == chunkenc.EncHistogramST {
-					c, err = chunkenc.RecodeToALPHistogramV2(c)
+				if enc == chunkenc.EncHistogramST || enc == chunkenc.EncFloatHistogramST {
+					var encoder chunkenc.ALPEncoder
+					c, err = encoder.RecodeHistogramV3(c)
 					require.NoError(t, err)
 				}
 				css := newMockChunkSeriesSet([]*prompb.ChunkedSeries{{Chunks: []prompb.Chunk{{Type: prompb.Chunk_Encoding(c.Encoding()), Data: c.Bytes(), MinTimeMs: 0, MaxTimeMs: 240}}}})
@@ -1283,7 +1284,7 @@ func TestStreamALPHistogramResponse(t *testing.T) {
 				for _, series := range writer.actual {
 					for _, raw := range series.Chunks {
 						wantType := chunkenc.ValHistogram
-						if enc == chunkenc.EncALPFloatHistogram {
+						if enc == chunkenc.EncALPFloatHistogram || enc == chunkenc.EncFloatHistogramST {
 							wantType = chunkenc.ValFloatHistogram
 						}
 						require.Equal(t, prompb.Chunk_Encoding(wantType.ChunkEncoding(false, st != 0)), raw.Type)

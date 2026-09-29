@@ -1091,8 +1091,8 @@ func (p DefaultBlockPopulator) PopulateBlock(ctx context.Context, metrics *Compa
 				} else {
 					var c chunkenc.Chunk
 					var err error
-					if autoHistograms && (old.Encoding() == chunkenc.EncHistogram || old.Encoding() == chunkenc.EncHistogramST) {
-						c, err = alpEncoder.RecodeHistogramV2(old)
+					if autoHistograms {
+						c, err = alpEncoder.RecodeHistogramV3(old)
 					} else {
 						c, err = alpEncoder.Recode(old)
 					}

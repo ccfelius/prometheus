@@ -8,8 +8,7 @@ always support start timestamps. They remain experimental and opt-in.
 
 `histograms: auto` keeps the existing histogram codec in Head and trials ALP
 at compaction, retaining the source unless the candidate saves at least 5%
-including headers. Integer candidates use version 2; float candidates use version
-1. Small or oversized legacy chunks can bypass the trial. Explicit `alp` continues
+including headers. Integer and float candidates use version 3. Small or oversized legacy chunks can bypass the trial. Explicit `alp` continues
 writing version 1.
 
 The mutable representation uses the existing ST histogram appender to maintain
@@ -103,8 +102,29 @@ compaction compares complete bytes and retains the legacy source when it wins.
 Both versions support append resumption, snapshots, scalar/SIMD reads, and remote
 read conversion. Resuming a version 2 chunk preserves that version, including a
 new chunk created by layout/reset handling. Version 1-only readers reject version
-2. Selecting the new `auto` mode opts into version 2 integer histogram output.
+2. Earlier `auto` writers used version 2 integer histogram output.
 Version 2 is rejected for floating-count histograms (encoding 9).
+
+## Format, version 3
+
+Version 3 is defined for both histogram encodings. It changes two sections:
+
+- Sample hints occupy `ceil(samples/4)` bytes. Hint `i` occupies bits
+  `2*(i%4)` through `2*(i%4)+1` of byte `i/4`. Unused high bits in the last
+  byte must be zero. All four existing reset-hint values are preserved.
+- The first integer sample uses length-prefixed integer blocks (modes 0 or 1
+  above), with at most 128 fields per block, instead of raw uint64 fields.
+  These blocks contain absolute count/zero-count and zigzag bucket fields.
+  Subsequent blocks start a separate stream of predicted differences with
+  zero initial deltas, also with at most 128 fields per block.
+
+Floating-count numeric blocks remain at most 1,024 values. All other fields
+retain version 1 semantics; the embedded timestamp/sum stream is version 1.
+Empty chunks contain only the four-byte header. Append resumption preserves
+version 3, including chunks created by layout/reset handling. Version 1/2
+readers reject version 3. Adaptive histogram compaction now opts into this
+format for both integer and float histograms; explicit `alp` still writes
+version 1. A 120-sample chunk uses 30 hint bytes instead of 120.
 
 ## Integration and compatibility
 

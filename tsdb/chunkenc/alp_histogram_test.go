@@ -16,6 +16,7 @@ package chunkenc
 import (
 	"math"
 	"slices"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -153,7 +154,10 @@ func TestALPHistograms(t *testing.T) {
 				want, got := build(legacy), build(enc)
 				require.Len(t, got, len(want))
 				for i, c := range got {
-					variants := []Chunk{c}
+					var encoder ALPEncoder
+					v3, err := encoder.RecodeHistogramV3(want[i])
+					require.NoError(t, err)
+					variants := []Chunk{c, v3}
 					if enc == EncALPHistogram {
 						v2, err := RecodeToALPHistogramV2(want[i])
 						require.NoError(t, err)
@@ -213,7 +217,10 @@ func TestALPHistogramCorruption(t *testing.T) {
 			}
 			require.NoError(t, err)
 		}
-		variants := [][]byte{c.Bytes()}
+		var encoder ALPEncoder
+		v3, err := encoder.RecodeHistogramV3(c.(*ALPHistogramChunk).inner)
+		require.NoError(t, err)
+		variants := [][]byte{c.Bytes(), v3.Bytes()}
 		if enc == EncALPHistogram {
 			v2, err := RecodeToALPHistogramV2(c.(*ALPHistogramChunk).inner)
 			require.NoError(t, err)
@@ -246,6 +253,9 @@ func FuzzALPHistogramDecode(f *testing.F) {
 			_, _, _, _ = a.AppendFloatHistogram(nil, 1, 2, tsdbutil.GenerateTestFloatHistogram(0), true)
 		}
 		f.Add(byte(enc), c.Bytes())
+		var encoder ALPEncoder
+		v3, _ := encoder.RecodeHistogramV3(c.(*ALPHistogramChunk).inner)
+		f.Add(byte(enc), v3.Bytes())
 		if enc == EncALPHistogram {
 			v2, _ := RecodeToALPHistogramV2(c.(*ALPHistogramChunk).inner)
 			f.Add(byte(enc), v2.Bytes())
@@ -276,18 +286,18 @@ func BenchmarkALPHistograms(b *testing.B) {
 	fhs := tsdbutil.GenerateTestFloatHistograms(120)
 	for _, variant := range []struct {
 		enc     Encoding
-		compact bool
-	}{{EncHistogramST, false}, {EncALPHistogram, false}, {EncFloatHistogramST, false}, {EncALPFloatHistogram, false}, {EncALPHistogram, true}} {
+		version byte
+	}{{EncHistogramST, 0}, {EncALPHistogram, 1}, {EncFloatHistogramST, 0}, {EncALPFloatHistogram, 1}, {EncALPHistogram, 2}, {EncALPHistogram, 3}, {EncALPFloatHistogram, 3}} {
 		enc := variant.enc
 		name := enc.String()
-		if variant.compact {
-			name += "V2"
+		if variant.version > 1 {
+			name += "V" + strconv.Itoa(int(variant.version))
 		}
 		b.Run(name, func(b *testing.B) {
 			build := func() Chunk {
 				c, _ := NewEmptyChunk(enc)
-				if variant.compact {
-					c.(*ALPHistogramChunk).version = alpHistogramCompactVersion
+				if variant.version > 0 {
+					c.(*ALPHistogramChunk).version = variant.version
 				}
 				a, _ := c.Appender()
 				for i := range 120 {
@@ -334,5 +344,32 @@ func BenchmarkALPHistograms(b *testing.B) {
 				b.ReportMetric(float64(len(data))/120, "encoded-B/sample")
 			})
 		})
+	}
+}
+
+func TestALPHistogramV3WideFirstSample(t *testing.T) {
+	for _, fields := range []int{0, 1, 127, 128, 129, 1025} {
+		c := NewHistogramSTChunk()
+		a, _ := c.Appender()
+		h := &histogram.Histogram{CounterResetHint: histogram.GaugeType, Schema: 1, PositiveSpans: []histogram.Span{{Length: uint32(fields)}}, PositiveBuckets: make([]int64, fields)}
+		for i := range h.PositiveBuckets {
+			h.PositiveBuckets[i] = int64(i%19) - 9
+		}
+		for i := range 5 {
+			h.Count = math.MaxUint64 - uint64(i)
+			_, _, a, _ = a.AppendHistogram(nil, 1, int64(i), h, true)
+		}
+		var e ALPEncoder
+		encoded, err := e.RecodeHistogramV3(c)
+		require.NoError(t, err)
+		ref, it := c.Iterator(nil), encoded.Iterator(nil)
+		for ref.Next() != ValNone {
+			require.Equal(t, ValHistogram, it.Next())
+			_, want := ref.AtHistogram(nil)
+			_, got := it.AtHistogram(nil)
+			require.Equal(t, want, got)
+		}
+		require.Equal(t, ValNone, it.Next())
+		require.NoError(t, it.Err())
 	}
 }

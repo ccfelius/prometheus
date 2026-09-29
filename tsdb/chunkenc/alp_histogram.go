@@ -27,6 +27,7 @@ import (
 const MaxSamplesPerALPHistogramChunk = histogramSTSampleCountMask
 
 const alpHistogramCompactVersion = 2
+const alpHistogramMetadataVersion = 3
 
 // ALPHistogramChunk stores histogram sums and floating-point counts in ALP
 // vectors. Integer counts use lossless integer frame-of-reference packing.
@@ -74,7 +75,7 @@ func RecodeToALPHistogramV2(source Chunk) (Chunk, error) {
 }
 
 func alpValidHistogramVersion(version byte, enc Encoding) bool {
-	return version == alpVersion || version == alpHistogramCompactVersion && enc == EncALPHistogram
+	return version == alpVersion || version == alpHistogramMetadataVersion || version == alpHistogramCompactVersion && enc == EncALPHistogram
 }
 
 // Encoding returns the integer- or floating-count ALP histogram encoding.
@@ -224,6 +225,7 @@ func (a *alpHistogramAppender) AppendFloatHistogram(prev Appender, st, t int64, 
 type alpHistogramNumbers struct {
 	previous, delta           []uint64
 	first                     bool
+	compactFirst              bool
 	src                       []byte
 	floats                    []float64
 	ints                      []uint64
@@ -264,6 +266,28 @@ func (r *alpHistogramNumbers) refill() bool {
 
 func (r *alpHistogramNumbers) integerSample() []uint64 {
 	if r.first {
+		if r.compactFirst {
+			for offset := 0; offset < len(r.previous); {
+				if len(r.src) < 4 {
+					r.err = errInvalidALP
+					return r.previous
+				}
+				size := uint64(binary.LittleEndian.Uint32(r.src))
+				if size > uint64(len(r.src)-4) {
+					r.err = errInvalidALP
+					return r.previous
+				}
+				take := min(r.blockSize, len(r.previous)-offset)
+				r.err = alpDecodeIntegers(r.previous[offset:offset+take], r.src[4:4+int(size)], &r.scratch)
+				if r.err != nil {
+					return r.previous
+				}
+				r.src = r.src[4+int(size):]
+				offset += take
+			}
+			r.first = false
+			return r.previous
+		}
 		if len(r.src)/8 < len(r.previous) {
 			r.err = errInvalidALP
 			return r.previous
@@ -426,7 +450,7 @@ func alpEncodeHistogramsWithWorkspace(inner Chunk, enc Encoding, state *alpEncod
 		return nil, errInvalidALP
 	}
 	blockSize := alpMaxBlockSize
-	if version == alpHistogramCompactVersion {
+	if enc == EncALPHistogram && version >= alpHistogramCompactVersion {
 		blockSize = alpBlockSize
 	}
 	if n < 0 || n > MaxSamplesPerALPHistogramChunk {
@@ -512,8 +536,19 @@ func alpEncodeHistogramsWithWorkspace(inner Chunk, enc Encoding, state *alpEncod
 				w.previous = append(w.previous[:0], w.fields...)
 				w.delta = slices.Grow(w.delta[:0], fields)[:fields]
 				clear(w.delta)
-				for _, v := range w.fields {
-					numeric = binary.LittleEndian.AppendUint64(numeric, v)
+				if version == alpHistogramMetadataVersion {
+					for remaining := w.fields; len(remaining) > 0; {
+						take := min(blockSize, len(remaining))
+						start := len(numeric)
+						numeric = append(numeric, 0, 0, 0, 0)
+						numeric = alpEncodeIntegers(numeric, remaining[:take])
+						binary.LittleEndian.PutUint32(numeric[start:], uint32(len(numeric)-start-4))
+						remaining = remaining[take:]
+					}
+				} else {
+					for _, v := range w.fields {
+						numeric = binary.LittleEndian.AppendUint64(numeric, v)
+					}
 				}
 			} else {
 				alpPredictIntegersNative(w.previous, w.delta, w.fields)
@@ -579,7 +614,17 @@ func alpEncodeHistogramsWithWorkspace(inner Chunk, enc Encoding, state *alpEncod
 	for _, v := range layout.CustomValues {
 		dst = binary.LittleEndian.AppendUint64(dst, math.Float64bits(v))
 	}
-	dst = append(dst, hints...)
+	if version == alpHistogramMetadataVersion {
+		for i := 0; i < len(hints); i += 4 {
+			var packed byte
+			for j := 0; j < min(4, len(hints)-i); j++ {
+				packed |= hints[i+j] << uint(2*j)
+			}
+			dst = append(dst, packed)
+		}
+	} else {
+		dst = append(dst, hints...)
+	}
 	b = w.times
 	dst = binary.LittleEndian.AppendUint32(dst, uint32(len(b)))
 	dst = append(dst, b...)
@@ -629,6 +674,7 @@ type alpHistogramIterator struct {
 	h                            histogram.Histogram
 	fh                           histogram.FloatHistogram
 	hints                        []byte
+	packedHints                  bool
 	n, index, positive, negative int
 	enc                          Encoding
 	err                          error
@@ -646,8 +692,10 @@ func (it *alpHistogramIterator) reset(src []byte, enc Encoding) {
 		it.err = errInvalidALP
 		return
 	}
+	it.packedHints = src[2] == alpHistogramMetadataVersion
+	it.numbers.compactFirst = it.packedHints
 	it.numbers.blockSize = alpMaxBlockSize
-	if src[2] == alpHistogramCompactVersion {
+	if enc == EncALPHistogram && src[2] >= alpHistogramCompactVersion {
 		it.numbers.blockSize = alpBlockSize
 	}
 	it.n = int(binary.BigEndian.Uint16(src))
@@ -722,16 +770,27 @@ func (it *alpHistogramIterator) reset(src []byte, enc Encoding) {
 		it.layout.CustomValues[i] = math.Float64frombits(binary.LittleEndian.Uint64(src))
 		src = src[8:]
 	}
-	if len(src) < it.n+4 {
+	hintBytes := it.n
+	if it.packedHints {
+		hintBytes = (it.n + 3) / 4
+	}
+	if len(src) < hintBytes+4 {
 		it.err = errInvalidALP
 		return
 	}
-	it.hints = src[:it.n]
-	src = src[it.n:]
-	for _, hint := range it.hints {
-		if hint > byte(histogram.GaugeType) {
+	it.hints = src[:hintBytes]
+	src = src[hintBytes:]
+	if it.packedHints {
+		if it.n%4 != 0 && it.hints[hintBytes-1]>>uint(2*(it.n%4)) != 0 {
 			it.err = errInvalidALP
 			return
+		}
+	} else {
+		for _, hint := range it.hints {
+			if hint > byte(histogram.GaugeType) {
+				it.err = errInvalidALP
+				return
+			}
 		}
 	}
 	size := uint64(binary.LittleEndian.Uint32(src))
@@ -755,7 +814,7 @@ func (it *alpHistogramIterator) reset(src []byte, enc Encoding) {
 	}
 	it.numbers.src, it.numbers.remaining = src, int(fields)*it.n
 	if it.numbers.integer {
-		if fields > uint64(len(src)/8) {
+		if !it.numbers.compactFirst && fields > uint64(len(src)/8) {
 			it.err = errInvalidALP
 			return
 		}
@@ -782,7 +841,12 @@ func (it *alpHistogramIterator) Next() ValueType {
 	}
 	it.index++
 	_, sum := it.times.At()
-	hint := histogram.CounterResetHint(it.hints[it.index])
+	var hint histogram.CounterResetHint
+	if it.packedHints {
+		hint = histogram.CounterResetHint((it.hints[it.index/4] >> uint(2*(it.index%4))) & 3)
+	} else {
+		hint = histogram.CounterResetHint(it.hints[it.index])
+	}
 	if it.enc == EncALPHistogram {
 		h := &it.h
 		h.Schema, h.ZeroThreshold, h.Sum, h.CounterResetHint = it.layout.Schema, it.layout.ZeroThreshold, sum, hint
