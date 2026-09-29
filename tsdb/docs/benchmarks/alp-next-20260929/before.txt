@@ -1,0 +1,288 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+BenchmarkALPChunk/constant/XOR/read-18    	  703574	       331.5 ns/op	2895.75 MB/s	         0.4000 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/constant/XOR/read-18    	  763652	       313.6 ns/op	3061.41 MB/s	         0.4000 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/constant/XOR/read-18    	  796922	       319.2 ns/op	3007.16 MB/s	         0.4000 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/constant/XOR/read-18    	  765224	       319.0 ns/op	3009.73 MB/s	         0.4000 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/constant/XOR/read-18    	  780698	       318.1 ns/op	3018.37 MB/s	         0.4000 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/constant/XOR/read-18    	  770505	       314.2 ns/op	3055.47 MB/s	         0.4000 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/constant/XOR/write-18   	  342775	       689.2 ns/op	         0.4000 encoded-B/sample	     208 B/op	       3 allocs/op
+BenchmarkALPChunk/constant/XOR/write-18   	  354661	       690.5 ns/op	         0.4000 encoded-B/sample	     208 B/op	       3 allocs/op
+BenchmarkALPChunk/constant/XOR/write-18   	  359828	       690.3 ns/op	         0.4000 encoded-B/sample	     208 B/op	       3 allocs/op
+BenchmarkALPChunk/constant/XOR/write-18   	  358714	       689.3 ns/op	         0.4000 encoded-B/sample	     208 B/op	       3 allocs/op
+BenchmarkALPChunk/constant/XOR/write-18   	  357945	       724.4 ns/op	         0.4000 encoded-B/sample	     208 B/op	       3 allocs/op
+BenchmarkALPChunk/constant/XOR/write-18   	  343843	       693.9 ns/op	         0.4000 encoded-B/sample	     208 B/op	       3 allocs/op
+BenchmarkALPChunk/constant/XOR2/read-18   	  571053	       377.6 ns/op	2542.08 MB/s	         0.2833 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/constant/XOR2/read-18   	  673526	       371.8 ns/op	2582.18 MB/s	         0.2833 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/constant/XOR2/read-18   	  638842	       386.4 ns/op	2484.54 MB/s	         0.2833 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/constant/XOR2/read-18   	  640240	       393.9 ns/op	2437.10 MB/s	         0.2833 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/constant/XOR2/read-18   	  624490	       385.3 ns/op	2491.25 MB/s	         0.2833 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/constant/XOR2/read-18   	  630997	       375.1 ns/op	2559.03 MB/s	         0.2833 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/constant/XOR2/write-18  	  437662	       555.4 ns/op	         0.2833 encoded-B/sample	     224 B/op	       3 allocs/op
+BenchmarkALPChunk/constant/XOR2/write-18  	  436016	       540.4 ns/op	         0.2833 encoded-B/sample	     224 B/op	       3 allocs/op
+BenchmarkALPChunk/constant/XOR2/write-18  	  459296	       543.1 ns/op	         0.2833 encoded-B/sample	     224 B/op	       3 allocs/op
+BenchmarkALPChunk/constant/XOR2/write-18  	  440916	       538.6 ns/op	         0.2833 encoded-B/sample	     224 B/op	       3 allocs/op
+BenchmarkALPChunk/constant/XOR2/write-18  	  446476	       539.6 ns/op	         0.2833 encoded-B/sample	     224 B/op	       3 allocs/op
+BenchmarkALPChunk/constant/XOR2/write-18  	  457182	       546.1 ns/op	         0.2833 encoded-B/sample	     224 B/op	       3 allocs/op
+BenchmarkALPChunk/constant/ALP/read-18    	  698054	       339.0 ns/op	2832.26 MB/s	         0.3333 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/constant/ALP/read-18    	  736412	       336.9 ns/op	2849.64 MB/s	         0.3333 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/constant/ALP/read-18    	  736440	       332.7 ns/op	2885.38 MB/s	         0.3333 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/constant/ALP/read-18    	  713930	       340.4 ns/op	2820.48 MB/s	         0.3333 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/constant/ALP/read-18    	  714373	       336.1 ns/op	2856.35 MB/s	         0.3333 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/constant/ALP/read-18    	  721586	       336.1 ns/op	2856.22 MB/s	         0.3333 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/constant/ALP/write-18   	  191084	      1304 ns/op	         0.3333 encoded-B/sample	    7264 B/op	      11 allocs/op
+BenchmarkALPChunk/constant/ALP/write-18   	  180273	      1326 ns/op	         0.3333 encoded-B/sample	    7264 B/op	      11 allocs/op
+BenchmarkALPChunk/constant/ALP/write-18   	  181162	      1306 ns/op	         0.3333 encoded-B/sample	    7264 B/op	      11 allocs/op
+BenchmarkALPChunk/constant/ALP/write-18   	  183415	      1297 ns/op	         0.3333 encoded-B/sample	    7264 B/op	      11 allocs/op
+BenchmarkALPChunk/constant/ALP/write-18   	  184599	      1289 ns/op	         0.3333 encoded-B/sample	    7264 B/op	      11 allocs/op
+BenchmarkALPChunk/constant/ALP/write-18   	  185988	      1314 ns/op	         0.3333 encoded-B/sample	    7264 B/op	      11 allocs/op
+BenchmarkALPChunk/decimal/XOR/read-18     	  232519	      1013 ns/op	 947.78 MB/s	         5.767 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/decimal/XOR/read-18     	  235719	      1009 ns/op	 951.48 MB/s	         5.767 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/decimal/XOR/read-18     	  240235	      1009 ns/op	 951.73 MB/s	         5.767 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/decimal/XOR/read-18     	  236869	      1012 ns/op	 948.62 MB/s	         5.767 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/decimal/XOR/read-18     	  238473	      1009 ns/op	 951.83 MB/s	         5.767 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/decimal/XOR/read-18     	  239311	      1011 ns/op	 949.76 MB/s	         5.767 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/decimal/XOR/write-18    	  113662	      2088 ns/op	         5.767 encoded-B/sample	    1872 B/op	       6 allocs/op
+BenchmarkALPChunk/decimal/XOR/write-18    	  116280	      2137 ns/op	         5.767 encoded-B/sample	    1872 B/op	       6 allocs/op
+BenchmarkALPChunk/decimal/XOR/write-18    	  113072	      2182 ns/op	         5.767 encoded-B/sample	    1872 B/op	       6 allocs/op
+BenchmarkALPChunk/decimal/XOR/write-18    	  112728	      2112 ns/op	         5.767 encoded-B/sample	    1872 B/op	       6 allocs/op
+BenchmarkALPChunk/decimal/XOR/write-18    	  116611	      2081 ns/op	         5.767 encoded-B/sample	    1872 B/op	       6 allocs/op
+BenchmarkALPChunk/decimal/XOR/write-18    	  115696	      2080 ns/op	         5.767 encoded-B/sample	    1872 B/op	       6 allocs/op
+BenchmarkALPChunk/decimal/XOR2/read-18    	  272652	       885.5 ns/op	1084.07 MB/s	         5.775 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/decimal/XOR2/read-18    	  274155	       882.5 ns/op	1087.81 MB/s	         5.775 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/decimal/XOR2/read-18    	  271332	       886.4 ns/op	1083.07 MB/s	         5.775 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/decimal/XOR2/read-18    	  270546	       883.7 ns/op	1086.35 MB/s	         5.775 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/decimal/XOR2/read-18    	  272023	       899.4 ns/op	1067.38 MB/s	         5.775 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/decimal/XOR2/read-18    	  264487	       889.9 ns/op	1078.71 MB/s	         5.775 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/decimal/XOR2/write-18   	  134940	      1784 ns/op	         5.775 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/decimal/XOR2/write-18   	  134353	      1776 ns/op	         5.775 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/decimal/XOR2/write-18   	  135867	      1782 ns/op	         5.775 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/decimal/XOR2/write-18   	  135958	      1777 ns/op	         5.775 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/decimal/XOR2/write-18   	  134821	      1781 ns/op	         5.775 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/decimal/XOR2/write-18   	  136731	      1771 ns/op	         5.775 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/decimal/ALP/read-18     	  525379	       453.2 ns/op	2118.28 MB/s	         1.308 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/decimal/ALP/read-18     	  539067	       461.4 ns/op	2080.74 MB/s	         1.308 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/decimal/ALP/read-18     	  525100	       455.4 ns/op	2108.11 MB/s	         1.308 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/decimal/ALP/read-18     	  520065	       454.5 ns/op	2112.00 MB/s	         1.308 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/decimal/ALP/read-18     	  526536	       454.1 ns/op	2113.96 MB/s	         1.308 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/decimal/ALP/read-18     	  539730	       454.1 ns/op	2113.96 MB/s	         1.308 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/decimal/ALP/write-18    	   92180	      2602 ns/op	         1.308 encoded-B/sample	    7264 B/op	      11 allocs/op
+BenchmarkALPChunk/decimal/ALP/write-18    	   93123	      2632 ns/op	         1.308 encoded-B/sample	    7264 B/op	      11 allocs/op
+BenchmarkALPChunk/decimal/ALP/write-18    	   93465	      2621 ns/op	         1.308 encoded-B/sample	    7264 B/op	      11 allocs/op
+BenchmarkALPChunk/decimal/ALP/write-18    	   93283	      2586 ns/op	         1.308 encoded-B/sample	    7264 B/op	      11 allocs/op
+BenchmarkALPChunk/decimal/ALP/write-18    	   92883	      2610 ns/op	         1.308 encoded-B/sample	    7264 B/op	      11 allocs/op
+BenchmarkALPChunk/decimal/ALP/write-18    	   90181	      2721 ns/op	         1.308 encoded-B/sample	    7264 B/op	      11 allocs/op
+BenchmarkALPChunk/exceptions/XOR/read-18  	  221031	      1074 ns/op	 894.04 MB/s	         7.700 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/exceptions/XOR/read-18  	  225002	      1070 ns/op	 897.49 MB/s	         7.700 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/exceptions/XOR/read-18  	  223972	      1070 ns/op	 897.01 MB/s	         7.700 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/exceptions/XOR/read-18  	  223009	      1073 ns/op	 894.83 MB/s	         7.700 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/exceptions/XOR/read-18  	  224581	      1070 ns/op	 897.60 MB/s	         7.700 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/exceptions/XOR/read-18  	  222793	      1076 ns/op	 892.50 MB/s	         7.700 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/exceptions/XOR/write-18 	   91350	      2629 ns/op	         7.700 encoded-B/sample	    3280 B/op	       7 allocs/op
+BenchmarkALPChunk/exceptions/XOR/write-18 	   90876	      2624 ns/op	         7.700 encoded-B/sample	    3280 B/op	       7 allocs/op
+BenchmarkALPChunk/exceptions/XOR/write-18 	   91650	      2625 ns/op	         7.700 encoded-B/sample	    3280 B/op	       7 allocs/op
+BenchmarkALPChunk/exceptions/XOR/write-18 	   90979	      2645 ns/op	         7.700 encoded-B/sample	    3280 B/op	       7 allocs/op
+BenchmarkALPChunk/exceptions/XOR/write-18 	   91339	      2637 ns/op	         7.700 encoded-B/sample	    3280 B/op	       7 allocs/op
+BenchmarkALPChunk/exceptions/XOR/write-18 	   91459	      2630 ns/op	         7.700 encoded-B/sample	    3280 B/op	       7 allocs/op
+BenchmarkALPChunk/exceptions/XOR2/read-18 	  275545	       859.7 ns/op	1116.73 MB/s	         5.700 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/exceptions/XOR2/read-18 	  281893	       859.5 ns/op	1116.96 MB/s	         5.700 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/exceptions/XOR2/read-18 	  274315	       858.8 ns/op	1117.88 MB/s	         5.700 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/exceptions/XOR2/read-18 	  281665	       856.8 ns/op	1120.45 MB/s	         5.700 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/exceptions/XOR2/read-18 	  279061	       858.5 ns/op	1118.26 MB/s	         5.700 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/exceptions/XOR2/read-18 	  277956	       858.6 ns/op	1118.04 MB/s	         5.700 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/exceptions/XOR2/write-18         	  134720	      1784 ns/op	         5.700 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/exceptions/XOR2/write-18         	  135622	      1775 ns/op	         5.700 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/exceptions/XOR2/write-18         	  136406	      1783 ns/op	         5.700 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/exceptions/XOR2/write-18         	  135495	      1777 ns/op	         5.700 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/exceptions/XOR2/write-18         	  135600	      1775 ns/op	         5.700 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/exceptions/XOR2/write-18         	  135279	      1774 ns/op	         5.700 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/exceptions/ALP/read-18           	  515236	       456.6 ns/op	2102.36 MB/s	         1.808 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/exceptions/ALP/read-18           	  540326	       458.2 ns/op	2095.01 MB/s	         1.808 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/exceptions/ALP/read-18           	  513625	       458.4 ns/op	2094.43 MB/s	         1.808 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/exceptions/ALP/read-18           	  525580	       459.4 ns/op	2089.73 MB/s	         1.808 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/exceptions/ALP/read-18           	  520978	       458.9 ns/op	2092.07 MB/s	         1.808 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/exceptions/ALP/read-18           	  512085	       460.2 ns/op	2086.20 MB/s	         1.808 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/exceptions/ALP/write-18          	   89872	      2604 ns/op	         1.808 encoded-B/sample	    7264 B/op	      11 allocs/op
+BenchmarkALPChunk/exceptions/ALP/write-18          	   91387	      2637 ns/op	         1.808 encoded-B/sample	    7264 B/op	      11 allocs/op
+BenchmarkALPChunk/exceptions/ALP/write-18          	   87711	      2630 ns/op	         1.808 encoded-B/sample	    7264 B/op	      11 allocs/op
+BenchmarkALPChunk/exceptions/ALP/write-18          	   92612	      2596 ns/op	         1.808 encoded-B/sample	    7264 B/op	      11 allocs/op
+BenchmarkALPChunk/exceptions/ALP/write-18          	   91062	      2745 ns/op	         1.808 encoded-B/sample	    7264 B/op	      11 allocs/op
+BenchmarkALPChunk/exceptions/ALP/write-18          	   88904	      2787 ns/op	         1.808 encoded-B/sample	    7264 B/op	      11 allocs/op
+BenchmarkALPChunk/computed/XOR/read-18             	  224017	      1070 ns/op	 896.88 MB/s	         7.108 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/computed/XOR/read-18             	  225464	      1067 ns/op	 899.48 MB/s	         7.108 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/computed/XOR/read-18             	  224559	      1069 ns/op	 897.74 MB/s	         7.108 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/computed/XOR/read-18             	  223130	      1068 ns/op	 898.68 MB/s	         7.108 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/computed/XOR/read-18             	  223491	      1076 ns/op	 892.45 MB/s	         7.108 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/computed/XOR/read-18             	  227520	      1064 ns/op	 902.01 MB/s	         7.108 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/computed/XOR/write-18            	   98960	      2441 ns/op	         7.108 encoded-B/sample	    1872 B/op	       6 allocs/op
+BenchmarkALPChunk/computed/XOR/write-18            	   99469	      2412 ns/op	         7.108 encoded-B/sample	    1872 B/op	       6 allocs/op
+BenchmarkALPChunk/computed/XOR/write-18            	  101136	      2414 ns/op	         7.108 encoded-B/sample	    1872 B/op	       6 allocs/op
+BenchmarkALPChunk/computed/XOR/write-18            	  100335	      2407 ns/op	         7.108 encoded-B/sample	    1872 B/op	       6 allocs/op
+BenchmarkALPChunk/computed/XOR/write-18            	   99361	      2418 ns/op	         7.108 encoded-B/sample	    1872 B/op	       6 allocs/op
+BenchmarkALPChunk/computed/XOR/write-18            	  100082	      2402 ns/op	         7.108 encoded-B/sample	    1872 B/op	       6 allocs/op
+BenchmarkALPChunk/computed/XOR2/read-18            	  270044	       894.1 ns/op	1073.74 MB/s	         7.117 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/computed/XOR2/read-18            	  269275	       894.2 ns/op	1073.53 MB/s	         7.117 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/computed/XOR2/read-18            	  269616	       893.4 ns/op	1074.53 MB/s	         7.117 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/computed/XOR2/read-18            	  268755	       894.7 ns/op	1072.97 MB/s	         7.117 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/computed/XOR2/read-18            	  271184	       896.9 ns/op	1070.40 MB/s	         7.117 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/computed/XOR2/read-18            	  267062	       897.8 ns/op	1069.28 MB/s	         7.117 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/computed/XOR2/write-18           	  130680	      1844 ns/op	         7.117 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/computed/XOR2/write-18           	  131780	      1835 ns/op	         7.117 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/computed/XOR2/write-18           	  130664	      1841 ns/op	         7.117 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/computed/XOR2/write-18           	  131901	      1838 ns/op	         7.117 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/computed/XOR2/write-18           	  129267	      1843 ns/op	         7.117 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/computed/XOR2/write-18           	  132292	      1837 ns/op	         7.117 encoded-B/sample	    1888 B/op	       6 allocs/op
+BenchmarkALPChunk/computed/ALP/read-18             	  379826	       626.9 ns/op	1531.38 MB/s	         6.742 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/computed/ALP/read-18             	  383534	       630.7 ns/op	1522.19 MB/s	         6.742 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/computed/ALP/read-18             	  381156	       631.6 ns/op	1519.91 MB/s	         6.742 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/computed/ALP/read-18             	  382111	       631.0 ns/op	1521.36 MB/s	         6.742 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/computed/ALP/read-18             	  378267	       630.9 ns/op	1521.61 MB/s	         6.742 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/computed/ALP/read-18             	  378939	       631.2 ns/op	1521.00 MB/s	         6.742 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/computed/ALP/write-18            	   26877	      8914 ns/op	         6.742 encoded-B/sample	    7264 B/op	      11 allocs/op
+BenchmarkALPChunk/computed/ALP/write-18            	   26960	      8927 ns/op	         6.742 encoded-B/sample	    7264 B/op	      11 allocs/op
+BenchmarkALPChunk/computed/ALP/write-18            	   27020	      8902 ns/op	         6.742 encoded-B/sample	    7264 B/op	      11 allocs/op
+BenchmarkALPChunk/computed/ALP/write-18            	   27013	      8887 ns/op	         6.742 encoded-B/sample	    7264 B/op	      11 allocs/op
+BenchmarkALPChunk/computed/ALP/write-18            	   27212	      8862 ns/op	         6.742 encoded-B/sample	    7264 B/op	      11 allocs/op
+BenchmarkALPChunk/computed/ALP/write-18            	   27106	      9418 ns/op	         6.742 encoded-B/sample	    7264 B/op	      11 allocs/op
+BenchmarkALPChunk/random/XOR/read-18               	  212908	      1120 ns/op	 857.15 MB/s	         8.475 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/random/XOR/read-18               	  214959	      1121 ns/op	 856.26 MB/s	         8.475 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/random/XOR/read-18               	  215077	      1118 ns/op	 858.67 MB/s	         8.475 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/random/XOR/read-18               	  216130	      1115 ns/op	 860.78 MB/s	         8.475 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/random/XOR/read-18               	  214584	      1118 ns/op	 858.42 MB/s	         8.475 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/random/XOR/read-18               	  214645	      1121 ns/op	 856.26 MB/s	         8.475 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/random/XOR/write-18              	  104352	      2279 ns/op	         8.475 encoded-B/sample	    3280 B/op	       7 allocs/op
+BenchmarkALPChunk/random/XOR/write-18              	  105429	      2281 ns/op	         8.475 encoded-B/sample	    3280 B/op	       7 allocs/op
+BenchmarkALPChunk/random/XOR/write-18              	  102666	      2288 ns/op	         8.475 encoded-B/sample	    3280 B/op	       7 allocs/op
+BenchmarkALPChunk/random/XOR/write-18              	  106882	      2281 ns/op	         8.475 encoded-B/sample	    3280 B/op	       7 allocs/op
+BenchmarkALPChunk/random/XOR/write-18              	  105314	      2286 ns/op	         8.475 encoded-B/sample	    3280 B/op	       7 allocs/op
+BenchmarkALPChunk/random/XOR/write-18              	  105380	      2284 ns/op	         8.475 encoded-B/sample	    3280 B/op	       7 allocs/op
+BenchmarkALPChunk/random/XOR2/read-18              	  250242	       958.3 ns/op	1001.73 MB/s	         8.483 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/random/XOR2/read-18              	  250615	       958.0 ns/op	1002.14 MB/s	         8.483 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/random/XOR2/read-18              	  249362	       958.0 ns/op	1002.09 MB/s	         8.483 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/random/XOR2/read-18              	  251632	       960.9 ns/op	 999.02 MB/s	         8.483 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/random/XOR2/read-18              	  249626	       962.3 ns/op	 997.58 MB/s	         8.483 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/random/XOR2/read-18              	  246594	       964.2 ns/op	 995.65 MB/s	         8.483 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/random/XOR2/write-18             	  107590	      2219 ns/op	         8.483 encoded-B/sample	    3296 B/op	       7 allocs/op
+BenchmarkALPChunk/random/XOR2/write-18             	  108266	      2204 ns/op	         8.483 encoded-B/sample	    3296 B/op	       7 allocs/op
+BenchmarkALPChunk/random/XOR2/write-18             	  108577	      2226 ns/op	         8.483 encoded-B/sample	    3296 B/op	       7 allocs/op
+BenchmarkALPChunk/random/XOR2/write-18             	  107786	      2212 ns/op	         8.483 encoded-B/sample	    3296 B/op	       7 allocs/op
+BenchmarkALPChunk/random/XOR2/write-18             	  108139	      2211 ns/op	         8.483 encoded-B/sample	    3296 B/op	       7 allocs/op
+BenchmarkALPChunk/random/XOR2/write-18             	  109737	      2210 ns/op	         8.483 encoded-B/sample	    3296 B/op	       7 allocs/op
+BenchmarkALPChunk/random/ALP/read-18               	  622003	       371.1 ns/op	2586.96 MB/s	         8.267 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/random/ALP/read-18               	  650824	       376.4 ns/op	2550.22 MB/s	         8.267 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/random/ALP/read-18               	  635901	       378.7 ns/op	2535.21 MB/s	         8.267 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/random/ALP/read-18               	  634116	       372.6 ns/op	2576.19 MB/s	         8.267 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/random/ALP/read-18               	  650024	       372.9 ns/op	2574.66 MB/s	         8.267 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/random/ALP/read-18               	  638106	       373.0 ns/op	2573.49 MB/s	         8.267 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPChunk/random/ALP/write-18              	   20684	     11637 ns/op	         8.267 encoded-B/sample	    8672 B/op	      12 allocs/op
+BenchmarkALPChunk/random/ALP/write-18              	   20559	     11684 ns/op	         8.267 encoded-B/sample	    8672 B/op	      12 allocs/op
+BenchmarkALPChunk/random/ALP/write-18              	   20646	     11643 ns/op	         8.267 encoded-B/sample	    8672 B/op	      12 allocs/op
+BenchmarkALPChunk/random/ALP/write-18              	   20570	     11657 ns/op	         8.267 encoded-B/sample	    8672 B/op	      12 allocs/op
+BenchmarkALPChunk/random/ALP/write-18              	   20413	     11880 ns/op	         8.267 encoded-B/sample	    8672 B/op	      12 allocs/op
+BenchmarkALPChunk/random/ALP/write-18              	   20312	     11694 ns/op	         8.267 encoded-B/sample	    8672 B/op	      12 allocs/op
+BenchmarkALPHistograms/histogramST/read-18         	   46042	      5173 ns/op	         8.800 encoded-B/sample	      32 B/op	       2 allocs/op
+BenchmarkALPHistograms/histogramST/read-18         	   46447	      5180 ns/op	         8.800 encoded-B/sample	      32 B/op	       2 allocs/op
+BenchmarkALPHistograms/histogramST/read-18         	   46232	      5194 ns/op	         8.800 encoded-B/sample	      32 B/op	       2 allocs/op
+BenchmarkALPHistograms/histogramST/read-18         	   46387	      5184 ns/op	         8.800 encoded-B/sample	      32 B/op	       2 allocs/op
+BenchmarkALPHistograms/histogramST/read-18         	   46054	      5205 ns/op	         8.800 encoded-B/sample	      32 B/op	       2 allocs/op
+BenchmarkALPHistograms/histogramST/read-18         	   46293	      5185 ns/op	         8.800 encoded-B/sample	      32 B/op	       2 allocs/op
+BenchmarkALPHistograms/histogramST/write-18        	   17461	     13768 ns/op	         8.800 encoded-B/sample	    3680 B/op	      13 allocs/op
+BenchmarkALPHistograms/histogramST/write-18        	   17503	     13744 ns/op	         8.800 encoded-B/sample	    3680 B/op	      13 allocs/op
+BenchmarkALPHistograms/histogramST/write-18        	   17463	     13749 ns/op	         8.800 encoded-B/sample	    3680 B/op	      13 allocs/op
+BenchmarkALPHistograms/histogramST/write-18        	   17536	     13726 ns/op	         8.800 encoded-B/sample	    3680 B/op	      13 allocs/op
+BenchmarkALPHistograms/histogramST/write-18        	   17510	     13705 ns/op	         8.800 encoded-B/sample	    3680 B/op	      13 allocs/op
+BenchmarkALPHistograms/histogramST/write-18        	   17490	     13729 ns/op	         8.800 encoded-B/sample	    3680 B/op	      13 allocs/op
+BenchmarkALPHistograms/ALPHistogram/read-18        	   60589	      3931 ns/op	        10.68 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/ALPHistogram/read-18        	   61824	      3924 ns/op	        10.68 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/ALPHistogram/read-18        	   60932	      3931 ns/op	        10.68 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/ALPHistogram/read-18        	   61077	      3926 ns/op	        10.68 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/ALPHistogram/read-18        	   61293	      3909 ns/op	        10.68 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/ALPHistogram/read-18        	   61299	      3908 ns/op	        10.68 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/ALPHistogram/write-18       	    7423	     32254 ns/op	        10.68 encoded-B/sample	   16544 B/op	      55 allocs/op
+BenchmarkALPHistograms/ALPHistogram/write-18       	    7663	     32045 ns/op	        10.68 encoded-B/sample	   16544 B/op	      55 allocs/op
+BenchmarkALPHistograms/ALPHistogram/write-18       	    7609	     32044 ns/op	        10.68 encoded-B/sample	   16544 B/op	      55 allocs/op
+BenchmarkALPHistograms/ALPHistogram/write-18       	    7737	     32094 ns/op	        10.68 encoded-B/sample	   16544 B/op	      55 allocs/op
+BenchmarkALPHistograms/ALPHistogram/write-18       	    7767	     32090 ns/op	        10.68 encoded-B/sample	   16544 B/op	      55 allocs/op
+BenchmarkALPHistograms/ALPHistogram/write-18       	    7560	     32133 ns/op	        10.68 encoded-B/sample	   16544 B/op	      55 allocs/op
+BenchmarkALPHistograms/floathistogramST/read-18    	   26959	      8897 ns/op	        19.39 encoded-B/sample	      32 B/op	       2 allocs/op
+BenchmarkALPHistograms/floathistogramST/read-18    	   26996	      8889 ns/op	        19.39 encoded-B/sample	      32 B/op	       2 allocs/op
+BenchmarkALPHistograms/floathistogramST/read-18    	   26942	      8902 ns/op	        19.39 encoded-B/sample	      32 B/op	       2 allocs/op
+BenchmarkALPHistograms/floathistogramST/read-18    	   27001	      8882 ns/op	        19.39 encoded-B/sample	      32 B/op	       2 allocs/op
+BenchmarkALPHistograms/floathistogramST/read-18    	   27051	      8864 ns/op	        19.39 encoded-B/sample	      32 B/op	       2 allocs/op
+BenchmarkALPHistograms/floathistogramST/read-18    	   27085	      8867 ns/op	        19.39 encoded-B/sample	      32 B/op	       2 allocs/op
+BenchmarkALPHistograms/floathistogramST/write-18   	    9538	     25968 ns/op	        19.39 encoded-B/sample	    8752 B/op	      13 allocs/op
+BenchmarkALPHistograms/floathistogramST/write-18   	    9542	     26096 ns/op	        19.39 encoded-B/sample	    8752 B/op	      13 allocs/op
+BenchmarkALPHistograms/floathistogramST/write-18   	    9315	     26210 ns/op	        19.39 encoded-B/sample	    8752 B/op	      13 allocs/op
+BenchmarkALPHistograms/floathistogramST/write-18   	    9256	     26079 ns/op	        19.39 encoded-B/sample	    8752 B/op	      13 allocs/op
+BenchmarkALPHistograms/floathistogramST/write-18   	    9316	     25960 ns/op	        19.39 encoded-B/sample	    8752 B/op	      13 allocs/op
+BenchmarkALPHistograms/floathistogramST/write-18   	    9529	     25888 ns/op	        19.39 encoded-B/sample	    8752 B/op	      13 allocs/op
+BenchmarkALPHistograms/ALPFloatHistogram/read-18   	   64634	      3734 ns/op	        17.27 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/ALPFloatHistogram/read-18   	   64953	      3746 ns/op	        17.27 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/ALPFloatHistogram/read-18   	   63628	      3752 ns/op	        17.27 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/ALPFloatHistogram/read-18   	   64137	      3753 ns/op	        17.27 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/ALPFloatHistogram/read-18   	   63289	      3768 ns/op	        17.27 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/ALPFloatHistogram/read-18   	   63602	      3757 ns/op	        17.27 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/ALPFloatHistogram/write-18  	    4670	     51373 ns/op	        17.27 encoded-B/sample	   25768 B/op	      58 allocs/op
+BenchmarkALPHistograms/ALPFloatHistogram/write-18  	    4780	     51203 ns/op	        17.27 encoded-B/sample	   25768 B/op	      58 allocs/op
+BenchmarkALPHistograms/ALPFloatHistogram/write-18  	    4843	     51318 ns/op	        17.27 encoded-B/sample	   25768 B/op	      58 allocs/op
+BenchmarkALPHistograms/ALPFloatHistogram/write-18  	    4828	     51229 ns/op	        17.27 encoded-B/sample	   25768 B/op	      58 allocs/op
+BenchmarkALPHistograms/ALPFloatHistogram/write-18  	    4773	     51442 ns/op	        17.27 encoded-B/sample	   25768 B/op	      58 allocs/op
+BenchmarkALPHistograms/ALPFloatHistogram/write-18  	    4678	     51238 ns/op	        17.27 encoded-B/sample	   25768 B/op	      58 allocs/op
+BenchmarkALPHistograms/ALPHistogramV2/read-18      	   57367	      4149 ns/op	         6.942 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/ALPHistogramV2/read-18      	   57888	      4131 ns/op	         6.942 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/ALPHistogramV2/read-18      	   57853	      4143 ns/op	         6.942 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/ALPHistogramV2/read-18      	   57946	      4132 ns/op	         6.942 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/ALPHistogramV2/read-18      	   58108	      4102 ns/op	         6.942 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/ALPHistogramV2/read-18      	   58363	      4196 ns/op	         6.942 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/ALPHistogramV2/write-18     	    7302	     32738 ns/op	         6.942 encoded-B/sample	   15264 B/op	      54 allocs/op
+BenchmarkALPHistograms/ALPHistogramV2/write-18     	    7563	     32292 ns/op	         6.942 encoded-B/sample	   15264 B/op	      54 allocs/op
+BenchmarkALPHistograms/ALPHistogramV2/write-18     	    7792	     32604 ns/op	         6.942 encoded-B/sample	   15264 B/op	      54 allocs/op
+BenchmarkALPHistograms/ALPHistogramV2/write-18     	    7676	     32192 ns/op	         6.942 encoded-B/sample	   15264 B/op	      54 allocs/op
+BenchmarkALPHistograms/ALPHistogramV2/write-18     	    7795	     32116 ns/op	         6.942 encoded-B/sample	   15264 B/op	      54 allocs/op
+BenchmarkALPHistograms/ALPHistogramV2/write-18     	    7551	     32333 ns/op	         6.942 encoded-B/sample	   15264 B/op	      54 allocs/op
+BenchmarkALPHistogramPaths/ALPHistogram/recode-18  	   13634	     17597 ns/op	   12840 B/op	      41 allocs/op
+BenchmarkALPHistogramPaths/ALPHistogram/recode-18  	   13666	     17560 ns/op	   12840 B/op	      41 allocs/op
+BenchmarkALPHistogramPaths/ALPHistogram/recode-18  	   13671	     17536 ns/op	   12840 B/op	      41 allocs/op
+BenchmarkALPHistogramPaths/ALPHistogram/recode-18  	   13593	     17611 ns/op	   12840 B/op	      41 allocs/op
+BenchmarkALPHistogramPaths/ALPHistogram/recode-18  	   13684	     17600 ns/op	   12840 B/op	      41 allocs/op
+BenchmarkALPHistogramPaths/ALPHistogram/recode-18  	   13584	     17671 ns/op	   12840 B/op	      41 allocs/op
+BenchmarkALPHistogramPaths/ALPHistogram/query-after-append-18         	    7060	     33692 ns/op	   11016 B/op	     271 allocs/op
+BenchmarkALPHistogramPaths/ALPHistogram/query-after-append-18         	    7129	     33617 ns/op	   11016 B/op	     271 allocs/op
+BenchmarkALPHistogramPaths/ALPHistogram/query-after-append-18         	    7164	     33444 ns/op	   11016 B/op	     271 allocs/op
+BenchmarkALPHistogramPaths/ALPHistogram/query-after-append-18         	    6954	     33821 ns/op	   11016 B/op	     271 allocs/op
+BenchmarkALPHistogramPaths/ALPHistogram/query-after-append-18         	    7485	     33496 ns/op	   11016 B/op	     271 allocs/op
+BenchmarkALPHistogramPaths/ALPHistogram/query-after-append-18         	    7401	     33513 ns/op	   11016 B/op	     271 allocs/op
+BenchmarkALPHistogramPaths/ALPFloatHistogram/recode-18                	    9589	     24722 ns/op	   16992 B/op	      44 allocs/op
+BenchmarkALPHistogramPaths/ALPFloatHistogram/recode-18                	   10000	     24729 ns/op	   16992 B/op	      44 allocs/op
+BenchmarkALPHistogramPaths/ALPFloatHistogram/recode-18                	   10000	     24677 ns/op	   16992 B/op	      44 allocs/op
+BenchmarkALPHistogramPaths/ALPFloatHistogram/recode-18                	   10000	     24718 ns/op	   16992 B/op	      44 allocs/op
+BenchmarkALPHistogramPaths/ALPFloatHistogram/recode-18                	    8655	     24861 ns/op	   16992 B/op	      44 allocs/op
+BenchmarkALPHistogramPaths/ALPFloatHistogram/recode-18                	   10000	     24666 ns/op	   16992 B/op	      44 allocs/op
+BenchmarkALPHistogramPaths/ALPFloatHistogram/query-after-append-18    	    5293	     45807 ns/op	   20600 B/op	     272 allocs/op
+BenchmarkALPHistogramPaths/ALPFloatHistogram/query-after-append-18    	    5474	     45695 ns/op	   20600 B/op	     272 allocs/op
+BenchmarkALPHistogramPaths/ALPFloatHistogram/query-after-append-18    	    5428	     45753 ns/op	   20600 B/op	     272 allocs/op
+BenchmarkALPHistogramPaths/ALPFloatHistogram/query-after-append-18    	    5390	     46050 ns/op	   20600 B/op	     272 allocs/op
+BenchmarkALPHistogramPaths/ALPFloatHistogram/query-after-append-18    	    5451	     45846 ns/op	   20600 B/op	     272 allocs/op
+BenchmarkALPHistogramPaths/ALPFloatHistogram/query-after-append-18    	    5248	     45900 ns/op	   20600 B/op	     272 allocs/op
+BenchmarkALPColdRead/ALP-18                                           	  587209	       433.9 ns/op	    2528 B/op	       4 allocs/op
+BenchmarkALPColdRead/ALP-18                                           	  564002	       433.7 ns/op	    2528 B/op	       4 allocs/op
+BenchmarkALPColdRead/ALP-18                                           	  563330	       445.2 ns/op	    2528 B/op	       4 allocs/op
+BenchmarkALPColdRead/ALP-18                                           	  539664	       446.0 ns/op	    2528 B/op	       4 allocs/op
+BenchmarkALPColdRead/ALP-18                                           	  542935	       449.1 ns/op	    2528 B/op	       4 allocs/op
+BenchmarkALPColdRead/ALP-18                                           	  545257	       444.1 ns/op	    2528 B/op	       4 allocs/op
+BenchmarkALPColdRead/ALPHistogram-18                                  	  320448	       741.2 ns/op	    3808 B/op	      11 allocs/op
+BenchmarkALPColdRead/ALPHistogram-18                                  	  331042	       742.4 ns/op	    3808 B/op	      11 allocs/op
+BenchmarkALPColdRead/ALPHistogram-18                                  	  327967	       745.5 ns/op	    3808 B/op	      11 allocs/op
+BenchmarkALPColdRead/ALPHistogram-18                                  	  326317	       742.9 ns/op	    3808 B/op	      11 allocs/op
+BenchmarkALPColdRead/ALPHistogram-18                                  	  322824	       740.4 ns/op	    3808 B/op	      11 allocs/op
+BenchmarkALPColdRead/ALPHistogram-18                                  	  324062	       744.1 ns/op	    3808 B/op	      11 allocs/op
+BenchmarkALPColdRead/ALPFloatHistogram-18                             	  106021	      2277 ns/op	   13248 B/op	      11 allocs/op
+BenchmarkALPColdRead/ALPFloatHistogram-18                             	  106362	      2278 ns/op	   13248 B/op	      11 allocs/op
+BenchmarkALPColdRead/ALPFloatHistogram-18                             	  104664	      2299 ns/op	   13248 B/op	      11 allocs/op
+BenchmarkALPColdRead/ALPFloatHistogram-18                             	  105972	      2258 ns/op	   13248 B/op	      11 allocs/op
+BenchmarkALPColdRead/ALPFloatHistogram-18                             	  106201	      2229 ns/op	   13248 B/op	      11 allocs/op
+BenchmarkALPColdRead/ALPFloatHistogram-18                             	  113396	      2157 ns/op	   13248 B/op	      11 allocs/op
+PASS
+ok  	github.com/prometheus/prometheus/tsdb/chunkenc	68.493s

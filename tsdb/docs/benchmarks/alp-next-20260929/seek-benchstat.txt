@@ -1,0 +1,25 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+                    │ tsdb/docs/benchmarks/alp-next-20260929/seek-before.txt │ tsdb/docs/benchmarks/alp-next-20260929/seek-after.txt │
+                    │                         sec/op                         │             sec/op              vs base               │
+ALPSeek/1785000-18                                               416.9n ± 4%                      139.7n ± 1%  -66.50% (p=0.002 n=6)
+ALPSeek/15000000-18                                              3.449µ ± 2%                      1.229µ ± 0%  -64.38% (p=0.002 n=6)
+geomean                                                          1.199µ                           414.2n       -65.46%
+
+                    │ tsdb/docs/benchmarks/alp-next-20260929/seek-before.txt │ tsdb/docs/benchmarks/alp-next-20260929/seek-after.txt │
+                    │                          B/op                          │             B/op               vs base                │
+ALPSeek/1785000-18                                              0.000 ± 0%                        0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPSeek/15000000-18                                             0.000 ± 0%                        0.000 ± 0%       ~ (p=1.000 n=6) ¹
+geomean                                                                    ²                                  +0.00%               ²
+¹ all samples are equal
+² summaries must be >0 to compute geomean
+
+                    │ tsdb/docs/benchmarks/alp-next-20260929/seek-before.txt │ tsdb/docs/benchmarks/alp-next-20260929/seek-after.txt │
+                    │                       allocs/op                        │           allocs/op            vs base                │
+ALPSeek/1785000-18                                              0.000 ± 0%                        0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPSeek/15000000-18                                             0.000 ± 0%                        0.000 ± 0%       ~ (p=1.000 n=6) ¹
+geomean                                                                    ²                                  +0.00%               ²
+¹ all samples are equal
+² summaries must be >0 to compute geomean

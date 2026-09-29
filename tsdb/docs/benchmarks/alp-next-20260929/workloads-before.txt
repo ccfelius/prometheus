@@ -1,0 +1,54 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+BenchmarkALPHistogramWorkloads/integer-8/histogramST/read-float-18         	   18138	      5905 ns/op	         8.675 encoded-B/sample	       8 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-8/histogramST/read-float-18         	   24385	      4972 ns/op	         8.675 encoded-B/sample	       8 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-8/histogramST/read-float-18         	   23196	      5027 ns/op	         8.675 encoded-B/sample	       8 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-8/histogramST/read-float-18         	   24226	      4939 ns/op	         8.675 encoded-B/sample	       8 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-8/histogramST/read-float-18         	   24349	      4940 ns/op	         8.675 encoded-B/sample	       8 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-8/histogramST/read-float-18         	   24393	      4939 ns/op	         8.675 encoded-B/sample	       8 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-8/ALPHistogram/read-float-18        	   28644	      4191 ns/op	         5.675 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-8/ALPHistogram/read-float-18        	   28579	      4175 ns/op	         5.675 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-8/ALPHistogram/read-float-18        	   28711	      4154 ns/op	         5.675 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-8/ALPHistogram/read-float-18        	   29050	      4165 ns/op	         5.675 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-8/ALPHistogram/read-float-18        	   28735	      4255 ns/op	         5.675 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-8/ALPHistogram/read-float-18        	   28875	      4167 ns/op	         5.675 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-128/histogramST/read-float-18       	    2518	     48661 ns/op	        23.69 encoded-B/sample	       9 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-128/histogramST/read-float-18       	    2523	     48400 ns/op	        23.69 encoded-B/sample	       9 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-128/histogramST/read-float-18       	    2516	     48835 ns/op	        23.69 encoded-B/sample	       9 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-128/histogramST/read-float-18       	    2452	     48882 ns/op	        23.69 encoded-B/sample	       9 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-128/histogramST/read-float-18       	    2512	     48389 ns/op	        23.69 encoded-B/sample	       9 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-128/histogramST/read-float-18       	    2506	     48389 ns/op	        23.69 encoded-B/sample	       9 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-128/ALPHistogram/read-float-18      	    3654	     33198 ns/op	        20.27 encoded-B/sample	       2 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-128/ALPHistogram/read-float-18      	    3668	     33289 ns/op	        20.27 encoded-B/sample	       2 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-128/ALPHistogram/read-float-18      	    3711	     33055 ns/op	        20.27 encoded-B/sample	       2 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-128/ALPHistogram/read-float-18      	    3654	     33180 ns/op	        20.27 encoded-B/sample	       2 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-128/ALPHistogram/read-float-18      	    3614	     33309 ns/op	        20.27 encoded-B/sample	       2 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-128/ALPHistogram/read-float-18      	    3700	     33419 ns/op	        20.27 encoded-B/sample	       2 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-1031/histogramST/read-float-18      	     319	    376097 ns/op	       136.6 encoded-B/sample	     128 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-1031/histogramST/read-float-18      	     318	    377987 ns/op	       136.6 encoded-B/sample	     129 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-1031/histogramST/read-float-18      	     316	    381717 ns/op	       136.6 encoded-B/sample	     129 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-1031/histogramST/read-float-18      	     315	    378485 ns/op	       136.6 encoded-B/sample	     130 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-1031/histogramST/read-float-18      	     316	    378204 ns/op	       136.6 encoded-B/sample	     129 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-1031/histogramST/read-float-18      	     316	    378041 ns/op	       136.6 encoded-B/sample	     129 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-1031/ALPHistogram/read-float-18     	     458	    260402 ns/op	       119.9 encoded-B/sample	      93 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-1031/ALPHistogram/read-float-18     	     460	    259110 ns/op	       119.9 encoded-B/sample	      93 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-1031/ALPHistogram/read-float-18     	     458	    303504 ns/op	       119.9 encoded-B/sample	      93 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-1031/ALPHistogram/read-float-18     	     442	    266320 ns/op	       119.9 encoded-B/sample	      97 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-1031/ALPHistogram/read-float-18     	     457	    260887 ns/op	       119.9 encoded-B/sample	      94 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-1031/ALPHistogram/read-float-18     	     459	    274346 ns/op	       119.9 encoded-B/sample	      93 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/fractional-128/floathistogramST/read-float-18         	    1054	    112775 ns/op	       885.7 encoded-B/sample	      10 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/fractional-128/floathistogramST/read-float-18         	    1083	    112123 ns/op	       885.7 encoded-B/sample	      10 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/fractional-128/floathistogramST/read-float-18         	    1071	    111802 ns/op	       885.7 encoded-B/sample	      10 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/fractional-128/floathistogramST/read-float-18         	    1077	    112129 ns/op	       885.7 encoded-B/sample	      10 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/fractional-128/floathistogramST/read-float-18         	    1027	    113560 ns/op	       885.7 encoded-B/sample	      10 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/fractional-128/floathistogramST/read-float-18         	    1081	    112135 ns/op	       885.7 encoded-B/sample	      10 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/fractional-128/ALPFloatHistogram/read-float-18        	    4970	     23820 ns/op	       230.8 encoded-B/sample	       3 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/fractional-128/ALPFloatHistogram/read-float-18        	    5245	     23965 ns/op	       230.8 encoded-B/sample	       3 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/fractional-128/ALPFloatHistogram/read-float-18        	    5014	     24479 ns/op	       230.8 encoded-B/sample	       3 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/fractional-128/ALPFloatHistogram/read-float-18        	    4764	     24295 ns/op	       230.8 encoded-B/sample	       4 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/fractional-128/ALPFloatHistogram/read-float-18        	    4857	     24117 ns/op	       230.8 encoded-B/sample	       4 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/fractional-128/ALPFloatHistogram/read-float-18        	    4698	     24388 ns/op	       230.8 encoded-B/sample	       4 B/op	       0 allocs/op
+PASS
+ok  	github.com/prometheus/prometheus/tsdb/chunkenc	6.107s

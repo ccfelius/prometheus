@@ -1,0 +1,28 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+                             │ tsdb/docs/benchmarks/alp-next-20260929/adaptive-full-trial.txt │ tsdb/docs/benchmarks/alp-next-20260929/adaptive-sampled-trial.txt │
+                             │                             sec/op                             │                   sec/op                    vs base               │
+ALPAdaptiveFloat/decimal-18                                                       2.376µ ± 4%                                  2.388µ ± 2%        ~ (p=0.329 n=6)
+ALPAdaptiveFloat/computed-18                                                     9385.5n ± 1%                                  113.6n ± 5%  -98.79% (p=0.002 n=6)
+ALPAdaptiveFloat/random-18                                                     12143.00n ± 3%                                  56.19n ± 1%  -99.54% (p=0.002 n=6)
+geomean                                                                           6.470µ                                       248.0n       -96.17%
+
+                             │ tsdb/docs/benchmarks/alp-next-20260929/adaptive-full-trial.txt │ tsdb/docs/benchmarks/alp-next-20260929/adaptive-sampled-trial.txt │
+                             │                              B/op                              │                   B/op                    vs base                 │
+ALPAdaptiveFloat/decimal-18                                                        944.0 ± 0%                                 944.0 ± 0%        ~ (p=1.000 n=6) ¹
+ALPAdaptiveFloat/computed-18                                                     1136.00 ± 0%                                 16.00 ± 0%  -98.59% (p=0.002 n=6)
+ALPAdaptiveFloat/random-18                                                       1264.00 ± 0%                                 16.00 ± 0%  -98.73% (p=0.002 n=6)
+geomean                                                                          1.081Ki                                      62.29       -94.37%
+¹ all samples are equal
+
+                             │ tsdb/docs/benchmarks/alp-next-20260929/adaptive-full-trial.txt │ tsdb/docs/benchmarks/alp-next-20260929/adaptive-sampled-trial.txt │
+                             │                           allocs/op                            │               allocs/op                vs base                    │
+ALPAdaptiveFloat/decimal-18                                                        3.000 ± 0%                              3.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPAdaptiveFloat/computed-18                                                       3.000 ± 0%                              0.000 ± 0%  -100.00% (p=0.002 n=6)
+ALPAdaptiveFloat/random-18                                                         3.000 ± 0%                              0.000 ± 0%  -100.00% (p=0.002 n=6)
+geomean                                                                            3.000                                               ?                      ² ³
+¹ all samples are equal
+² summaries must be >0 to compute geomean
+³ ratios must be >0 to compute geomean

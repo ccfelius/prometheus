@@ -1,5 +1,10 @@
 # ALP implementation: architecture, formats, execution, and tradeoffs
 
+> Subsequent changes on `tsdb-alp-next-optimizations` are documented in the
+> [next optimization report](benchmarks/alp-next-20260929/report.md), including
+> histogram version 3, adaptive sampling, additional SIMD encoding, workspace
+> reuse, direct histogram materialization, and lazy timestamp seeks.
+
 This report describes the implementation at `5b5b11813f69474b1621c00fb47101637abf298a`
 on `tsdb-alp-optimization`. It covers both the initial implementation and the
 subsequent optimizations. The report describes implemented behavior; proposed

@@ -46,6 +46,11 @@ varints of delta-of-delta, with the previous delta initially zero. Arithmetic
 uses two's-complement wraparound, making differences reversible over all int64
 timestamps. The containing series provides timestamp ordering.
 
+The reader keeps regular timestamps as start and delta rather than expanding an
+array. For nondecreasing blocks proven not to wrap, seeking computes a sample
+index directly. Irregular, decreasing, and wrapping sequences retain sequential
+seek behavior. This is a reader optimization; the serialized format is unchanged.
+
 Absent start timestamps have a zero-length section and produce zero for every
 sample. Constant start timestamps occupy eight bytes. Otherwise, each sample
 has a signed Go varint delta from the preceding start timestamp, initially zero.

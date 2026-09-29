@@ -1,0 +1,12 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+BenchmarkALPHistograms/ALPHistogramV3/read-18    	   56454	      4228 ns/op	         5.725 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/ALPHistogramV3/read-18    	   58032	      4173 ns/op	         5.725 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/ALPHistogramV3/read-18    	   56611	      4205 ns/op	         5.725 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/ALPHistogramV3/read-18    	   56640	      4188 ns/op	         5.725 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/ALPHistogramV3/read-18    	   56743	      4144 ns/op	         5.725 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistograms/ALPHistogramV3/read-18    	   57632	      4164 ns/op	         5.725 encoded-B/sample	       0 B/op	       0 allocs/op
+PASS
+ok  	github.com/prometheus/prometheus/tsdb/chunkenc	3.201s

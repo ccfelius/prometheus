@@ -1,0 +1,22 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+BenchmarkALPAdaptiveFloat/decimal-18      	  101102	      2403 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/decimal-18      	   89070	      2436 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/decimal-18      	  102435	      2374 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/decimal-18      	  103000	      2385 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/decimal-18      	  102362	      2370 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/decimal-18      	   99715	      2390 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/computed-18     	 2114914	       113.7 ns/op	      16 B/op	       0 allocs/op
+BenchmarkALPAdaptiveFloat/computed-18     	 2122258	       113.6 ns/op	      16 B/op	       0 allocs/op
+BenchmarkALPAdaptiveFloat/computed-18     	 2113641	       113.7 ns/op	      16 B/op	       0 allocs/op
+BenchmarkALPAdaptiveFloat/computed-18     	 2118609	       113.6 ns/op	      16 B/op	       0 allocs/op
+BenchmarkALPAdaptiveFloat/computed-18     	 2121290	       113.4 ns/op	      16 B/op	       0 allocs/op
+BenchmarkALPAdaptiveFloat/computed-18     	 2120583	       119.1 ns/op	      16 B/op	       0 allocs/op
+BenchmarkALPAdaptiveFloat/random-18       	 4234596	        56.21 ns/op	      16 B/op	       0 allocs/op
+BenchmarkALPAdaptiveFloat/random-18       	 4199103	        56.35 ns/op	      16 B/op	       0 allocs/op
+BenchmarkALPAdaptiveFloat/random-18       	 4263718	        56.41 ns/op	      16 B/op	       0 allocs/op
+BenchmarkALPAdaptiveFloat/random-18       	 4264098	        56.16 ns/op	      16 B/op	       0 allocs/op
+BenchmarkALPAdaptiveFloat/random-18       	 4301061	        55.81 ns/op	      16 B/op	       0 allocs/op
+BenchmarkALPAdaptiveFloat/random-18       	 4345297	        56.01 ns/op	      16 B/op	       0 allocs/op

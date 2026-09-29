@@ -1,0 +1,92 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+                                                                     │ /tmp/alp-next-workloads-before.txt │ /tmp/alp-next-workloads-after.txt  │
+                                                                     │               sec/op               │   sec/op     vs base               │
+ALPHistogramWorkloads/integer-8/histogramST/read-float-18                                    4.956µ ± 19%   5.596µ ± 2%        ~ (p=0.063 n=6)
+ALPHistogramWorkloads/integer-8/ALPHistogram/read-float-18                                   4.171µ ±  2%   3.986µ ± 1%   -4.44% (p=0.002 n=6)
+ALPHistogramWorkloads/integer-128/histogramST/read-float-18                                  48.53µ ±  1%   52.97µ ± 0%   +9.14% (p=0.002 n=6)
+ALPHistogramWorkloads/integer-128/ALPHistogram/read-float-18                                 33.24µ ±  1%   29.89µ ± 4%  -10.10% (p=0.002 n=6)
+ALPHistogramWorkloads/integer-1031/histogramST/read-float-18                                 378.1µ ±  1%   409.7µ ± 1%   +8.35% (p=0.002 n=6)
+ALPHistogramWorkloads/integer-1031/ALPHistogram/read-float-18                                263.6µ ± 15%   231.4µ ± 1%  -12.22% (p=0.002 n=6)
+ALPHistogramWorkloads/fractional-128/floathistogramST/read-float-18                          112.1µ ±  1%   113.3µ ± 0%   +1.08% (p=0.041 n=6)
+ALPHistogramWorkloads/fractional-128/ALPFloatHistogram/read-float-18                         24.21µ ±  2%   23.20µ ± 0%   -4.15% (p=0.002 n=6)
+ALPAdaptiveFloat/decimal/full-trial-18                                                                      2.355µ ± 1%
+ALPAdaptiveFloat/decimal/sampled-trial-18                                                                   2.950µ ± 3%
+ALPAdaptiveFloat/computed/full-trial-18                                                                     9.439µ ± 1%
+ALPAdaptiveFloat/computed/sampled-trial-18                                                                  115.0n ± 1%
+ALPAdaptiveFloat/random/full-trial-18                                                                       12.29µ ± 1%
+ALPAdaptiveFloat/random/sampled-trial-18                                                                    55.77n ± 0%
+ALPWorkspace/XOR2/cold-18                                                                                   2.972µ ± 1%
+ALPWorkspace/XOR2/reuse-18                                                                                  2.360µ ± 5%
+ALPWorkspace/histogramST/cold-18                                                                            17.65µ ± 5%
+ALPWorkspace/histogramST/reuse-18                                                                           17.12µ ± 1%
+ALPWorkspace/floathistogramST/cold-18                                                                       24.64µ ± 0%
+ALPWorkspace/floathistogramST/reuse-18                                                                      23.51µ ± 0%
+geomean                                                                                      41.63µ         9.713µ        -0.31%
+
+                                                                     │ /tmp/alp-next-workloads-before.txt │    /tmp/alp-next-workloads-after.txt     │
+                                                                     │          encoded-B/sample          │ encoded-B/sample  vs base                │
+ALPHistogramWorkloads/integer-8/histogramST/read-float-18                                      8.675 ± 0%         8.675 ± 0%       ~ (p=1.000 n=6) ¹
+ALPHistogramWorkloads/integer-8/ALPHistogram/read-float-18                                     5.675 ± 0%         5.675 ± 0%       ~ (p=1.000 n=6) ¹
+ALPHistogramWorkloads/integer-128/histogramST/read-float-18                                    23.69 ± 0%         23.69 ± 0%       ~ (p=1.000 n=6) ¹
+ALPHistogramWorkloads/integer-128/ALPHistogram/read-float-18                                   20.27 ± 0%         20.27 ± 0%       ~ (p=1.000 n=6) ¹
+ALPHistogramWorkloads/integer-1031/histogramST/read-float-18                                   136.6 ± 0%         136.6 ± 0%       ~ (p=1.000 n=6) ¹
+ALPHistogramWorkloads/integer-1031/ALPHistogram/read-float-18                                  119.9 ± 0%         119.9 ± 0%       ~ (p=1.000 n=6) ¹
+ALPHistogramWorkloads/fractional-128/floathistogramST/read-float-18                            885.7 ± 0%         885.7 ± 0%       ~ (p=1.000 n=6) ¹
+ALPHistogramWorkloads/fractional-128/ALPFloatHistogram/read-float-18                           230.8 ± 0%         230.8 ± 0%       ~ (p=1.000 n=6) ¹
+geomean                                                                                        54.61              54.61       +0.00%
+¹ all samples are equal
+
+                                                                     │ /tmp/alp-next-workloads-before.txt │   /tmp/alp-next-workloads-after.txt   │
+                                                                     │                B/op                │     B/op      vs base                 │
+ALPHistogramWorkloads/integer-8/histogramST/read-float-18                                   8.000 ±  0%       8.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPHistogramWorkloads/integer-8/ALPHistogram/read-float-18                                  0.000 ±  0%       0.000 ± 0%        ~ (p=1.000 n=6) ¹
+ALPHistogramWorkloads/integer-128/histogramST/read-float-18                                 9.000 ±  0%      10.000 ± 0%  +11.11% (p=0.002 n=6)
+ALPHistogramWorkloads/integer-128/ALPHistogram/read-float-18                                2.000 ±  0%       1.000 ± 0%  -50.00% (p=0.002 n=6)
+ALPHistogramWorkloads/integer-1031/histogramST/read-float-18                                129.0 ±  1%       139.5 ± 0%   +8.14% (p=0.002 n=6)
+ALPHistogramWorkloads/integer-1031/ALPHistogram/read-float-18                               93.00 ±  4%       63.00 ± 2%  -32.26% (p=0.002 n=6)
+ALPHistogramWorkloads/fractional-128/floathistogramST/read-float-18                         10.00 ±  0%       10.00 ± 0%        ~ (p=1.000 n=6) ¹
+ALPHistogramWorkloads/fractional-128/ALPFloatHistogram/read-float-18                        3.500 ± 14%       3.000 ± 0%        ~ (p=0.182 n=6)
+ALPAdaptiveFloat/decimal/full-trial-18                                                                        944.0 ± 0%
+ALPAdaptiveFloat/decimal/sampled-trial-18                                                                     944.0 ± 0%
+ALPAdaptiveFloat/computed/full-trial-18                                                                     1.109Ki ± 0%
+ALPAdaptiveFloat/computed/sampled-trial-18                                                                    16.00 ± 0%
+ALPAdaptiveFloat/random/full-trial-18                                                                       1.234Ki ± 0%
+ALPAdaptiveFloat/random/sampled-trial-18                                                                      16.00 ± 0%
+ALPWorkspace/XOR2/cold-18                                                                                     944.0 ± 0%
+ALPWorkspace/XOR2/reuse-18                                                                                    944.0 ± 0%
+ALPWorkspace/histogramST/cold-18                                                                            6.570Ki ± 0%
+ALPWorkspace/histogramST/reuse-18                                                                           3.102Ki ± 0%
+ALPWorkspace/floathistogramST/cold-18                                                                       10.49Ki ± 0%
+ALPWorkspace/floathistogramST/reuse-18                                                                      3.884Ki ± 0%
+geomean                                                                                                 ²                 -12.33%               ²
+¹ all samples are equal
+² summaries must be >0 to compute geomean
+
+                                                                     │ /tmp/alp-next-workloads-before.txt │ /tmp/alp-next-workloads-after.txt  │
+                                                                     │             allocs/op              │ allocs/op   vs base                │
+ALPHistogramWorkloads/integer-8/histogramST/read-float-18                                    1.000 ± 0%     1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPHistogramWorkloads/integer-8/ALPHistogram/read-float-18                                   0.000 ± 0%     0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPHistogramWorkloads/integer-128/histogramST/read-float-18                                  1.000 ± 0%     1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPHistogramWorkloads/integer-128/ALPHistogram/read-float-18                                 0.000 ± 0%     0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPHistogramWorkloads/integer-1031/histogramST/read-float-18                                 1.000 ± 0%     1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPHistogramWorkloads/integer-1031/ALPHistogram/read-float-18                                0.000 ± 0%     0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPHistogramWorkloads/fractional-128/floathistogramST/read-float-18                          1.000 ± 0%     1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPHistogramWorkloads/fractional-128/ALPFloatHistogram/read-float-18                         0.000 ± 0%     0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPAdaptiveFloat/decimal/full-trial-18                                                                      3.000 ± 0%
+ALPAdaptiveFloat/decimal/sampled-trial-18                                                                   3.000 ± 0%
+ALPAdaptiveFloat/computed/full-trial-18                                                                     3.000 ± 0%
+ALPAdaptiveFloat/computed/sampled-trial-18                                                                  0.000 ± 0%
+ALPAdaptiveFloat/random/full-trial-18                                                                       3.000 ± 0%
+ALPAdaptiveFloat/random/sampled-trial-18                                                                    0.000 ± 0%
+ALPWorkspace/XOR2/cold-18                                                                                   3.000 ± 0%
+ALPWorkspace/XOR2/reuse-18                                                                                  3.000 ± 0%
+ALPWorkspace/histogramST/cold-18                                                                            41.00 ± 0%
+ALPWorkspace/histogramST/reuse-18                                                                           17.00 ± 0%
+ALPWorkspace/floathistogramST/cold-18                                                                       40.00 ± 0%
+ALPWorkspace/floathistogramST/reuse-18                                                                      17.00 ± 0%
+geomean                                                                                                 ²               +0.00%               ²
+¹ all samples are equal
+² summaries must be >0 to compute geomean

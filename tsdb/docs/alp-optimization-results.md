@@ -1,5 +1,10 @@
 # ALP optimization results
 
+> Subsequent changes on `tsdb-alp-next-optimizations` are documented in the
+> [next optimization report](benchmarks/alp-next-20260929/report.md), including
+> histogram version 3, adaptive sampling, additional SIMD encoding, workspace
+> reuse, direct histogram materialization, and lazy timestamp seeks.
+
 Implemented on `tsdb-alp-optimization`, based on `606f11f67` (`tsdb-alp-simd`).
 This report records the completed portion of the [optimization plan](alp-optimization-plan.md).
 ALP remains experimental and opt-in; default encodings are unchanged.

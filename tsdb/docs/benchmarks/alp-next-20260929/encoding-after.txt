@@ -1,0 +1,42 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+BenchmarkALPWorkspace/XOR2/cold-18         	   39907	      2966 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/cold-18         	   41007	      2935 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/cold-18         	   41635	      2903 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/cold-18         	   41203	      2885 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/cold-18         	   39727	      2972 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/cold-18         	   40924	      2922 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/reuse-18        	   49153	      2369 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/reuse-18        	   51188	      2327 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/reuse-18        	   51114	      2335 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/reuse-18        	   51667	      2332 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/reuse-18        	   52640	      2341 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/reuse-18        	   50380	      2347 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/histogramST/cold-18  	    7009	     17098 ns/op	    6728 B/op	      41 allocs/op
+BenchmarkALPWorkspace/histogramST/cold-18  	    7449	     16825 ns/op	    6728 B/op	      41 allocs/op
+BenchmarkALPWorkspace/histogramST/cold-18  	    7194	     17111 ns/op	    6728 B/op	      41 allocs/op
+BenchmarkALPWorkspace/histogramST/cold-18  	    7113	     17017 ns/op	    6728 B/op	      41 allocs/op
+BenchmarkALPWorkspace/histogramST/cold-18  	    7167	     16823 ns/op	    6728 B/op	      41 allocs/op
+BenchmarkALPWorkspace/histogramST/cold-18  	    7504	     17405 ns/op	    6728 B/op	      41 allocs/op
+BenchmarkALPWorkspace/histogramST/reuse-18 	    7201	     16384 ns/op	    3176 B/op	      17 allocs/op
+BenchmarkALPWorkspace/histogramST/reuse-18 	    6811	     16606 ns/op	    3176 B/op	      17 allocs/op
+BenchmarkALPWorkspace/histogramST/reuse-18 	    7196	     16513 ns/op	    3176 B/op	      17 allocs/op
+BenchmarkALPWorkspace/histogramST/reuse-18 	    7246	     16590 ns/op	    3176 B/op	      17 allocs/op
+BenchmarkALPWorkspace/histogramST/reuse-18 	    7387	     16490 ns/op	    3176 B/op	      17 allocs/op
+BenchmarkALPWorkspace/histogramST/reuse-18 	    7326	     16367 ns/op	    3176 B/op	      17 allocs/op
+BenchmarkALPWorkspace/floathistogramST/cold-18         	    4779	     24993 ns/op	   10744 B/op	      40 allocs/op
+BenchmarkALPWorkspace/floathistogramST/cold-18         	    4928	     24857 ns/op	   10744 B/op	      40 allocs/op
+BenchmarkALPWorkspace/floathistogramST/cold-18         	    4850	     24915 ns/op	   10744 B/op	      40 allocs/op
+BenchmarkALPWorkspace/floathistogramST/cold-18         	    4957	     24750 ns/op	   10744 B/op	      40 allocs/op
+BenchmarkALPWorkspace/floathistogramST/cold-18         	    4898	     24706 ns/op	   10744 B/op	      40 allocs/op
+BenchmarkALPWorkspace/floathistogramST/cold-18         	    4966	     24937 ns/op	   10744 B/op	      40 allocs/op
+BenchmarkALPWorkspace/floathistogramST/reuse-18        	    5138	     23446 ns/op	    3977 B/op	      17 allocs/op
+BenchmarkALPWorkspace/floathistogramST/reuse-18        	    4970	     23529 ns/op	    3977 B/op	      17 allocs/op
+BenchmarkALPWorkspace/floathistogramST/reuse-18        	    5136	     23399 ns/op	    3977 B/op	      17 allocs/op
+BenchmarkALPWorkspace/floathistogramST/reuse-18        	    5181	     23335 ns/op	    3977 B/op	      17 allocs/op
+BenchmarkALPWorkspace/floathistogramST/reuse-18        	    5149	     23313 ns/op	    3977 B/op	      17 allocs/op
+BenchmarkALPWorkspace/floathistogramST/reuse-18        	    5082	     23507 ns/op	    3977 B/op	      17 allocs/op
+PASS
+ok  	github.com/prometheus/prometheus/tsdb/chunkenc	5.885s

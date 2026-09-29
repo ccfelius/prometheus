@@ -1,0 +1,126 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+BenchmarkALPAdaptiveFloat/decimal/full-trial-18         	   50133	      2366 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/decimal/full-trial-18         	   51462	      2350 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/decimal/full-trial-18         	   51324	      2330 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/decimal/full-trial-18         	   51540	      2355 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/decimal/full-trial-18         	   51266	      2364 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/decimal/full-trial-18         	   50998	      2354 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/decimal/sampled-trial-18      	   40744	      2952 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/decimal/sampled-trial-18      	   40857	      2948 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/decimal/sampled-trial-18      	   40750	      2938 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/decimal/sampled-trial-18      	   40492	      3037 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/decimal/sampled-trial-18      	   41026	      2948 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/decimal/sampled-trial-18      	   40821	      2965 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/computed/full-trial-18        	   12541	      9556 ns/op	    1136 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/computed/full-trial-18        	   12690	      9452 ns/op	    1136 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/computed/full-trial-18        	   12730	      9426 ns/op	    1136 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/computed/full-trial-18        	   12643	      9470 ns/op	    1136 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/computed/full-trial-18        	   12734	      9422 ns/op	    1136 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/computed/full-trial-18        	   12765	      9398 ns/op	    1136 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/computed/sampled-trial-18     	 1000000	       115.6 ns/op	      16 B/op	       0 allocs/op
+BenchmarkALPAdaptiveFloat/computed/sampled-trial-18     	 1000000	       115.2 ns/op	      16 B/op	       0 allocs/op
+BenchmarkALPAdaptiveFloat/computed/sampled-trial-18     	 1000000	       114.9 ns/op	      16 B/op	       0 allocs/op
+BenchmarkALPAdaptiveFloat/computed/sampled-trial-18     	 1000000	       115.0 ns/op	      16 B/op	       0 allocs/op
+BenchmarkALPAdaptiveFloat/computed/sampled-trial-18     	 1000000	       114.8 ns/op	      16 B/op	       0 allocs/op
+BenchmarkALPAdaptiveFloat/computed/sampled-trial-18     	 1000000	       114.6 ns/op	      16 B/op	       0 allocs/op
+BenchmarkALPAdaptiveFloat/random/full-trial-18          	    9495	     12353 ns/op	    1264 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/random/full-trial-18          	    9614	     12345 ns/op	    1264 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/random/full-trial-18          	    9681	     12286 ns/op	    1264 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/random/full-trial-18          	    9867	     12299 ns/op	    1264 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/random/full-trial-18          	    9490	     12154 ns/op	    1264 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/random/full-trial-18          	    9585	     12136 ns/op	    1264 B/op	       3 allocs/op
+BenchmarkALPAdaptiveFloat/random/sampled-trial-18       	 2142961	        55.99 ns/op	      16 B/op	       0 allocs/op
+BenchmarkALPAdaptiveFloat/random/sampled-trial-18       	 2154079	        55.73 ns/op	      16 B/op	       0 allocs/op
+BenchmarkALPAdaptiveFloat/random/sampled-trial-18       	 2157535	        55.81 ns/op	      16 B/op	       0 allocs/op
+BenchmarkALPAdaptiveFloat/random/sampled-trial-18       	 2158957	        55.67 ns/op	      16 B/op	       0 allocs/op
+BenchmarkALPAdaptiveFloat/random/sampled-trial-18       	 2150451	        55.63 ns/op	      16 B/op	       0 allocs/op
+BenchmarkALPAdaptiveFloat/random/sampled-trial-18       	 2144508	        56.04 ns/op	      16 B/op	       0 allocs/op
+BenchmarkALPWorkspace/XOR2/cold-18                      	   40284	      2971 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/cold-18                      	   40744	      2981 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/cold-18                      	   38439	      3011 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/cold-18                      	   40752	      2966 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/cold-18                      	   40408	      2972 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/cold-18                      	   40658	      2958 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/reuse-18                     	   51026	      2359 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/reuse-18                     	   50941	      2360 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/reuse-18                     	   50961	      2354 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/reuse-18                     	   51465	      2339 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/reuse-18                     	   51854	      2372 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/reuse-18                     	   48231	      2486 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/histogramST/cold-18               	    6530	     17485 ns/op	    6728 B/op	      41 allocs/op
+BenchmarkALPWorkspace/histogramST/cold-18               	    6840	     17574 ns/op	    6728 B/op	      41 allocs/op
+BenchmarkALPWorkspace/histogramST/cold-18               	    6775	     17697 ns/op	    6728 B/op	      41 allocs/op
+BenchmarkALPWorkspace/histogramST/cold-18               	    6898	     18569 ns/op	    6728 B/op	      41 allocs/op
+BenchmarkALPWorkspace/histogramST/cold-18               	    6594	     18066 ns/op	    6728 B/op	      41 allocs/op
+BenchmarkALPWorkspace/histogramST/cold-18               	    6733	     17598 ns/op	    6728 B/op	      41 allocs/op
+BenchmarkALPWorkspace/histogramST/reuse-18              	    6979	     17222 ns/op	    3176 B/op	      17 allocs/op
+BenchmarkALPWorkspace/histogramST/reuse-18              	    6877	     17183 ns/op	    3176 B/op	      17 allocs/op
+BenchmarkALPWorkspace/histogramST/reuse-18              	    6981	     17101 ns/op	    3176 B/op	      17 allocs/op
+BenchmarkALPWorkspace/histogramST/reuse-18              	    6934	     17137 ns/op	    3176 B/op	      17 allocs/op
+BenchmarkALPWorkspace/histogramST/reuse-18              	    6988	     16974 ns/op	    3176 B/op	      17 allocs/op
+BenchmarkALPWorkspace/histogramST/reuse-18              	    7058	     16966 ns/op	    3176 B/op	      17 allocs/op
+BenchmarkALPWorkspace/floathistogramST/cold-18          	    4934	     24643 ns/op	   10744 B/op	      40 allocs/op
+BenchmarkALPWorkspace/floathistogramST/cold-18          	    4897	     24724 ns/op	   10744 B/op	      40 allocs/op
+BenchmarkALPWorkspace/floathistogramST/cold-18          	    4824	     24569 ns/op	   10744 B/op	      40 allocs/op
+BenchmarkALPWorkspace/floathistogramST/cold-18          	    4972	     24558 ns/op	   10744 B/op	      40 allocs/op
+BenchmarkALPWorkspace/floathistogramST/cold-18          	    4939	     24634 ns/op	   10744 B/op	      40 allocs/op
+BenchmarkALPWorkspace/floathistogramST/cold-18          	    4923	     24715 ns/op	   10744 B/op	      40 allocs/op
+BenchmarkALPWorkspace/floathistogramST/reuse-18         	    5216	     23457 ns/op	    3977 B/op	      17 allocs/op
+BenchmarkALPWorkspace/floathistogramST/reuse-18         	    5058	     23605 ns/op	    3977 B/op	      17 allocs/op
+BenchmarkALPWorkspace/floathistogramST/reuse-18         	    5101	     23513 ns/op	    3977 B/op	      17 allocs/op
+BenchmarkALPWorkspace/floathistogramST/reuse-18         	    5074	     23509 ns/op	    3977 B/op	      17 allocs/op
+BenchmarkALPWorkspace/floathistogramST/reuse-18         	    5116	     23480 ns/op	    3977 B/op	      17 allocs/op
+BenchmarkALPWorkspace/floathistogramST/reuse-18         	    5149	     23593 ns/op	    3977 B/op	      17 allocs/op
+BenchmarkALPHistogramWorkloads/integer-8/histogramST/read-float-18         	   22011	      5522 ns/op	         8.675 encoded-B/sample	       8 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-8/histogramST/read-float-18         	   21848	      5477 ns/op	         8.675 encoded-B/sample	       8 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-8/histogramST/read-float-18         	   21820	      5565 ns/op	         8.675 encoded-B/sample	       8 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-8/histogramST/read-float-18         	   21040	      5695 ns/op	         8.675 encoded-B/sample	       8 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-8/histogramST/read-float-18         	   21382	      5639 ns/op	         8.675 encoded-B/sample	       8 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-8/histogramST/read-float-18         	   21396	      5628 ns/op	         8.675 encoded-B/sample	       8 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-8/ALPHistogram/read-float-18        	   30106	      3983 ns/op	         5.675 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-8/ALPHistogram/read-float-18        	   30291	      3973 ns/op	         5.675 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-8/ALPHistogram/read-float-18        	   30470	      3961 ns/op	         5.675 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-8/ALPHistogram/read-float-18        	   29788	      3991 ns/op	         5.675 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-8/ALPHistogram/read-float-18        	   29872	      3989 ns/op	         5.675 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-8/ALPHistogram/read-float-18        	   29823	      3991 ns/op	         5.675 encoded-B/sample	       0 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-128/histogramST/read-float-18       	    2266	     52733 ns/op	        23.69 encoded-B/sample	      10 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-128/histogramST/read-float-18       	    2246	     52985 ns/op	        23.69 encoded-B/sample	      10 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-128/histogramST/read-float-18       	    2263	     52966 ns/op	        23.69 encoded-B/sample	      10 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-128/histogramST/read-float-18       	    2269	     52877 ns/op	        23.69 encoded-B/sample	      10 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-128/histogramST/read-float-18       	    2253	     53025 ns/op	        23.69 encoded-B/sample	      10 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-128/histogramST/read-float-18       	    2274	     52970 ns/op	        23.69 encoded-B/sample	      10 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-128/ALPHistogram/read-float-18      	    3980	     29886 ns/op	        20.27 encoded-B/sample	       1 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-128/ALPHistogram/read-float-18      	    3963	     30017 ns/op	        20.27 encoded-B/sample	       1 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-128/ALPHistogram/read-float-18      	    4022	     29653 ns/op	        20.27 encoded-B/sample	       1 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-128/ALPHistogram/read-float-18      	    3997	     31018 ns/op	        20.27 encoded-B/sample	       1 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-128/ALPHistogram/read-float-18      	    3945	     29728 ns/op	        20.27 encoded-B/sample	       1 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-128/ALPHistogram/read-float-18      	    4024	     29885 ns/op	        20.27 encoded-B/sample	       1 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-1031/histogramST/read-float-18      	     292	    409556 ns/op	       136.6 encoded-B/sample	     139 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-1031/histogramST/read-float-18      	     292	    409361 ns/op	       136.6 encoded-B/sample	     139 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-1031/histogramST/read-float-18      	     291	    409848 ns/op	       136.6 encoded-B/sample	     140 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-1031/histogramST/read-float-18      	     292	    409121 ns/op	       136.6 encoded-B/sample	     139 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-1031/histogramST/read-float-18      	     290	    412482 ns/op	       136.6 encoded-B/sample	     140 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-1031/histogramST/read-float-18      	     290	    412376 ns/op	       136.6 encoded-B/sample	     140 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/integer-1031/ALPHistogram/read-float-18     	     514	    231794 ns/op	       119.9 encoded-B/sample	      63 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-1031/ALPHistogram/read-float-18     	     514	    230992 ns/op	       119.9 encoded-B/sample	      63 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-1031/ALPHistogram/read-float-18     	     517	    232012 ns/op	       119.9 encoded-B/sample	      62 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-1031/ALPHistogram/read-float-18     	     514	    231978 ns/op	       119.9 encoded-B/sample	      63 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-1031/ALPHistogram/read-float-18     	     514	    229153 ns/op	       119.9 encoded-B/sample	      63 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/integer-1031/ALPHistogram/read-float-18     	     524	    228999 ns/op	       119.9 encoded-B/sample	      62 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/fractional-128/floathistogramST/read-float-18         	    1062	    113154 ns/op	       885.7 encoded-B/sample	      10 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/fractional-128/floathistogramST/read-float-18         	    1059	    113299 ns/op	       885.7 encoded-B/sample	      10 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/fractional-128/floathistogramST/read-float-18         	    1052	    113776 ns/op	       885.7 encoded-B/sample	      10 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/fractional-128/floathistogramST/read-float-18         	    1053	    113285 ns/op	       885.7 encoded-B/sample	      10 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/fractional-128/floathistogramST/read-float-18         	    1057	    113545 ns/op	       885.7 encoded-B/sample	      10 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/fractional-128/floathistogramST/read-float-18         	    1050	    113381 ns/op	       885.7 encoded-B/sample	      10 B/op	       1 allocs/op
+BenchmarkALPHistogramWorkloads/fractional-128/ALPFloatHistogram/read-float-18        	    5101	     23178 ns/op	       230.8 encoded-B/sample	       3 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/fractional-128/ALPFloatHistogram/read-float-18        	    5167	     23192 ns/op	       230.8 encoded-B/sample	       3 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/fractional-128/ALPFloatHistogram/read-float-18        	    5131	     23211 ns/op	       230.8 encoded-B/sample	       3 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/fractional-128/ALPFloatHistogram/read-float-18        	    5142	     23229 ns/op	       230.8 encoded-B/sample	       3 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/fractional-128/ALPFloatHistogram/read-float-18        	    5128	     23304 ns/op	       230.8 encoded-B/sample	       3 B/op	       0 allocs/op
+BenchmarkALPHistogramWorkloads/fractional-128/ALPFloatHistogram/read-float-18        	    5115	     23129 ns/op	       230.8 encoded-B/sample	       3 B/op	       0 allocs/op
+PASS
+ok  	github.com/prometheus/prometheus/tsdb/chunkenc	14.715s

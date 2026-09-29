@@ -1,0 +1,66 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+BenchmarkALPWorkspace/XOR2/cold-18         	   33795	      3423 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/cold-18         	   37659	      3265 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/cold-18         	   36272	      3352 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/cold-18         	   36138	      3330 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/cold-18         	   36631	      3257 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/cold-18         	   37680	      3173 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/reuse-18        	   48380	      2535 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/reuse-18        	   47287	      2526 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/reuse-18        	   48488	      2536 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/reuse-18        	   48434	      2510 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/reuse-18        	   45759	      2548 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/XOR2/reuse-18        	   47200	      2518 ns/op	     944 B/op	       3 allocs/op
+BenchmarkALPWorkspace/histogramST/cold-18  	    6102	     20837 ns/op	    6648 B/op	      40 allocs/op
+BenchmarkALPWorkspace/histogramST/cold-18  	    6084	     20290 ns/op	    6648 B/op	      40 allocs/op
+BenchmarkALPWorkspace/histogramST/cold-18  	    6147	     20602 ns/op	    6648 B/op	      40 allocs/op
+BenchmarkALPWorkspace/histogramST/cold-18  	    5846	     20814 ns/op	    6648 B/op	      40 allocs/op
+BenchmarkALPWorkspace/histogramST/cold-18  	    6034	     20482 ns/op	    6648 B/op	      40 allocs/op
+BenchmarkALPWorkspace/histogramST/cold-18  	    6157	     21021 ns/op	    6648 B/op	      40 allocs/op
+BenchmarkALPWorkspace/histogramST/reuse-18 	    6102	     20540 ns/op	    3176 B/op	      17 allocs/op
+BenchmarkALPWorkspace/histogramST/reuse-18 	    5835	     20008 ns/op	    3176 B/op	      17 allocs/op
+BenchmarkALPWorkspace/histogramST/reuse-18 	    5830	     19707 ns/op	    3176 B/op	      17 allocs/op
+BenchmarkALPWorkspace/histogramST/reuse-18 	    5980	     19919 ns/op	    3176 B/op	      17 allocs/op
+BenchmarkALPWorkspace/histogramST/reuse-18 	    5895	     20235 ns/op	    3176 B/op	      17 allocs/op
+BenchmarkALPWorkspace/histogramST/reuse-18 	    5623	     20057 ns/op	    3176 B/op	      17 allocs/op
+BenchmarkALPWorkspace/floathistogramST/cold-18         	    4282	     28349 ns/op	   10744 B/op	      40 allocs/op
+BenchmarkALPWorkspace/floathistogramST/cold-18         	    4568	     28058 ns/op	   10744 B/op	      40 allocs/op
+BenchmarkALPWorkspace/floathistogramST/cold-18         	    4274	     28205 ns/op	   10744 B/op	      40 allocs/op
+BenchmarkALPWorkspace/floathistogramST/cold-18         	    4579	     28201 ns/op	   10744 B/op	      40 allocs/op
+BenchmarkALPWorkspace/floathistogramST/cold-18         	    4438	     27689 ns/op	   10744 B/op	      40 allocs/op
+BenchmarkALPWorkspace/floathistogramST/cold-18         	    4510	     27886 ns/op	   10744 B/op	      40 allocs/op
+BenchmarkALPWorkspace/floathistogramST/reuse-18        	    4688	     25851 ns/op	    3977 B/op	      17 allocs/op
+BenchmarkALPWorkspace/floathistogramST/reuse-18        	    4592	     25796 ns/op	    3977 B/op	      17 allocs/op
+BenchmarkALPWorkspace/floathistogramST/reuse-18        	    4627	     26502 ns/op	    3977 B/op	      17 allocs/op
+BenchmarkALPWorkspace/floathistogramST/reuse-18        	    4735	     25759 ns/op	    3977 B/op	      17 allocs/op
+BenchmarkALPWorkspace/floathistogramST/reuse-18        	    4650	     26130 ns/op	    3977 B/op	      17 allocs/op
+BenchmarkALPWorkspace/floathistogramST/reuse-18        	    4831	     26178 ns/op	    3977 B/op	      17 allocs/op
+BenchmarkALPHistogramPaths/ALPHistogram/recode-18      	    6025	     20598 ns/op	    6648 B/op	      40 allocs/op
+BenchmarkALPHistogramPaths/ALPHistogram/recode-18      	    5994	     20660 ns/op	    6648 B/op	      40 allocs/op
+BenchmarkALPHistogramPaths/ALPHistogram/recode-18      	    5829	     21123 ns/op	    6648 B/op	      40 allocs/op
+BenchmarkALPHistogramPaths/ALPHistogram/recode-18      	    5917	     20772 ns/op	    6648 B/op	      40 allocs/op
+BenchmarkALPHistogramPaths/ALPHistogram/recode-18      	    5967	     20488 ns/op	    6648 B/op	      40 allocs/op
+BenchmarkALPHistogramPaths/ALPHistogram/recode-18      	    5818	     21140 ns/op	    6648 B/op	      40 allocs/op
+BenchmarkALPHistogramPaths/ALPHistogram/query-after-append-18         	    3262	     37332 ns/op	   11016 B/op	     271 allocs/op
+BenchmarkALPHistogramPaths/ALPHistogram/query-after-append-18         	    3298	     38188 ns/op	   11016 B/op	     271 allocs/op
+BenchmarkALPHistogramPaths/ALPHistogram/query-after-append-18         	    3200	     38054 ns/op	   11016 B/op	     271 allocs/op
+BenchmarkALPHistogramPaths/ALPHistogram/query-after-append-18         	    3230	     38441 ns/op	   11016 B/op	     271 allocs/op
+BenchmarkALPHistogramPaths/ALPHistogram/query-after-append-18         	    3308	     37752 ns/op	   11016 B/op	     271 allocs/op
+BenchmarkALPHistogramPaths/ALPHistogram/query-after-append-18         	    3175	     37499 ns/op	   11016 B/op	     271 allocs/op
+BenchmarkALPHistogramPaths/ALPFloatHistogram/recode-18                	    4359	     28121 ns/op	   10744 B/op	      40 allocs/op
+BenchmarkALPHistogramPaths/ALPFloatHistogram/recode-18                	    4531	     27472 ns/op	   10744 B/op	      40 allocs/op
+BenchmarkALPHistogramPaths/ALPFloatHistogram/recode-18                	    3990	     28014 ns/op	   10744 B/op	      40 allocs/op
+BenchmarkALPHistogramPaths/ALPFloatHistogram/recode-18                	    4465	     27829 ns/op	   10744 B/op	      40 allocs/op
+BenchmarkALPHistogramPaths/ALPFloatHistogram/recode-18                	    4440	     27726 ns/op	   10744 B/op	      40 allocs/op
+BenchmarkALPHistogramPaths/ALPFloatHistogram/recode-18                	    4534	     27866 ns/op	   10744 B/op	      40 allocs/op
+BenchmarkALPHistogramPaths/ALPFloatHistogram/query-after-append-18    	    2432	     51802 ns/op	   20600 B/op	     272 allocs/op
+BenchmarkALPHistogramPaths/ALPFloatHistogram/query-after-append-18    	    2376	     52444 ns/op	   20600 B/op	     272 allocs/op
+BenchmarkALPHistogramPaths/ALPFloatHistogram/query-after-append-18    	    2382	     52256 ns/op	   20600 B/op	     272 allocs/op
+BenchmarkALPHistogramPaths/ALPFloatHistogram/query-after-append-18    	    2414	     51230 ns/op	   20600 B/op	     272 allocs/op
+BenchmarkALPHistogramPaths/ALPFloatHistogram/query-after-append-18    	    2424	     52079 ns/op	   20600 B/op	     272 allocs/op
+BenchmarkALPHistogramPaths/ALPFloatHistogram/query-after-append-18    	    2400	     52815 ns/op	   20600 B/op	     272 allocs/op
+PASS
+ok  	github.com/prometheus/prometheus/tsdb/chunkenc	7.640s

@@ -1,0 +1,18 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+BenchmarkALPSeek/1785000-18         	  534514	       432.6 ns/op	       0 B/op	       0 allocs/op
+BenchmarkALPSeek/1785000-18         	  622164	       410.7 ns/op	       0 B/op	       0 allocs/op
+BenchmarkALPSeek/1785000-18         	  582652	       411.4 ns/op	       0 B/op	       0 allocs/op
+BenchmarkALPSeek/1785000-18         	  591976	       419.0 ns/op	       0 B/op	       0 allocs/op
+BenchmarkALPSeek/1785000-18         	  535405	       427.2 ns/op	       0 B/op	       0 allocs/op
+BenchmarkALPSeek/1785000-18         	  592909	       414.8 ns/op	       0 B/op	       0 allocs/op
+BenchmarkALPSeek/15000000-18        	   70785	      3424 ns/op	       0 B/op	       0 allocs/op
+BenchmarkALPSeek/15000000-18        	   69789	      3448 ns/op	       0 B/op	       0 allocs/op
+BenchmarkALPSeek/15000000-18        	   68473	      3453 ns/op	       0 B/op	       0 allocs/op
+BenchmarkALPSeek/15000000-18        	   69930	      3513 ns/op	       0 B/op	       0 allocs/op
+BenchmarkALPSeek/15000000-18        	   69147	      3449 ns/op	       0 B/op	       0 allocs/op
+BenchmarkALPSeek/15000000-18        	   69978	      3435 ns/op	       0 B/op	       0 allocs/op
+PASS
+ok  	github.com/prometheus/prometheus/tsdb/chunkenc	3.225s

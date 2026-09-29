@@ -1,5 +1,10 @@
 # Experimental ALP implementation and measurements
 
+> Subsequent changes on `tsdb-alp-next-optimizations` are documented in the
+> [next optimization report](benchmarks/alp-next-20260929/report.md), including
+> histogram version 3, adaptive sampling, additional SIMD encoding, workspace
+> reuse, direct histogram materialization, and lazy timestamp seeks.
+
 This branch adds lossless ALP float chunks and explicit SIMD decoding through
 Go's experimental `simd/archsimd` package. The default float encoding is unchanged.
 The [wire-format specification](format/alp.md) describes the architecture-independent
@@ -11,7 +16,7 @@ The [optimization results](alp-optimization-results.md) describe the implemented
 changes, current measurements, adaptive configuration, and histogram version 2.
 The measurements below are the original implementation baseline.
 
-For the complete current code walkthrough, see the
+For the baseline code walkthrough, see the
 [detailed implementation report](alp-implementation-details.md).
 
 ## Build and enable

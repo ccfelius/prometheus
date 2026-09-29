@@ -4208,7 +4208,10 @@ with this feature.
 # builds read and write the same ALP format using scalar Go.
 # 'auto' keeps XOR2 in Head and considers ALP during compaction. It replaces a
 # finalized chunk only when ALP saves at least 5% of its encoded bytes, including
-# headers. Small chunks can bypass the trial. Existing ALP chunks remain readable.
+# headers. A bounded decimal probe and series-local retry hints can bypass trials,
+# so some compression opportunities are skipped to reduce CPU cost. Rejected
+# series retry after seven eligible chunks. Small chunks can also bypass the trial.
+# Existing ALP chunks remain readable.
 #
 # When absent, the encoding is 'xor2' if --enable-feature=xor2-encoding or
 # --enable-feature=st-storage is set, and 'xor' otherwise.
@@ -4233,9 +4236,10 @@ with this feature.
   # them to standard histogram chunks, using ST variants when ST is present.
   # An absent field retains the selection resolved at startup.
   # 'auto' keeps legacy histograms in Head and selects ALP during compaction only
-  # when it saves at least 5%. Integer candidates use ALP histogram version 2
-  # (128-value numeric vectors); float candidates use version 1. Version 2 chunks
-  # require a version-2-capable reader. Explicit 'alp' continues writing version 1.
+  # when it saves at least 5%. Both candidates use ALP histogram version 3, with
+  # packed reset hints and a packed first integer sample. Integer numeric vectors
+  # hold 128 values; float vectors hold 1024. Version 3 requires a compatible
+  # reader. Explicit 'alp' continues writing version 1.
   # Oversized legacy chunks can be retained without a conversion trial.
   [ histograms: <string> ] ]
 
