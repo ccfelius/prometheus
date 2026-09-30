@@ -1,0 +1,1026 @@
+[
+  {
+    "case": "BenchmarkALPMatrix/float/random-finite/n=120/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^random\\-finite$/^n=120$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.471616,
+    "user_cpu_seconds": 6.411677999999999,
+    "system_cpu_seconds": 0.020858
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/random-finite/n=120/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^random\\-finite$/^n=120$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.483715083,
+    "user_cpu_seconds": 6.418533000000001,
+    "system_cpu_seconds": 0.022222
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/decimal2/n=1024/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^decimal2$/^n=1024$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.494026041,
+    "user_cpu_seconds": 6.438017999999998,
+    "system_cpu_seconds": 0.019540000000000002
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/decimal2/n=1024/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^decimal2$/^n=1024$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.348195833000002,
+    "user_cpu_seconds": 6.292828,
+    "system_cpu_seconds": 0.019989999999999994
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/constant/n=120/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^constant$/^n=120$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.557533665999998,
+    "user_cpu_seconds": 6.465950000000003,
+    "system_cpu_seconds": 0.029206999999999997
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/constant/n=120/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^constant$/^n=120$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.526264583,
+    "user_cpu_seconds": 6.435707000000001,
+    "system_cpu_seconds": 0.028529
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/random-bits/n=32/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^random\\-bits$/^n=32$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.5044154590000005,
+    "user_cpu_seconds": 6.443478999999996,
+    "system_cpu_seconds": 0.020940999999999987
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/random-bits/n=32/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^random\\-bits$/^n=32$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.500894500000001,
+    "user_cpu_seconds": 6.437831000000003,
+    "system_cpu_seconds": 0.021617000000000025
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/computed/n=120/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^computed$/^n=120$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.496406667000002,
+    "user_cpu_seconds": 6.450562999999995,
+    "system_cpu_seconds": 0.018891999999999992
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/computed/n=120/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^computed$/^n=120$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.5145666250000005,
+    "user_cpu_seconds": 6.46647500000001,
+    "system_cpu_seconds": 0.019194000000000017
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/constant/n=32/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^constant$/^n=32$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.458937625000004,
+    "user_cpu_seconds": 6.346164999999999,
+    "system_cpu_seconds": 0.03650599999999998
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/constant/n=32/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^constant$/^n=32$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.5291948749999875,
+    "user_cpu_seconds": 6.3781139999999965,
+    "system_cpu_seconds": 0.06381999999999999
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/computed/n=32/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^computed$/^n=32$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.507442916999992,
+    "user_cpu_seconds": 6.425072,
+    "system_cpu_seconds": 0.05113000000000001
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/computed/n=32/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^computed$/^n=32$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.523465333000004,
+    "user_cpu_seconds": 6.464979999999997,
+    "system_cpu_seconds": 0.03242299999999998
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^noisy\\-decimal$/^n=120$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.498870457999999,
+    "user_cpu_seconds": 6.420024999999995,
+    "system_cpu_seconds": 0.038343000000000016
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^noisy\\-decimal$/^n=120$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.519191250000006,
+    "user_cpu_seconds": 6.369863000000009,
+    "system_cpu_seconds": 0.08342900000000003
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/noisy-decimal/n=1024/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^noisy\\-decimal$/^n=1024$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 7.228348583000013,
+    "user_cpu_seconds": 5.971006000000003,
+    "system_cpu_seconds": 0.06821699999999997
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/noisy-decimal/n=1024/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^noisy\\-decimal$/^n=1024$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.378843833000005,
+    "user_cpu_seconds": 6.286155999999991,
+    "system_cpu_seconds": 0.04762999999999995
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/outliers20/n=32/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^outliers20$/^n=32$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.364200917000005,
+    "user_cpu_seconds": 6.305152000000007,
+    "system_cpu_seconds": 0.03051400000000004
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/outliers20/n=32/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^outliers20$/^n=32$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.348514124999994,
+    "user_cpu_seconds": 6.293430999999998,
+    "system_cpu_seconds": 0.028310999999999975
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/decimal2/n=120/buckets=0/time=no-st-jitter",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^decimal2$/^n=120$/^buckets=0$/^time=no\\-st\\-jitter$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.508177791999998,
+    "user_cpu_seconds": 6.416744000000008,
+    "system_cpu_seconds": 0.04159999999999997
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/decimal2/n=120/buckets=0/time=no-st-jitter",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^decimal2$/^n=120$/^buckets=0$/^time=no\\-st\\-jitter$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.526635083000002,
+    "user_cpu_seconds": 6.439576999999986,
+    "system_cpu_seconds": 0.039188
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/counter/n=120/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^counter$/^n=120$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.501898583000013,
+    "user_cpu_seconds": 6.434601000000015,
+    "system_cpu_seconds": 0.03272700000000006
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/counter/n=120/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^counter$/^n=120$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.478408000000002,
+    "user_cpu_seconds": 6.411467999999985,
+    "system_cpu_seconds": 0.03524099999999997
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/outliers20/n=1024/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^outliers20$/^n=1024$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.5539802079999845,
+    "user_cpu_seconds": 6.476765999999998,
+    "system_cpu_seconds": 0.035360999999999976
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/outliers20/n=1024/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^outliers20$/^n=1024$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.455695708999997,
+    "user_cpu_seconds": 6.383925000000005,
+    "system_cpu_seconds": 0.033497
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/stale5/n=1024/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^stale5$/^n=1024$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.574010458000004,
+    "user_cpu_seconds": 6.505088000000001,
+    "system_cpu_seconds": 0.033731999999999984
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/stale5/n=1024/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^stale5$/^n=1024$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.583959249999992,
+    "user_cpu_seconds": 6.5125209999999925,
+    "system_cpu_seconds": 0.03582700000000005
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/random-finite/n=1024/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^random\\-finite$/^n=1024$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.510385291999995,
+    "user_cpu_seconds": 6.435795000000013,
+    "system_cpu_seconds": 0.034680000000000044
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/random-finite/n=1024/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^random\\-finite$/^n=1024$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.510264250000006,
+    "user_cpu_seconds": 6.4336239999999805,
+    "system_cpu_seconds": 0.036009999999999875
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/stale5/n=32/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^stale5$/^n=32$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.50718170799999,
+    "user_cpu_seconds": 6.433623000000011,
+    "system_cpu_seconds": 0.038038000000000016
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/stale5/n=32/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^stale5$/^n=32$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.529220957999996,
+    "user_cpu_seconds": 6.444331000000005,
+    "system_cpu_seconds": 0.040974000000000066
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/random-finite/n=32/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^random\\-finite$/^n=32$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.514190249999984,
+    "user_cpu_seconds": 6.443073999999996,
+    "system_cpu_seconds": 0.03344400000000003
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/random-finite/n=32/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^random\\-finite$/^n=32$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.474151833000008,
+    "user_cpu_seconds": 6.403389000000004,
+    "system_cpu_seconds": 0.034513000000000016
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/computed/n=1024/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^computed$/^n=1024$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.547655666999987,
+    "user_cpu_seconds": 6.467927000000003,
+    "system_cpu_seconds": 0.03492099999999998
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/computed/n=1024/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^computed$/^n=1024$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.532608666000016,
+    "user_cpu_seconds": 6.454226000000006,
+    "system_cpu_seconds": 0.03669499999999992
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/stale5/n=120/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^stale5$/^n=120$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.489446750000013,
+    "user_cpu_seconds": 6.409550999999993,
+    "system_cpu_seconds": 0.03608200000000017
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/stale5/n=120/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^stale5$/^n=120$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.510677458999993,
+    "user_cpu_seconds": 6.423709000000002,
+    "system_cpu_seconds": 0.040919999999999845
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/computed/n=120/buckets=0/time=no-st-jitter",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^computed$/^n=120$/^buckets=0$/^time=no\\-st\\-jitter$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.501507957999991,
+    "user_cpu_seconds": 6.427372999999989,
+    "system_cpu_seconds": 0.035786000000000096
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/computed/n=120/buckets=0/time=no-st-jitter",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^computed$/^n=120$/^buckets=0$/^time=no\\-st\\-jitter$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.506562291000023,
+    "user_cpu_seconds": 6.434150999999986,
+    "system_cpu_seconds": 0.03366800000000003
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/decimal6/n=120/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^decimal6$/^n=120$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.517613415999961,
+    "user_cpu_seconds": 6.455439000000013,
+    "system_cpu_seconds": 0.03322999999999987
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/decimal6/n=120/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^decimal6$/^n=120$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.523061208000001,
+    "user_cpu_seconds": 6.463813000000016,
+    "system_cpu_seconds": 0.03002499999999997
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/decimal2/n=120/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^decimal2$/^n=120$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 9.795364333000009,
+    "user_cpu_seconds": 9.65888799999999,
+    "system_cpu_seconds": 0.06024800000000008
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/decimal2/n=120/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^decimal2$/^n=120$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 9.820308375000025,
+    "user_cpu_seconds": 9.62736799999999,
+    "system_cpu_seconds": 0.08868999999999994
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/noisy-decimal/n=32/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^noisy\\-decimal$/^n=32$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.506898708999984,
+    "user_cpu_seconds": 6.436324000000013,
+    "system_cpu_seconds": 0.03602799999999995
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/noisy-decimal/n=32/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^noisy\\-decimal$/^n=32$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.475832916999991,
+    "user_cpu_seconds": 6.3812469999999735,
+    "system_cpu_seconds": 0.04946200000000012
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/counter/n=1024/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^counter$/^n=1024$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.369533875000002,
+    "user_cpu_seconds": 6.3008440000000405,
+    "system_cpu_seconds": 0.03780399999999995
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/counter/n=1024/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^counter$/^n=1024$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.098893249999946,
+    "user_cpu_seconds": 6.036606000000006,
+    "system_cpu_seconds": 0.036999000000000004
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/decimal2/n=32/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^decimal2$/^n=32$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.516359665999971,
+    "user_cpu_seconds": 6.4351839999999925,
+    "system_cpu_seconds": 0.04283400000000004
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/decimal2/n=32/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^decimal2$/^n=32$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.499094000000014,
+    "user_cpu_seconds": 6.423987000000011,
+    "system_cpu_seconds": 0.03735200000000005
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/constant/n=1024/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^constant$/^n=1024$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.502234459000022,
+    "user_cpu_seconds": 6.444407999999953,
+    "system_cpu_seconds": 0.03234199999999987
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/constant/n=1024/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^constant$/^n=1024$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.4882068329999925,
+    "user_cpu_seconds": 6.430451000000005,
+    "system_cpu_seconds": 0.03194200000000014
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/decimal6/n=1024/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^decimal6$/^n=1024$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.6061842500000125,
+    "user_cpu_seconds": 6.384301999999991,
+    "system_cpu_seconds": 0.1380849999999998
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/decimal6/n=1024/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^decimal6$/^n=1024$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.690938707999976,
+    "user_cpu_seconds": 6.586882000000003,
+    "system_cpu_seconds": 0.05815400000000004
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/outliers20/n=120/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^outliers20$/^n=120$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.506327499999998,
+    "user_cpu_seconds": 6.4309370000000285,
+    "system_cpu_seconds": 0.043879
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/outliers20/n=120/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^outliers20$/^n=120$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.519130415999996,
+    "user_cpu_seconds": 6.4124630000000025,
+    "system_cpu_seconds": 0.055760000000000254
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/counter/n=32/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^counter$/^n=32$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.499636959000043,
+    "user_cpu_seconds": 6.406148999999971,
+    "system_cpu_seconds": 0.05517499999999975
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/counter/n=32/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^counter$/^n=32$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.690521457999978,
+    "user_cpu_seconds": 6.531082000000026,
+    "system_cpu_seconds": 0.0565380000000002
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/random-bits/n=1024/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^random\\-bits$/^n=1024$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.548297082999966,
+    "user_cpu_seconds": 6.4649989999999775,
+    "system_cpu_seconds": 0.03584399999999999
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/random-bits/n=1024/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^random\\-bits$/^n=1024$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.518808917000001,
+    "user_cpu_seconds": 6.446420999999987,
+    "system_cpu_seconds": 0.03258099999999997
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/decimal6/n=32/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^decimal6$/^n=32$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.411414417000003,
+    "user_cpu_seconds": 6.327401000000009,
+    "system_cpu_seconds": 0.049363000000000046
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/decimal6/n=32/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^decimal6$/^n=32$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 6.523236084000018,
+    "user_cpu_seconds": 6.461455999999998,
+    "system_cpu_seconds": 0.031117999999999757
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/random-bits/n=120/buckets=0/time=no-st",
+    "backend": "simd",
+    "command": [
+      "/private/tmp/alp-three-simd.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^random\\-bits$/^n=120$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 9.764600833999964,
+    "user_cpu_seconds": 9.636549000000002,
+    "system_cpu_seconds": 0.06048700000000018
+  },
+  {
+    "case": "BenchmarkALPMatrix/float/random-bits/n=120/buckets=0/time=no-st",
+    "backend": "scalar",
+    "command": [
+      "/private/tmp/alp-three-scalar.test",
+      "-test.run=^$",
+      "-test.bench=^BenchmarkALPMatrix$/^float$/^random\\-bits$/^n=120$/^buckets=0$/^time=no\\-st$",
+      "-test.benchmem",
+      "-test.count=6",
+      "-test.benchtime=150ms",
+      "-test.cpu=1"
+    ],
+    "wall_seconds": 9.74377800000002,
+    "user_cpu_seconds": 9.608983000000023,
+    "system_cpu_seconds": 0.06867499999999982
+  }
+]

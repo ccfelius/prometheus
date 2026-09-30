@@ -1,37 +1,4 @@
-"""Generate a three-codec report from the shared matrix runner's measurements."""
-import importlib.util
-import json
-from pathlib import Path
-import statistics
-import sys
-
-sys.dont_write_bytecode = True
-root = Path(__file__).resolve().parent
-shared_path = root.parent / 'alp-extensive-20260929' / 'analyze.py'
-spec = importlib.util.spec_from_file_location('matrix_analysis', shared_path)
-shared = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(shared)
-rows = shared.summarize(root)
-index = {(r['backend'], r['pattern'], r['samples'], r['timing'], r['codec'], r['operation']): r for r in rows}
-metadata = json.loads((root / 'metadata.json').read_text())
-
-
-def get(pattern, codec, operation, backend='simd', n=120, timing='no-st'):
-    return index[backend, pattern, n, timing, codec, operation]
-
-
-def table(headers, body):
-    return '\n'.join(['| ' + ' | '.join(headers) + ' |', '| ' + ' | '.join(['---'] * len(headers)) + ' |'] + ['| ' + ' | '.join(row) + ' |' for row in body])
-
-
-for backend in ('scalar', 'simd'):
-    raw = (root / f'{backend}.txt').read_text().splitlines()
-    headers = [line for line in raw if line.startswith(('goos:', 'goarch:', 'pkg:', 'cpu:'))]
-    for codec in ('XOR', 'XOR2', 'ALP'):
-        lines = [line.replace(f'/{codec}/', '/codec/') for line in raw if line.startswith('Benchmark') and f'/{codec}/' in line]
-        (root / f'{backend}-{codec.lower()}.txt').write_text('\n'.join(headers + lines) + '\n')
-
-text = f'''# ALP compared with XOR and XOR2
+# ALP compared with XOR and XOR2
 
 This benchmark directly compares the current ALP implementation with both
 existing float encodings, XOR and XOR2, on identical input values and timestamps.
@@ -39,30 +6,19 @@ All start timestamps are zero because XOR cannot represent them. The earlier
 [extensive benchmark](../alp-extensive-20260929/report.md) compares XOR2 and ALP
 with nonzero start timestamps and also covers histogram codecs.
 
-Measured {metadata['started_utc'][:10]} on {metadata['cpu']}, darwin/arm64,
-Go 1.27.1. Source revision: `{metadata['revision']}`.
-There are {metadata['observations']:,} observations across 32 input scenarios,
+Measured 2026-09-30 on Apple M5 Pro, darwin/arm64,
+Go 1.27.1. Source revision: `6f65296eda1740208253a777b2cf46ee5f36de65`.
+There are 2,376 observations across 32 input scenarios,
 two builds, three codecs, and six repetitions of each operation. The scalar and
 SIMD builds use the same compiler; only `GOEXPERIMENT=simd` differs.
 
 ## Main findings
 
-'''
-for baseline in ('XOR', 'XOR2'):
-    pairs = []
-    for r in rows:
-        if r['backend'] == 'simd' and r['codec'] == baseline and r['operation'] == 'encode':
-            alp = get(r['pattern'], 'ALP', 'encode', n=r['samples'], timing=r['timing'])
-            dec = get(r['pattern'], baseline, 'decode', n=r['samples'], timing=r['timing'])
-            alp_dec = get(r['pattern'], 'ALP', 'decode', n=r['samples'], timing=r['timing'])
-            pairs.append((dec['ns/op']/alp_dec['ns/op'], alp['cpu-ns/sample']/r['cpu-ns/sample'], alp['encoded-B/sample']/r['encoded-B/sample']))
-    text += (f"- Against **{baseline}**, SIMD ALP warm decoding is faster in **{sum(p[0]>1 for p in pairs)}/{len(pairs)}** cases "
-             f"({min(p[0] for p in pairs):.2f}–{max(p[0] for p in pairs):.2f}× speedup). "
-             f"Encoding consumes more CPU in **{sum(p[1]>1 for p in pairs)}/{len(pairs)}** cases. "
-             f"ALP stores fewer bytes in **{sum(p[2]<1 for p in pairs)}/{len(pairs)}** cases.\n")
-text += f'''
+- Against **XOR**, SIMD ALP warm decoding is faster in **32/32** cases (1.00–3.62× speedup). Encoding consumes more CPU in **28/32** cases. ALP stores fewer bytes in **26/32** cases.
+- Against **XOR2**, SIMD ALP warm decoding is faster in **32/32** cases (1.24–7.77× speedup). Encoding consumes more CPU in **26/32** cases. ALP stores fewer bytes in **26/32** cases.
+
 Median process CPU utilization across rows is
-{statistics.median(r['cpu-%core'] for r in rows):.1f}% of one core. Compare CPU
+99.8% of one core. Compare CPU
 time for a fixed amount of data to assess CPU savings. Utilization alone does
 not distinguish a fast codec from a slow one when both continuously run.
 
@@ -85,15 +41,38 @@ SIMD build, 120 samples per chunk, regular timestamps. Times are microseconds
 for the complete chunk; lower is better. Encoding includes appending and final
 serialization. Warm decoding reuses an iterator and materializes every value.
 
-'''
-patterns = ['constant', 'counter', 'decimal2', 'decimal6', 'noisy-decimal', 'computed', 'random-finite', 'random-bits', 'stale5', 'outliers20']
-body = []
-for pattern in patterns:
-    for codec in ('XOR', 'XOR2', 'ALP'):
-        e, d = get(pattern, codec, 'encode'), get(pattern, codec, 'decode')
-        body.append([pattern, codec, f"{e['ns/op']/1000:.3f}", f"{d['ns/op']/1000:.3f}", f"{e['M-samples/s']:.1f}", f"{d['M-samples/s']:.1f}"])
-text += table(['Pattern', 'Codec', 'Encode µs/chunk', 'Decode µs/chunk', 'Encode M samples/s', 'Decode M samples/s'], body)
-text += '''
+| Pattern | Codec | Encode µs/chunk | Decode µs/chunk | Encode M samples/s | Decode M samples/s |
+| --- | --- | --- | --- | --- | --- |
+| constant | XOR | 0.686 | 0.325 | 174.8 | 369.7 |
+| constant | XOR2 | 0.558 | 0.406 | 214.9 | 295.2 |
+| constant | ALP | 1.330 | 0.271 | 90.2 | 442.6 |
+| counter | XOR | 1.454 | 0.641 | 82.5 | 187.2 |
+| counter | XOR2 | 1.237 | 0.704 | 97.0 | 170.5 |
+| counter | ALP | 2.780 | 0.373 | 43.2 | 322.0 |
+| decimal2 | XOR | 2.189 | 1.026 | 54.8 | 117.0 |
+| decimal2 | XOR2 | 1.827 | 0.882 | 65.7 | 136.0 |
+| decimal2 | ALP | 2.836 | 0.386 | 42.3 | 310.7 |
+| decimal6 | XOR | 2.611 | 1.093 | 46.0 | 109.7 |
+| decimal6 | XOR2 | 1.828 | 0.911 | 65.6 | 131.7 |
+| decimal6 | ALP | 7.017 | 0.382 | 17.1 | 314.2 |
+| noisy-decimal | XOR | 2.446 | 1.033 | 49.0 | 116.2 |
+| noisy-decimal | XOR2 | 1.951 | 0.912 | 61.5 | 131.5 |
+| noisy-decimal | ALP | 2.844 | 0.394 | 42.2 | 304.6 |
+| computed | XOR | 2.463 | 1.028 | 48.7 | 116.7 |
+| computed | XOR2 | 1.962 | 0.909 | 61.1 | 132.0 |
+| computed | ALP | 9.362 | 0.558 | 12.8 | 214.9 |
+| random-finite | XOR | 2.239 | 1.100 | 53.6 | 109.1 |
+| random-finite | XOR2 | 2.224 | 0.926 | 54.0 | 129.6 |
+| random-finite | ALP | 10.867 | 0.559 | 11.0 | 214.8 |
+| random-bits | XOR | 2.285 | 1.105 | 52.5 | 108.6 |
+| random-bits | XOR2 | 2.249 | 0.943 | 53.4 | 127.2 |
+| random-bits | ALP | 12.213 | 0.307 | 9.8 | 391.4 |
+| stale5 | XOR | 2.674 | 1.088 | 44.9 | 110.3 |
+| stale5 | XOR2 | 1.822 | 0.875 | 65.9 | 137.1 |
+| stale5 | ALP | 2.842 | 0.389 | 42.2 | 308.7 |
+| outliers20 | XOR | 2.045 | 1.105 | 58.7 | 108.5 |
+| outliers20 | XOR2 | 1.950 | 0.951 | 61.6 | 126.2 |
+| outliers20 | ALP | 7.197 | 0.395 | 16.7 | 303.9 |
 
 ## CPU cost and compressed size
 
@@ -103,14 +82,38 @@ samples. Encoded bytes include chunk headers and timestamp streams. The numeric
 compression ratio uses the 8-byte float value as its uncompressed baseline, excluding the
 raw timestamp size; it is `8 / encoded bytes per sample` for all three codecs.
 
-'''
-body = []
-for pattern in patterns:
-    for codec in ('XOR', 'XOR2', 'ALP'):
-        e, d = get(pattern, codec, 'encode'), get(pattern, codec, 'decode')
-        body.append([pattern, codec, f"{e['cpu-ns/sample']:.2f}", f"{d['cpu-ns/sample']:.2f}", f"{e['encoded-B/sample']:.3f}", f"{8/e['encoded-B/sample']:.2f}:1"])
-text += table(['Pattern', 'Codec', 'Encode CPU ns/sample', 'Decode CPU ns/sample', 'Encoded B/sample', 'Numeric compression ratio'], body)
-text += '''
+| Pattern | Codec | Encode CPU ns/sample | Decode CPU ns/sample | Encoded B/sample | Numeric compression ratio |
+| --- | --- | --- | --- | --- | --- |
+| constant | XOR | 5.69 | 2.70 | 0.400 | 20.00:1 |
+| constant | XOR2 | 4.62 | 3.39 | 0.283 | 28.24:1 |
+| constant | ALP | 10.61 | 2.26 | 0.333 | 24.00:1 |
+| counter | XOR | 12.07 | 5.34 | 1.967 | 4.07:1 |
+| counter | XOR2 | 10.25 | 5.87 | 1.975 | 4.05:1 |
+| counter | ALP | 22.73 | 3.11 | 1.775 | 4.51:1 |
+| decimal2 | XOR | 18.08 | 8.55 | 5.767 | 1.39:1 |
+| decimal2 | XOR2 | 15.09 | 7.35 | 5.775 | 1.39:1 |
+| decimal2 | ALP | 23.19 | 3.22 | 1.308 | 6.12:1 |
+| decimal6 | XOR | 21.64 | 9.11 | 5.733 | 1.40:1 |
+| decimal6 | XOR2 | 15.11 | 7.60 | 5.742 | 1.39:1 |
+| decimal6 | ALP | 58.02 | 3.18 | 1.392 | 5.75:1 |
+| noisy-decimal | XOR | 20.24 | 8.61 | 7.117 | 1.12:1 |
+| noisy-decimal | XOR2 | 16.14 | 7.61 | 7.125 | 1.12:1 |
+| noisy-decimal | ALP | 23.17 | 3.28 | 2.175 | 3.68:1 |
+| computed | XOR | 20.41 | 8.57 | 7.108 | 1.13:1 |
+| computed | XOR2 | 16.22 | 7.57 | 7.117 | 1.12:1 |
+| computed | ALP | 77.55 | 4.66 | 6.742 | 1.19:1 |
+| random-finite | XOR | 18.44 | 9.17 | 8.467 | 0.94:1 |
+| random-finite | XOR2 | 18.27 | 7.72 | 8.475 | 0.94:1 |
+| random-finite | ALP | 90.15 | 4.66 | 7.475 | 1.07:1 |
+| random-bits | XOR | 18.83 | 9.21 | 8.483 | 0.94:1 |
+| random-bits | XOR2 | 18.51 | 7.86 | 8.492 | 0.94:1 |
+| random-bits | ALP | 101.20 | 2.55 | 8.267 | 0.97:1 |
+| stale5 | XOR | 22.05 | 9.07 | 7.700 | 1.04:1 |
+| stale5 | XOR2 | 15.05 | 7.30 | 5.700 | 1.40:1 |
+| stale5 | ALP | 23.25 | 3.24 | 1.808 | 4.42:1 |
+| outliers20 | XOR | 16.88 | 9.21 | 7.442 | 1.07:1 |
+| outliers20 | XOR2 | 16.12 | 7.93 | 7.450 | 1.07:1 |
+| outliers20 | ALP | 59.45 | 3.29 | 4.975 | 1.61:1 |
 
 ## Cold iterator decoding
 
@@ -118,14 +121,14 @@ These full scans allocate a fresh iterator for each chunk. The encoded bytes
 remain in memory, so this is an allocation comparison, not a cold disk or CPU
 cache measurement. All cases below have 120 samples and regular timestamps.
 
-'''
-body = []
-for pattern in ('decimal2', 'random-bits'):
-    for codec in ('XOR', 'XOR2', 'ALP'):
-        r = get(pattern, codec, 'decode-cold')
-        body.append([pattern, codec, f"{r['ns/op']/1000:.3f}", f"{r['cpu-ns/sample']:.2f}", str(int(r['B/op'])), str(int(r['allocs/op']))])
-text += table(['Pattern', 'Codec', 'Decode µs/chunk', 'CPU ns/sample', 'Allocated B/chunk', 'Allocations/chunk'], body)
-text += '''
+| Pattern | Codec | Decode µs/chunk | CPU ns/sample | Allocated B/chunk | Allocations/chunk |
+| --- | --- | --- | --- | --- | --- |
+| decimal2 | XOR | 1.058 | 8.82 | 128 | 2 |
+| decimal2 | XOR2 | 0.914 | 7.61 | 144 | 2 |
+| decimal2 | ALP | 0.526 | 4.29 | 1552 | 4 |
+| random-bits | XOR | 1.139 | 9.48 | 128 | 2 |
+| random-bits | XOR2 | 0.977 | 8.13 | 144 | 2 |
+| random-bits | ALP | 0.418 | 3.41 | 1296 | 3 |
 
 ## Methodology and reproduction
 
@@ -172,6 +175,3 @@ GOTOOLCHAIN=go1.27.1 go run golang.org/x/perf/cmd/benchstat@v0.0.0-2026090820000
 
 The one-iteration smoke run enumerates the cases and is excluded from the
 measurements. Regenerating statistics does not require repeating measurements.
-'''
-(root / 'report.md').write_text(text)
-print(f'Wrote {len(rows)} medians and the XOR/XOR2/ALP report.')

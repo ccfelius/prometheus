@@ -1,0 +1,780 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+                                                                         │ simd-xor.txt │             simd-xor2.txt             │             simd-alp.txt              │
+                                                                         │    sec/op    │    sec/op      vs base                │    sec/op      vs base                │
+ALPMatrix/float/random-finite/n=120/buckets=0/time=no-st/codec/encode       2.239µ ± 0%    2.224µ ±  0%    -0.69% (p=0.002 n=6)   10.868µ ±  1%  +385.37% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=120/buckets=0/time=no-st/codec/decode      1100.0n ± 0%    926.2n ±  0%   -15.80% (p=0.002 n=6)    558.6n ±  1%   -49.21% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=1024/buckets=0/time=no-st/codec/encode           17.73µ ± 0%    19.99µ ±  0%   +12.74% (p=0.002 n=6)    14.96µ ±  1%   -15.66% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=1024/buckets=0/time=no-st/codec/decode           8.716µ ± 1%   18.658µ ±  1%  +114.08% (p=0.002 n=6)    3.192µ ±  1%   -63.38% (p=0.002 n=6)
+ALPMatrix/float/constant/n=120/buckets=0/time=no-st/codec/encode            686.4n ± 0%    558.4n ±  0%   -18.65% (p=0.002 n=6)   1330.0n ±  1%   +93.76% (p=0.002 n=6)
+ALPMatrix/float/constant/n=120/buckets=0/time=no-st/codec/decode            324.6n ± 0%    406.5n ±  5%   +25.23% (p=0.002 n=6)    271.1n ±  0%   -16.48% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=32/buckets=0/time=no-st/codec/encode          719.6n ± 1%    705.1n ±  1%    -2.01% (p=0.002 n=6)   7126.5n ±  2%  +890.27% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=32/buckets=0/time=no-st/codec/decode         308.20n ± 0%   260.80n ±  1%   -15.38% (p=0.002 n=6)    93.93n ±  2%   -69.52% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st/codec/encode            2.464µ ± 1%    1.963µ ±  7%   -20.34% (p=0.002 n=6)    9.362µ ±  0%  +280.03% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st/codec/decode           1028.0n ± 0%    908.8n ±  1%   -11.60% (p=0.002 n=6)    558.5n ±  1%   -45.68% (p=0.002 n=6)
+ALPMatrix/float/constant/n=32/buckets=0/time=no-st/codec/encode             289.1n ± 2%    254.8n ±  1%   -11.85% (p=0.002 n=6)    473.9n ±  3%   +63.93% (p=0.002 n=6)
+ALPMatrix/float/constant/n=32/buckets=0/time=no-st/codec/decode             160.4n ± 7%    174.2n ±  6%    +8.63% (p=0.002 n=6)    116.2n ± 25%   -27.52% (p=0.002 n=6)
+ALPMatrix/float/computed/n=32/buckets=0/time=no-st/codec/encode             716.7n ± 1%    597.6n ±  1%   -16.61% (p=0.002 n=6)   6665.0n ±  1%  +829.96% (p=0.002 n=6)
+ALPMatrix/float/computed/n=32/buckets=0/time=no-st/codec/decode             295.7n ± 0%    258.4n ±  0%   -12.61% (p=0.002 n=6)    206.3n ±  1%   -30.25% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/codec/encode       2.447µ ± 1%    1.951µ ±  0%   -20.25% (p=0.002 n=6)    2.844µ ±  1%   +16.23% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/codec/decode      1033.0n ± 0%    912.5n ±  0%   -11.67% (p=0.002 n=6)    394.0n ±  0%   -61.86% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=1024/buckets=0/time=no-st/codec/encode      22.36µ ± 2%    20.98µ ±  1%    -6.18% (p=0.002 n=6)    15.59µ ±  7%   -30.26% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=1024/buckets=0/time=no-st/codec/decode      8.518µ ± 2%   17.928µ ±  3%  +110.46% (p=0.002 n=6)    3.293µ ±  3%   -61.34% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=32/buckets=0/time=no-st/codec/encode           666.3n ± 1%    596.0n ±  1%   -10.54% (p=0.002 n=6)   5844.5n ±  3%  +777.16% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=32/buckets=0/time=no-st/codec/decode           289.9n ± 0%    256.9n ±  1%   -11.42% (p=0.002 n=6)    150.6n ±  1%   -48.04% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st-jitter/codec/encode     2.435µ ± 0%    2.121µ ±  0%   -12.88% (p=0.002 n=6)    3.003µ ±  1%   +23.33% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st-jitter/codec/decode    1534.5n ± 0%   1165.0n ±  1%   -24.08% (p=0.002 n=6)    694.2n ±  0%   -54.76% (p=0.002 n=6)
+ALPMatrix/float/counter/n=120/buckets=0/time=no-st/codec/encode             1.454µ ± 1%    1.237µ ±  5%   -14.92% (p=0.002 n=6)    2.781µ ±  1%   +91.23% (p=0.002 n=6)
+ALPMatrix/float/counter/n=120/buckets=0/time=no-st/codec/decode             640.9n ± 0%    703.9n ±  1%    +9.83% (p=0.002 n=6)    372.7n ±  0%   -41.86% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=1024/buckets=0/time=no-st/codec/encode         16.98µ ± 1%    21.72µ ±  1%   +27.91% (p=0.002 n=6)    61.18µ ±  0%  +260.36% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=1024/buckets=0/time=no-st/codec/decode         9.270µ ± 0%   18.684µ ±  0%  +101.55% (p=0.002 n=6)    3.338µ ±  1%   -64.00% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/codec/encode             22.71µ ± 1%    19.95µ ±  1%   -12.15% (p=0.002 n=6)    19.61µ ±  0%   -13.65% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/codec/decode             9.117µ ± 0%   19.131µ ±  0%  +109.84% (p=0.002 n=6)    3.250µ ±  1%   -64.35% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=1024/buckets=0/time=no-st/codec/encode      18.36µ ± 1%    23.36µ ±  1%   +27.25% (p=0.002 n=6)    89.56µ ±  0%  +387.90% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=1024/buckets=0/time=no-st/codec/decode      9.213µ ± 0%   19.759µ ±  0%  +114.47% (p=0.002 n=6)    4.660µ ±  0%   -49.42% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/codec/encode               713.5n ± 1%    564.4n ±  1%   -20.90% (p=0.002 n=6)   1673.0n ±  1%  +134.46% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/codec/decode               287.8n ± 1%    236.6n ±  2%   -17.76% (p=0.002 n=6)    146.8n ±  1%   -48.98% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=32/buckets=0/time=no-st/codec/encode        699.6n ± 1%    695.9n ±  0%    -0.54% (p=0.013 n=6)   7277.5n ±  3%  +940.16% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=32/buckets=0/time=no-st/codec/decode        304.8n ± 0%    257.3n ±  0%   -15.57% (p=0.002 n=6)    206.7n ±  0%   -32.17% (p=0.002 n=6)
+ALPMatrix/float/computed/n=1024/buckets=0/time=no-st/codec/encode           21.92µ ± 2%    21.65µ ±  8%         ~ (p=0.240 n=6)    74.52µ ±  1%  +240.03% (p=0.002 n=6)
+ALPMatrix/float/computed/n=1024/buckets=0/time=no-st/codec/decode           8.475µ ± 0%   13.615µ ±  3%   +60.66% (p=0.002 n=6)    4.676µ ±  0%   -44.82% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=120/buckets=0/time=no-st/codec/encode              2.674µ ± 0%    1.822µ ±  1%   -31.85% (p=0.002 n=6)    2.842µ ±  1%    +6.30% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=120/buckets=0/time=no-st/codec/decode             1088.0n ± 1%    875.5n ±  1%   -19.53% (p=0.002 n=6)    388.7n ±  0%   -64.27% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st-jitter/codec/encode     2.672µ ± 3%    2.275µ ±  0%   -14.84% (p=0.002 n=6)    9.527µ ±  1%  +256.62% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st-jitter/codec/decode    1540.5n ± 1%   1273.5n ±  0%   -17.33% (p=0.002 n=6)    858.5n ±  1%   -44.27% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=120/buckets=0/time=no-st/codec/encode            2.611µ ± 1%    1.828µ ±  1%   -29.99% (p=0.002 n=6)    7.017µ ±  1%  +168.75% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=120/buckets=0/time=no-st/codec/decode           1093.5n ± 2%    911.5n ±  1%   -16.65% (p=0.002 n=6)    381.9n ±  1%   -65.07% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/encode            2.190µ ± 2%    1.827µ ±  1%   -16.56% (p=0.002 n=6)    2.836µ ±  1%   +29.53% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/decode           1026.0n ± 0%    882.1n ±  0%   -14.03% (p=0.002 n=6)    386.2n ±  5%   -62.36% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/decode-cold      1058.5n ± 1%    914.1n ±  1%   -13.64% (p=0.002 n=6)    525.6n ±  2%   -50.34% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=32/buckets=0/time=no-st/codec/encode        730.4n ± 1%    606.3n ±  4%   -16.98% (p=0.002 n=6)   1738.0n ±  5%  +137.97% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=32/buckets=0/time=no-st/codec/decode        299.8n ± 0%    266.3n ±  1%   -11.17% (p=0.002 n=6)    149.9n ±  2%   -50.00% (p=0.002 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=no-st/codec/encode            13.17µ ± 1%    14.81µ ±  0%   +12.47% (p=0.002 n=6)    14.79µ ±  5%   +12.27% (p=0.002 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=no-st/codec/decode            5.409µ ± 1%   16.245µ ±  0%  +200.37% (p=0.002 n=6)    3.110µ ±  1%   -42.50% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=32/buckets=0/time=no-st/codec/encode             667.1n ± 0%    545.4n ±  0%   -18.24% (p=0.002 n=6)   1690.5n ±  1%  +153.39% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=32/buckets=0/time=no-st/codec/decode             267.8n ± 1%    246.2n ±  2%    -8.08% (p=0.002 n=6)    144.9n ±  0%   -45.90% (p=0.002 n=6)
+ALPMatrix/float/constant/n=1024/buckets=0/time=no-st/codec/encode           4.632µ ± 0%    8.252µ ±  2%   +78.14% (p=0.002 n=6)    5.956µ ±  1%   +28.58% (p=0.002 n=6)
+ALPMatrix/float/constant/n=1024/buckets=0/time=no-st/codec/decode           2.298µ ± 1%   14.029µ ±  1%  +510.62% (p=0.002 n=6)    2.290µ ±  0%    -0.33% (p=0.050 n=6)
+ALPMatrix/float/decimal6/n=1024/buckets=0/time=no-st/codec/encode           21.66µ ± 6%    20.90µ ±  3%    -3.53% (p=0.004 n=6)    19.69µ ±  4%    -9.11% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=1024/buckets=0/time=no-st/codec/decode           9.425µ ± 3%   19.375µ ±  4%  +105.58% (p=0.002 n=6)    3.281µ ±  5%   -65.19% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=120/buckets=0/time=no-st/codec/encode          2.045µ ± 1%    1.949µ ±  4%    -4.65% (p=0.004 n=6)    7.198µ ±  2%  +252.04% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=120/buckets=0/time=no-st/codec/decode         1105.5n ± 2%    950.8n ±  0%   -13.99% (p=0.002 n=6)    394.9n ±  1%   -64.28% (p=0.002 n=6)
+ALPMatrix/float/counter/n=32/buckets=0/time=no-st/codec/encode              499.1n ± 5%    436.1n ± 17%   -12.62% (p=0.026 n=6)   1820.0n ± 11%  +264.66% (p=0.002 n=6)
+ALPMatrix/float/counter/n=32/buckets=0/time=no-st/codec/decode              202.5n ± 2%    224.9n ±  5%   +11.06% (p=0.002 n=6)    135.1n ±  1%   -33.28% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=1024/buckets=0/time=no-st/codec/encode        18.64µ ± 1%    23.46µ ±  0%   +25.87% (p=0.002 n=6)   102.37µ ±  6%  +449.32% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=1024/buckets=0/time=no-st/codec/decode        9.321µ ± 0%   19.987µ ±  1%  +114.42% (p=0.002 n=6)    2.573µ ±  3%   -72.40% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=32/buckets=0/time=no-st/codec/encode             725.2n ± 1%    563.4n ±  1%   -22.32% (p=0.002 n=6)   5898.5n ±  1%  +713.36% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=32/buckets=0/time=no-st/codec/decode             302.6n ± 1%    257.6n ±  1%   -14.89% (p=0.002 n=6)    146.3n ±  1%   -51.67% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/encode         2.286µ ± 3%    2.249µ ±  0%    -1.60% (p=0.002 n=6)   12.213µ ±  1%  +434.35% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/decode        1105.0n ± 1%    943.2n ±  1%   -14.64% (p=0.002 n=6)    306.6n ±  0%   -72.25% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/decode-cold   1138.5n ± 0%    977.3n ±  0%   -14.16% (p=0.002 n=6)    418.1n ±  1%   -63.28% (p=0.002 n=6)
+geomean                                                                     1.805µ         1.906µ          +5.63%                  1.959µ          +8.57%
+
+                                                                         │ simd-xor.txt  │             simd-xor2.txt             │              simd-alp.txt              │
+                                                                         │      B/s      │      B/s        vs base               │      B/s        vs base                │
+ALPMatrix/float/random-finite/n=120/buckets=0/time=no-st/codec/encode      408.84Mi ± 0%   411.71Mi ±  0%   +0.70% (p=0.002 n=6)    84.24Mi ±  1%   -79.39% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=120/buckets=0/time=no-st/codec/decode       832.0Mi ± 0%    988.5Mi ±  1%  +18.81% (p=0.002 n=6)   1638.7Mi ±  1%   +96.97% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=1024/buckets=0/time=no-st/codec/encode           440.6Mi ± 0%    390.8Mi ±  0%  -11.30% (p=0.002 n=6)    522.4Mi ±  1%   +18.56% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=1024/buckets=0/time=no-st/codec/decode           896.4Mi ± 1%    418.7Mi ±  1%  -53.29% (p=0.002 n=6)   2447.8Mi ±  1%  +173.08% (p=0.002 n=6)
+ALPMatrix/float/constant/n=120/buckets=0/time=no-st/codec/encode           1333.8Mi ± 0%   1639.5Mi ±  0%  +22.92% (p=0.002 n=6)    688.3Mi ±  1%   -48.39% (p=0.002 n=6)
+ALPMatrix/float/constant/n=120/buckets=0/time=no-st/codec/decode            2.755Gi ± 0%    2.200Gi ±  4%  -20.15% (p=0.002 n=6)    3.298Gi ±  0%   +19.71% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=32/buckets=0/time=no-st/codec/encode         339.24Mi ± 1%   346.21Mi ±  1%   +2.06% (p=0.002 n=6)    34.26Mi ±  2%   -89.90% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=32/buckets=0/time=no-st/codec/decode          792.2Mi ± 0%    936.0Mi ±  1%  +18.16% (p=0.002 n=6)   2599.0Mi ±  2%  +228.10% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st/codec/encode           371.64Mi ± 1%   466.62Mi ±  6%  +25.56% (p=0.002 n=6)    97.79Mi ±  0%   -73.69% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st/codec/decode            890.3Mi ± 0%   1007.4Mi ±  1%  +13.16% (p=0.002 n=6)   1639.4Mi ±  1%   +84.15% (p=0.002 n=6)
+ALPMatrix/float/constant/n=32/buckets=0/time=no-st/codec/encode             844.6Mi ± 2%    958.3Mi ±  1%  +13.46% (p=0.002 n=6)    515.2Mi ±  3%   -38.99% (p=0.002 n=6)
+ALPMatrix/float/constant/n=32/buckets=0/time=no-st/codec/decode             1.486Gi ± 8%    1.368Gi ±  6%   -7.94% (p=0.002 n=6)    2.051Gi ± 20%   +38.02% (p=0.002 n=6)
+ALPMatrix/float/computed/n=32/buckets=0/time=no-st/codec/encode            340.66Mi ± 1%   408.50Mi ±  1%  +19.92% (p=0.002 n=6)    36.63Mi ±  1%   -89.25% (p=0.002 n=6)
+ALPMatrix/float/computed/n=32/buckets=0/time=no-st/codec/decode             825.5Mi ± 0%    944.6Mi ±  0%  +14.42% (p=0.002 n=6)   1183.4Mi ±  1%   +43.35% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/codec/encode       374.2Mi ± 1%    469.2Mi ±  0%  +25.38% (p=0.002 n=6)    322.0Mi ±  1%   -13.95% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/codec/decode       886.0Mi ± 0%   1003.4Mi ±  0%  +13.24% (p=0.002 n=6)   2323.8Mi ±  0%  +162.27% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=1024/buckets=0/time=no-st/codec/encode      349.4Mi ± 2%    372.4Mi ±  1%   +6.58% (p=0.002 n=6)    501.0Mi ±  6%   +43.39% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=1024/buckets=0/time=no-st/codec/decode      917.1Mi ± 2%    435.8Mi ±  3%  -52.49% (p=0.002 n=6)   2372.3Mi ±  3%  +158.66% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=32/buckets=0/time=no-st/codec/encode          366.42Mi ± 1%   409.60Mi ±  1%  +11.79% (p=0.002 n=6)    41.77Mi ±  3%   -88.60% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=32/buckets=0/time=no-st/codec/decode           842.0Mi ± 0%    950.5Mi ±  1%  +12.88% (p=0.002 n=6)   1620.8Mi ±  1%   +92.49% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st-jitter/codec/encode     376.1Mi ± 0%    431.6Mi ±  0%  +14.77% (p=0.002 n=6)    304.9Mi ±  1%   -18.92% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st-jitter/codec/decode     596.6Mi ± 0%    785.6Mi ±  1%  +31.68% (p=0.002 n=6)   1318.7Mi ±  0%  +121.03% (p=0.002 n=6)
+ALPMatrix/float/counter/n=120/buckets=0/time=no-st/codec/encode             629.7Mi ± 1%    740.2Mi ±  5%  +17.54% (p=0.002 n=6)    329.3Mi ±  1%   -47.71% (p=0.002 n=6)
+ALPMatrix/float/counter/n=120/buckets=0/time=no-st/codec/decode             1.395Gi ± 0%    1.270Gi ±  1%   -8.95% (p=0.002 n=6)    2.399Gi ±  0%   +71.99% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=1024/buckets=0/time=no-st/codec/encode         460.2Mi ± 1%    359.8Mi ±  1%  -21.82% (p=0.002 n=6)    127.7Mi ±  0%   -72.25% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=1024/buckets=0/time=no-st/codec/decode         842.8Mi ± 0%    418.1Mi ±  0%  -50.39% (p=0.002 n=6)   2340.9Mi ±  1%  +177.76% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/codec/encode             344.1Mi ± 1%    391.6Mi ±  1%  +13.83% (p=0.002 n=6)    398.4Mi ±  0%   +15.80% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/codec/decode             857.0Mi ± 0%    408.4Mi ±  0%  -52.35% (p=0.002 n=6)   2403.8Mi ±  1%  +180.49% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=1024/buckets=0/time=no-st/codec/encode     425.62Mi ± 1%   334.46Mi ±  1%  -21.42% (p=0.002 n=6)    87.23Mi ±  0%   -79.50% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=1024/buckets=0/time=no-st/codec/decode      848.0Mi ± 0%    395.4Mi ±  0%  -53.37% (p=0.002 n=6)   1676.6Mi ±  0%   +97.72% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/codec/encode               342.2Mi ± 1%    432.5Mi ±  1%  +26.40% (p=0.002 n=6)    145.9Mi ±  1%   -57.35% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/codec/decode               848.4Mi ± 1%   1031.7Mi ±  2%  +21.60% (p=0.002 n=6)   1663.4Mi ±  1%   +96.06% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=32/buckets=0/time=no-st/codec/encode       348.94Mi ± 1%   350.85Mi ±  0%   +0.55% (p=0.015 n=6)    33.55Mi ±  3%   -90.39% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=32/buckets=0/time=no-st/codec/decode        801.2Mi ± 0%    948.8Mi ±  0%  +18.42% (p=0.002 n=6)   1181.1Mi ±  0%   +47.41% (p=0.002 n=6)
+ALPMatrix/float/computed/n=1024/buckets=0/time=no-st/codec/encode           356.5Mi ± 2%    360.9Mi ±  7%        ~ (p=0.240 n=6)    104.8Mi ±  1%   -70.59% (p=0.002 n=6)
+ALPMatrix/float/computed/n=1024/buckets=0/time=no-st/codec/decode           921.9Mi ± 0%    573.8Mi ±  2%  -37.76% (p=0.002 n=6)   1670.7Mi ±  0%   +81.23% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=120/buckets=0/time=no-st/codec/encode              342.4Mi ± 0%    502.4Mi ±  1%  +46.70% (p=0.002 n=6)    322.1Mi ±  1%    -5.93% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=120/buckets=0/time=no-st/codec/decode              841.5Mi ± 1%   1045.7Mi ±  1%  +24.27% (p=0.002 n=6)   2355.0Mi ±  0%  +179.84% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st-jitter/codec/encode    342.66Mi ± 3%   402.42Mi ±  0%  +17.44% (p=0.002 n=6)    96.10Mi ±  1%   -71.96% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st-jitter/codec/decode     594.3Mi ± 1%    719.0Mi ±  0%  +20.97% (p=0.002 n=6)   1066.3Mi ±  1%   +79.42% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=120/buckets=0/time=no-st/codec/encode            350.6Mi ± 1%    500.8Mi ±  1%  +42.84% (p=0.002 n=6)    130.5Mi ±  1%   -62.79% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=120/buckets=0/time=no-st/codec/decode            837.4Mi ± 2%   1004.4Mi ±  1%  +19.95% (p=0.002 n=6)   2397.2Mi ±  1%  +186.27% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/encode            418.2Mi ± 2%    501.1Mi ±  1%  +19.81% (p=0.002 n=6)    322.8Mi ±  1%   -22.81% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/decode            892.0Mi ± 0%   1037.9Mi ±  0%  +16.35% (p=0.002 n=6)   2370.7Mi ±  5%  +165.77% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/decode-cold       864.7Mi ± 1%   1001.5Mi ±  1%  +15.82% (p=0.002 n=6)   1742.0Mi ±  2%  +101.45% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=32/buckets=0/time=no-st/codec/encode        334.3Mi ± 1%    402.6Mi ±  3%  +20.44% (p=0.002 n=6)    140.5Mi ±  5%   -57.96% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=32/buckets=0/time=no-st/codec/decode        814.2Mi ± 0%    916.7Mi ±  1%  +12.59% (p=0.002 n=6)   1628.9Mi ±  2%  +100.05% (p=0.002 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=no-st/codec/encode            593.2Mi ± 1%    527.4Mi ±  0%  -11.09% (p=0.002 n=6)    528.3Mi ±  5%   -10.93% (p=0.002 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=no-st/codec/decode           1444.5Mi ± 1%    480.9Mi ±  0%  -66.71% (p=0.002 n=6)   2512.5Mi ±  1%   +73.93% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=32/buckets=0/time=no-st/codec/encode             366.0Mi ± 0%    447.6Mi ±  0%  +22.31% (p=0.002 n=6)    144.4Mi ±  1%   -60.53% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=32/buckets=0/time=no-st/codec/decode             911.4Mi ± 1%    991.6Mi ±  2%   +8.80% (p=0.002 n=6)   1684.7Mi ±  0%   +84.84% (p=0.002 n=6)
+ALPMatrix/float/constant/n=1024/buckets=0/time=no-st/codec/encode          1686.7Mi ± 0%    946.8Mi ±  2%  -43.86% (p=0.002 n=6)   1311.7Mi ±  1%   -22.23% (p=0.002 n=6)
+ALPMatrix/float/constant/n=1024/buckets=0/time=no-st/codec/decode          3400.5Mi ± 1%    556.9Mi ±  1%  -83.62% (p=0.002 n=6)   3411.8Mi ±  0%    +0.33% (p=0.041 n=6)
+ALPMatrix/float/decimal6/n=1024/buckets=0/time=no-st/codec/encode           360.7Mi ± 6%    373.9Mi ±  3%   +3.66% (p=0.004 n=6)    396.8Mi ±  3%   +10.02% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=1024/buckets=0/time=no-st/codec/decode           829.0Mi ± 2%    403.2Mi ±  4%  -51.36% (p=0.002 n=6)   2380.8Mi ±  5%  +187.20% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=120/buckets=0/time=no-st/codec/encode          447.8Mi ± 1%    469.6Mi ±  4%   +4.88% (p=0.004 n=6)    127.2Mi ±  2%   -71.59% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=120/buckets=0/time=no-st/codec/decode          828.1Mi ± 2%    962.9Mi ±  0%  +16.28% (p=0.002 n=6)   2318.4Mi ±  1%  +179.97% (p=0.002 n=6)
+ALPMatrix/float/counter/n=32/buckets=0/time=no-st/codec/encode              489.1Mi ± 4%    560.6Mi ± 15%  +14.60% (p=0.026 n=6)    134.2Mi ± 10%   -72.57% (p=0.002 n=6)
+ALPMatrix/float/counter/n=32/buckets=0/time=no-st/codec/decode              1.178Gi ± 2%    1.060Gi ±  5%   -9.96% (p=0.002 n=6)    1.765Gi ±  1%   +49.87% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=1024/buckets=0/time=no-st/codec/encode       419.24Mi ± 1%   333.09Mi ±  0%  -20.55% (p=0.002 n=6)    76.32Mi ±  6%   -81.80% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=1024/buckets=0/time=no-st/codec/decode        838.1Mi ± 0%    390.9Mi ±  1%  -53.36% (p=0.002 n=6)   3036.6Mi ±  3%  +262.31% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=32/buckets=0/time=no-st/codec/encode            336.65Mi ± 1%   433.34Mi ±  1%  +28.72% (p=0.002 n=6)    41.39Mi ±  1%   -87.71% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=32/buckets=0/time=no-st/codec/decode             806.8Mi ± 1%    948.1Mi ±  1%  +17.51% (p=0.002 n=6)   1669.2Mi ±  1%  +106.89% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/encode        400.55Mi ± 3%   407.09Mi ±  0%   +1.63% (p=0.002 n=6)    74.97Mi ±  1%   -81.28% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/decode         828.3Mi ± 1%    970.6Mi ±  1%  +17.18% (p=0.002 n=6)   2986.4Mi ±  1%  +260.55% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/decode-cold    804.4Mi ± 0%    936.8Mi ±  0%  +16.46% (p=0.002 n=6)   2189.9Mi ±  1%  +172.25% (p=0.002 n=6)
+geomean                                                                     650.8Mi         616.2Mi         -5.32%                  599.5Mi          -7.89%
+
+                                                                         │ simd-xor.txt │           simd-xor2.txt            │            simd-alp.txt            │
+                                                                         │  chunks/op   │ chunks/op   vs base                │ chunks/op   vs base                │
+ALPMatrix/float/random-finite/n=120/buckets=0/time=no-st/codec/encode        1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-finite/n=120/buckets=0/time=no-st/codec/decode        1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=1024/buckets=0/time=no-st/codec/encode            1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=1024/buckets=0/time=no-st/codec/decode            1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/constant/n=120/buckets=0/time=no-st/codec/encode             1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/constant/n=120/buckets=0/time=no-st/codec/decode             1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-bits/n=32/buckets=0/time=no-st/codec/encode           1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-bits/n=32/buckets=0/time=no-st/codec/decode           1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st/codec/encode             1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st/codec/decode             1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/constant/n=32/buckets=0/time=no-st/codec/encode              1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/constant/n=32/buckets=0/time=no-st/codec/decode              1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/computed/n=32/buckets=0/time=no-st/codec/encode              1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/computed/n=32/buckets=0/time=no-st/codec/decode              1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/codec/encode        1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/codec/decode        1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=1024/buckets=0/time=no-st/codec/encode       1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=1024/buckets=0/time=no-st/codec/decode       1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/outliers20/n=32/buckets=0/time=no-st/codec/encode            1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/outliers20/n=32/buckets=0/time=no-st/codec/decode            1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st-jitter/codec/encode      1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st-jitter/codec/decode      1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=120/buckets=0/time=no-st/codec/encode              1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=120/buckets=0/time=no-st/codec/decode              1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/outliers20/n=1024/buckets=0/time=no-st/codec/encode          1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/outliers20/n=1024/buckets=0/time=no-st/codec/decode          1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/codec/encode              1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/codec/decode              1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-finite/n=1024/buckets=0/time=no-st/codec/encode       1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-finite/n=1024/buckets=0/time=no-st/codec/decode       1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/codec/encode                1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/codec/decode                1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-finite/n=32/buckets=0/time=no-st/codec/encode         1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-finite/n=32/buckets=0/time=no-st/codec/decode         1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/computed/n=1024/buckets=0/time=no-st/codec/encode            1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/computed/n=1024/buckets=0/time=no-st/codec/decode            1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=120/buckets=0/time=no-st/codec/encode               1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=120/buckets=0/time=no-st/codec/decode               1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st-jitter/codec/encode      1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st-jitter/codec/decode      1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal6/n=120/buckets=0/time=no-st/codec/encode             1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal6/n=120/buckets=0/time=no-st/codec/decode             1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/encode             1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/decode             1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/decode-cold        1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=32/buckets=0/time=no-st/codec/encode         1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=32/buckets=0/time=no-st/codec/decode         1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=1024/buckets=0/time=no-st/codec/encode             1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=1024/buckets=0/time=no-st/codec/decode             1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=32/buckets=0/time=no-st/codec/encode              1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=32/buckets=0/time=no-st/codec/decode              1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/constant/n=1024/buckets=0/time=no-st/codec/encode            1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/constant/n=1024/buckets=0/time=no-st/codec/decode            1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal6/n=1024/buckets=0/time=no-st/codec/encode            1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal6/n=1024/buckets=0/time=no-st/codec/decode            1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/outliers20/n=120/buckets=0/time=no-st/codec/encode           1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/outliers20/n=120/buckets=0/time=no-st/codec/decode           1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=32/buckets=0/time=no-st/codec/encode               1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=32/buckets=0/time=no-st/codec/decode               1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-bits/n=1024/buckets=0/time=no-st/codec/encode         1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-bits/n=1024/buckets=0/time=no-st/codec/decode         1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal6/n=32/buckets=0/time=no-st/codec/encode              1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal6/n=32/buckets=0/time=no-st/codec/decode              1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/encode          1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/decode          1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/decode-cold     1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+geomean                                                                      1.000        1.000       +0.00%                   1.000       +0.00%
+¹ all samples are equal
+
+                                                                         │ simd-xor.txt │            simd-xor2.txt            │            simd-alp.txt             │
+                                                                         │  cpu-%core   │  cpu-%core   vs base                │  cpu-%core   vs base                │
+ALPMatrix/float/random-finite/n=120/buckets=0/time=no-st/codec/encode        98.80 ± 0%    98.78 ± 0%       ~ (p=0.080 n=6)      99.55 ± 0%  +0.75% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=120/buckets=0/time=no-st/codec/decode        100.0 ± 0%    100.0 ± 0%       ~ (p=1.000 n=6)      100.0 ± 0%       ~ (p=0.455 n=6)
+ALPMatrix/float/decimal2/n=1024/buckets=0/time=no-st/codec/encode            98.97 ± 0%    98.69 ± 0%  -0.28% (p=0.050 n=6)      99.49 ± 0%  +0.53% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=1024/buckets=0/time=no-st/codec/decode            100.0 ± 0%    100.0 ± 0%       ~ (p=1.000 n=6)      100.0 ± 0%       ~ (p=1.000 n=6)
+ALPMatrix/float/constant/n=120/buckets=0/time=no-st/codec/encode             99.47 ± 0%    99.30 ± 0%  -0.17% (p=0.002 n=6)      95.72 ± 2%  -3.77% (p=0.002 n=6)
+ALPMatrix/float/constant/n=120/buckets=0/time=no-st/codec/decode             100.0 ± 0%    100.0 ± 0%       ~ (p=1.000 n=6)      100.0 ± 0%       ~ (p=1.000 n=6)
+ALPMatrix/float/random-bits/n=32/buckets=0/time=no-st/codec/encode           98.65 ± 0%    98.61 ± 0%       ~ (p=0.459 n=6)      99.76 ± 0%  +1.13% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=32/buckets=0/time=no-st/codec/decode           100.0 ± 0%    100.0 ± 0%       ~ (p=1.000 n=6)      100.0 ± 1%       ~ (p=1.000 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st/codec/encode             99.40 ± 0%    99.21 ± 1%  -0.19% (p=0.002 n=6)      99.46 ± 0%       ~ (p=0.253 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st/codec/decode            100.00 ± 0%    99.91 ± 0%       ~ (p=0.182 n=6)     100.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/constant/n=32/buckets=0/time=no-st/codec/encode              98.69 ± 0%    98.42 ± 2%  -0.26% (p=0.002 n=6)      96.64 ± 1%  -2.07% (p=0.002 n=6)
+ALPMatrix/float/constant/n=32/buckets=0/time=no-st/codec/decode             100.00 ± 0%   100.00 ± 0%       ~ (p=1.000 n=6) ¹    99.99 ± 0%       ~ (p=0.061 n=6)
+ALPMatrix/float/computed/n=32/buckets=0/time=no-st/codec/encode              99.25 ± 0%    99.01 ± 0%       ~ (p=0.058 n=6)      99.84 ± 0%  +0.60% (p=0.002 n=6)
+ALPMatrix/float/computed/n=32/buckets=0/time=no-st/codec/decode              100.0 ± 0%    100.0 ± 0%       ~ (p=1.000 n=6)      100.0 ± 0%       ~ (p=1.000 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/codec/encode        99.43 ± 0%    99.25 ± 0%       ~ (p=0.065 n=6)      98.15 ± 0%  -1.28% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/codec/decode        100.0 ± 0%    100.0 ± 0%       ~ (p=1.000 n=6)      100.0 ± 0%       ~ (p=1.000 n=6)
+ALPMatrix/float/noisy-decimal/n=1024/buckets=0/time=no-st/codec/encode       98.91 ± 0%    98.45 ± 0%  -0.46% (p=0.015 n=6)      99.28 ± 1%       ~ (p=0.065 n=6)
+ALPMatrix/float/noisy-decimal/n=1024/buckets=0/time=no-st/codec/decode      100.00 ± 0%    99.97 ± 1%       ~ (p=0.082 n=6)     100.00 ± 0%       ~ (p=1.000 n=6)
+ALPMatrix/float/outliers20/n=32/buckets=0/time=no-st/codec/encode            99.19 ± 0%    99.08 ± 0%       ~ (p=0.225 n=6)      99.82 ± 1%       ~ (p=0.054 n=6)
+ALPMatrix/float/outliers20/n=32/buckets=0/time=no-st/codec/decode            100.0 ± 0%    100.0 ± 0%       ~ (p=0.455 n=6)      100.0 ± 0%       ~ (p=0.152 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st-jitter/codec/encode      98.97 ± 0%    98.80 ± 0%  -0.18% (p=0.035 n=6)      98.29 ± 0%  -0.69% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st-jitter/codec/decode      100.0 ± 0%    100.0 ± 0%       ~ (p=1.000 n=6)      100.0 ± 0%       ~ (p=1.000 n=6)
+ALPMatrix/float/counter/n=120/buckets=0/time=no-st/codec/encode              99.69 ± 0%    99.59 ± 0%       ~ (p=0.420 n=6)      98.12 ± 0%  -1.57% (p=0.002 n=6)
+ALPMatrix/float/counter/n=120/buckets=0/time=no-st/codec/decode              100.0 ± 0%    100.0 ± 0%       ~ (p=1.000 n=6)      100.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/outliers20/n=1024/buckets=0/time=no-st/codec/encode          98.58 ± 0%    98.48 ± 0%       ~ (p=0.290 n=6)      99.81 ± 0%  +1.24% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=1024/buckets=0/time=no-st/codec/decode          100.0 ± 0%    100.0 ± 0%       ~ (p=1.000 n=6) ¹    100.0 ± 0%       ~ (p=0.182 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/codec/encode              98.91 ± 0%    98.78 ± 0%       ~ (p=0.186 n=6)      99.59 ± 0%  +0.69% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/codec/decode              100.0 ± 0%    100.0 ± 0%       ~ (p=0.455 n=6)      100.0 ± 0%       ~ (p=0.455 n=6)
+ALPMatrix/float/random-finite/n=1024/buckets=0/time=no-st/codec/encode       98.69 ± 0%    98.42 ± 0%       ~ (p=0.100 n=6)      99.68 ± 0%  +1.00% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=1024/buckets=0/time=no-st/codec/decode       100.0 ± 0%    100.0 ± 0%       ~ (p=1.000 n=6) ¹    100.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/codec/encode                99.25 ± 0%    98.86 ± 1%  -0.40% (p=0.002 n=6)      99.07 ± 0%       ~ (p=0.056 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/codec/decode                100.0 ± 0%    100.0 ± 0%       ~ (p=0.273 n=6)      100.0 ± 0%       ~ (p=0.455 n=6)
+ALPMatrix/float/random-finite/n=32/buckets=0/time=no-st/codec/encode         98.72 ± 0%    98.66 ± 0%       ~ (p=0.316 n=6)      99.81 ± 1%  +1.10% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=32/buckets=0/time=no-st/codec/decode         100.0 ± 0%    100.0 ± 0%       ~ (p=1.000 n=6)      100.0 ± 0%       ~ (p=0.455 n=6)
+ALPMatrix/float/computed/n=1024/buckets=0/time=no-st/codec/encode            98.86 ± 0%    98.00 ± 1%  -0.86% (p=0.002 n=6)      99.71 ± 0%  +0.86% (p=0.002 n=6)
+ALPMatrix/float/computed/n=1024/buckets=0/time=no-st/codec/decode            100.0 ± 0%    100.0 ± 0%       ~ (p=0.182 n=6)      100.0 ± 0%       ~ (p=0.182 n=6)
+ALPMatrix/float/stale5/n=120/buckets=0/time=no-st/codec/encode               99.07 ± 0%    99.15 ± 0%       ~ (p=0.288 n=6)      98.14 ± 1%  -0.93% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=120/buckets=0/time=no-st/codec/decode               100.0 ± 0%    100.0 ± 0%       ~ (p=1.000 n=6)      100.0 ± 0%       ~ (p=1.000 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st-jitter/codec/encode      99.09 ± 3%    98.90 ± 0%       ~ (p=0.102 n=6)      99.40 ± 0%  +0.32% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st-jitter/codec/decode      100.0 ± 0%    100.0 ± 0%       ~ (p=1.000 n=6)      100.0 ± 0%       ~ (p=1.000 n=6)
+ALPMatrix/float/decimal6/n=120/buckets=0/time=no-st/codec/encode             99.47 ± 0%    99.18 ± 0%  -0.30% (p=0.002 n=6)      99.28 ± 0%  -0.20% (p=0.015 n=6)
+ALPMatrix/float/decimal6/n=120/buckets=0/time=no-st/codec/decode             99.99 ± 1%   100.00 ± 0%       ~ (p=0.372 n=6)     100.00 ± 0%       ~ (p=0.061 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/encode             99.16 ± 2%    99.16 ± 0%       ~ (p=0.816 n=6)      98.10 ± 1%       ~ (p=0.065 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/decode             100.0 ± 0%    100.0 ± 0%       ~ (p=1.000 n=6) ¹    100.0 ± 1%       ~ (p=1.000 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/decode-cold        99.95 ± 0%    99.93 ± 0%       ~ (p=0.089 n=6)      97.91 ± 1%  -2.04% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=32/buckets=0/time=no-st/codec/encode         99.28 ± 0%    99.00 ± 0%  -0.28% (p=0.041 n=6)      98.57 ± 2%  -0.72% (p=0.009 n=6)
+ALPMatrix/float/noisy-decimal/n=32/buckets=0/time=no-st/codec/decode        100.00 ± 0%   100.00 ± 0%       ~ (p=0.697 n=6)      99.91 ± 0%       ~ (p=0.100 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=no-st/codec/encode             99.58 ± 0%    99.07 ± 0%  -0.51% (p=0.002 n=6)      99.10 ± 1%  -0.48% (p=0.009 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=no-st/codec/decode            100.00 ± 0%   100.00 ± 0%       ~ (p=1.000 n=6) ¹    99.94 ± 0%       ~ (p=0.061 n=6)
+ALPMatrix/float/decimal2/n=32/buckets=0/time=no-st/codec/encode              99.19 ± 0%    98.94 ± 0%  -0.26% (p=0.037 n=6)      99.07 ± 0%       ~ (p=0.132 n=6)
+ALPMatrix/float/decimal2/n=32/buckets=0/time=no-st/codec/decode              100.0 ± 0%    100.0 ± 0%       ~ (p=1.000 n=6)      100.0 ± 0%       ~ (p=0.455 n=6)
+ALPMatrix/float/constant/n=1024/buckets=0/time=no-st/codec/encode            99.89 ± 0%    99.31 ± 0%  -0.59% (p=0.002 n=6)      99.08 ± 1%  -0.81% (p=0.002 n=6)
+ALPMatrix/float/constant/n=1024/buckets=0/time=no-st/codec/decode            100.0 ± 0%    100.0 ± 0%       ~ (p=0.545 n=6)      100.0 ± 0%       ~ (p=1.000 n=6)
+ALPMatrix/float/decimal6/n=1024/buckets=0/time=no-st/codec/encode            99.15 ± 1%    98.68 ± 1%       ~ (p=0.061 n=6)      99.45 ± 0%  +0.31% (p=0.019 n=6)
+ALPMatrix/float/decimal6/n=1024/buckets=0/time=no-st/codec/decode            100.0 ± 1%    100.0 ± 1%       ~ (p=1.000 n=6)      100.0 ± 0%       ~ (p=0.697 n=6)
+ALPMatrix/float/outliers20/n=120/buckets=0/time=no-st/codec/encode           99.23 ± 0%    99.19 ± 0%       ~ (p=0.563 n=6)      99.31 ± 0%       ~ (p=0.597 n=6)
+ALPMatrix/float/outliers20/n=120/buckets=0/time=no-st/codec/decode           100.0 ± 0%    100.0 ± 0%       ~ (p=0.455 n=6)      100.0 ± 0%       ~ (p=0.848 n=6)
+ALPMatrix/float/counter/n=32/buckets=0/time=no-st/codec/encode               99.11 ± 1%    98.44 ± 7%       ~ (p=0.093 n=6)      98.44 ± 2%  -0.68% (p=0.041 n=6)
+ALPMatrix/float/counter/n=32/buckets=0/time=no-st/codec/decode               99.81 ± 0%    98.27 ± 2%  -1.55% (p=0.028 n=6)     100.00 ± 0%       ~ (p=0.318 n=6)
+ALPMatrix/float/random-bits/n=1024/buckets=0/time=no-st/codec/encode         98.51 ± 1%    98.47 ± 0%       ~ (p=0.846 n=6)      99.70 ± 1%  +1.21% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=1024/buckets=0/time=no-st/codec/decode         99.97 ± 0%   100.00 ± 0%       ~ (p=0.545 n=6)     100.00 ± 1%       ~ (p=0.697 n=6)
+ALPMatrix/float/decimal6/n=32/buckets=0/time=no-st/codec/encode              99.29 ± 1%    98.84 ± 0%  -0.45% (p=0.019 n=6)      99.81 ± 0%  +0.52% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=32/buckets=0/time=no-st/codec/decode              100.0 ± 0%    100.0 ± 0%       ~ (p=1.000 n=6) ¹    100.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/encode          98.85 ± 2%    98.87 ± 0%       ~ (p=0.613 n=6)      99.48 ± 0%  +0.64% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/decode          100.0 ± 0%    100.0 ± 0%       ~ (p=1.000 n=6)      100.0 ± 0%       ~ (p=0.455 n=6)
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/decode-cold     99.95 ± 0%    99.93 ± 0%  -0.03% (p=0.002 n=6)      97.84 ± 0%  -2.12% (p=0.002 n=6)
+geomean                                                                      99.56         99.42       -0.14%                    99.46       -0.10%
+¹ all samples are equal
+
+                                                                         │  simd-xor.txt  │             simd-xor2.txt              │              simd-alp.txt              │
+                                                                         │ cpu-sec/sample │ cpu-sec/sample  vs base                │ cpu-sec/sample  vs base                │
+ALPMatrix/float/random-finite/n=120/buckets=0/time=no-st/codec/encode         18.43n ± 0%     18.27n ±  0%    -0.90% (p=0.002 n=6)     90.15n ±  1%  +389.02% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=120/buckets=0/time=no-st/codec/decode         9.170n ± 0%     7.718n ±  0%   -15.83% (p=0.002 n=6)     4.656n ±  1%   -49.23% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=1024/buckets=0/time=no-st/codec/encode             17.14n ± 1%     19.26n ±  0%   +12.37% (p=0.002 n=6)     14.53n ±  1%   -15.23% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=1024/buckets=0/time=no-st/codec/decode             8.512n ± 1%    18.220n ±  1%  +114.05% (p=0.002 n=6)     3.117n ±  1%   -63.38% (p=0.002 n=6)
+ALPMatrix/float/constant/n=120/buckets=0/time=no-st/codec/encode              5.691n ± 0%     4.622n ±  0%   -18.80% (p=0.002 n=6)    10.610n ±  2%   +86.42% (p=0.002 n=6)
+ALPMatrix/float/constant/n=120/buckets=0/time=no-st/codec/decode              2.704n ± 0%     3.387n ±  5%   +25.25% (p=0.002 n=6)     2.259n ±  0%   -16.47% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=32/buckets=0/time=no-st/codec/encode            22.18n ± 0%     21.73n ±  1%    -2.01% (p=0.002 n=6)    222.20n ±  2%  +902.03% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=32/buckets=0/time=no-st/codec/decode            9.631n ± 0%     8.147n ±  1%   -15.41% (p=0.002 n=6)     2.937n ±  1%   -69.51% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st/codec/encode              20.41n ± 1%     16.22n ±  6%   -20.55% (p=0.002 n=6)     77.55n ±  0%  +279.87% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st/codec/decode              8.572n ± 0%     7.567n ±  1%   -11.72% (p=0.002 n=6)     4.655n ±  1%   -45.70% (p=0.002 n=6)
+ALPMatrix/float/constant/n=32/buckets=0/time=no-st/codec/encode               8.915n ± 3%     7.811n ±  1%   -12.38% (p=0.002 n=6)    14.250n ±  5%   +59.84% (p=0.002 n=6)
+ALPMatrix/float/constant/n=32/buckets=0/time=no-st/codec/decode               5.014n ± 7%     5.446n ±  6%    +8.62% (p=0.002 n=6)     3.632n ± 25%   -27.56% (p=0.002 n=6)
+ALPMatrix/float/computed/n=32/buckets=0/time=no-st/codec/encode               22.23n ± 1%     18.48n ±  1%   -16.85% (p=0.002 n=6)    207.95n ±  0%  +835.45% (p=0.002 n=6)
+ALPMatrix/float/computed/n=32/buckets=0/time=no-st/codec/decode               9.243n ± 1%     8.078n ±  0%   -12.61% (p=0.002 n=6)     6.448n ±  1%   -30.24% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/codec/encode         20.24n ± 1%     16.14n ±  0%   -20.26% (p=0.002 n=6)     23.17n ±  1%   +14.48% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/codec/decode         8.605n ± 0%     7.605n ±  0%   -11.62% (p=0.002 n=6)     3.284n ±  0%   -61.84% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=1024/buckets=0/time=no-st/codec/encode        21.61n ± 2%     20.16n ±  1%    -6.69% (p=0.002 n=6)     15.12n ±  6%   -29.99% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=1024/buckets=0/time=no-st/codec/decode        8.322n ± 1%    17.505n ±  2%  +110.33% (p=0.002 n=6)     3.216n ±  3%   -61.35% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=32/buckets=0/time=no-st/codec/encode             20.65n ± 1%     18.45n ±  1%   -10.68% (p=0.002 n=6)    182.45n ±  1%  +783.54% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=32/buckets=0/time=no-st/codec/decode             9.061n ± 0%     8.027n ±  1%   -11.41% (p=0.002 n=6)     4.708n ±  1%   -48.05% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st-jitter/codec/encode       20.07n ± 0%     17.45n ±  0%   -13.05% (p=0.002 n=6)     24.58n ±  1%   +22.44% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st-jitter/codec/decode      12.790n ± 0%     9.713n ±  1%   -24.06% (p=0.002 n=6)     5.786n ±  0%   -54.76% (p=0.002 n=6)
+ALPMatrix/float/counter/n=120/buckets=0/time=no-st/codec/encode               12.07n ± 1%     10.25n ±  5%   -15.08% (p=0.002 n=6)     22.72n ±  1%   +88.28% (p=0.002 n=6)
+ALPMatrix/float/counter/n=120/buckets=0/time=no-st/codec/decode               5.341n ± 0%     5.866n ±  1%    +9.82% (p=0.002 n=6)     3.105n ±  0%   -41.86% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=1024/buckets=0/time=no-st/codec/encode           16.34n ± 1%     20.88n ±  1%   +27.82% (p=0.002 n=6)     59.63n ±  0%  +264.93% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=1024/buckets=0/time=no-st/codec/decode           9.053n ± 0%    18.250n ±  0%  +101.59% (p=0.002 n=6)     3.260n ±  1%   -64.00% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/codec/encode               21.93n ± 1%     19.25n ±  0%   -12.20% (p=0.002 n=6)     19.07n ±  0%   -13.02% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/codec/decode               8.902n ± 0%    18.685n ±  0%  +109.90% (p=0.002 n=6)     3.174n ±  1%   -64.34% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=1024/buckets=0/time=no-st/codec/encode        17.66n ± 1%     22.45n ±  0%   +27.13% (p=0.002 n=6)     87.09n ±  0%  +393.32% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=1024/buckets=0/time=no-st/codec/decode        8.998n ± 0%    19.300n ±  0%  +114.50% (p=0.002 n=6)     4.551n ±  0%   -49.42% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/codec/encode                 22.14n ± 1%     17.44n ±  1%   -21.27% (p=0.002 n=6)     51.80n ±  1%  +133.91% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/codec/decode                 8.995n ± 1%     7.398n ±  2%   -17.75% (p=0.002 n=6)     4.587n ±  1%   -49.00% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=32/buckets=0/time=no-st/codec/encode          21.56n ± 1%     21.43n ±  0%    -0.58% (p=0.011 n=6)    227.00n ±  2%  +952.88% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=32/buckets=0/time=no-st/codec/decode          9.522n ± 0%     8.042n ±  0%   -15.54% (p=0.002 n=6)     6.460n ±  0%   -32.15% (p=0.002 n=6)
+ALPMatrix/float/computed/n=1024/buckets=0/time=no-st/codec/encode             21.14n ± 2%     20.70n ±  7%         ~ (p=0.132 n=6)     72.48n ±  1%  +242.80% (p=0.002 n=6)
+ALPMatrix/float/computed/n=1024/buckets=0/time=no-st/codec/decode             8.275n ± 0%    13.300n ±  3%   +60.72% (p=0.002 n=6)     4.567n ±  0%   -44.81% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=120/buckets=0/time=no-st/codec/encode                22.05n ± 1%     15.05n ±  0%   -31.76% (p=0.002 n=6)     23.25n ±  1%    +5.42% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=120/buckets=0/time=no-st/codec/decode                9.067n ± 1%     7.296n ±  1%   -19.53% (p=0.002 n=6)     3.240n ±  0%   -64.27% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st-jitter/codec/encode       22.06n ± 0%     18.76n ±  0%   -14.98% (p=0.002 n=6)     78.91n ±  1%  +257.65% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st-jitter/codec/decode      12.840n ± 1%    10.615n ±  0%   -17.33% (p=0.002 n=6)     7.155n ±  1%   -44.27% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=120/buckets=0/time=no-st/codec/encode              21.64n ± 1%     15.11n ±  1%   -30.19% (p=0.002 n=6)     58.02n ±  1%  +168.05% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=120/buckets=0/time=no-st/codec/decode              9.105n ± 1%     7.595n ±  1%   -16.58% (p=0.002 n=6)     3.183n ±  1%   -65.04% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/encode              18.08n ± 1%     15.08n ±  1%   -16.57% (p=0.002 n=6)     23.18n ±  0%   +28.24% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/decode              8.553n ± 0%     7.352n ±  0%   -14.04% (p=0.002 n=6)     3.219n ±  4%   -62.36% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/decode-cold         8.819n ± 1%     7.614n ±  1%   -13.66% (p=0.002 n=6)     4.290n ±  2%   -51.36% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=32/buckets=0/time=no-st/codec/encode          22.66n ± 1%     18.76n ±  3%   -17.21% (p=0.002 n=6)     53.13n ±  5%  +134.47% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=32/buckets=0/time=no-st/codec/decode          9.371n ± 0%     8.324n ±  1%   -11.18% (p=0.002 n=6)     4.679n ±  2%   -50.06% (p=0.002 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=no-st/codec/encode              12.79n ± 1%     14.30n ±  1%   +11.76% (p=0.002 n=6)     14.30n ±  5%   +11.76% (p=0.002 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=no-st/codec/decode              5.283n ± 1%    15.865n ±  0%  +200.30% (p=0.002 n=6)     3.032n ±  1%   -42.60% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=32/buckets=0/time=no-st/codec/encode               20.66n ± 1%     16.86n ±  0%   -18.41% (p=0.002 n=6)     52.26n ±  1%  +152.89% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=32/buckets=0/time=no-st/codec/decode               8.372n ± 1%     7.695n ±  1%    -8.09% (p=0.002 n=6)     4.530n ±  0%   -45.90% (p=0.002 n=6)
+ALPMatrix/float/constant/n=1024/buckets=0/time=no-st/codec/encode             4.519n ± 0%     7.995n ±  2%   +76.92% (p=0.002 n=6)     5.756n ±  0%   +27.37% (p=0.002 n=6)
+ALPMatrix/float/constant/n=1024/buckets=0/time=no-st/codec/decode             2.244n ± 0%    13.705n ±  1%  +510.74% (p=0.002 n=6)     2.237n ±  0%    -0.33% (p=0.039 n=6)
+ALPMatrix/float/decimal6/n=1024/buckets=0/time=no-st/codec/encode             20.97n ± 5%     20.13n ±  3%    -4.03% (p=0.002 n=6)     19.12n ±  3%    -8.82% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=1024/buckets=0/time=no-st/codec/decode             9.204n ± 2%    18.925n ±  3%  +105.62% (p=0.002 n=6)     3.205n ±  5%   -65.18% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=120/buckets=0/time=no-st/codec/encode            16.89n ± 1%     16.12n ±  4%    -4.53% (p=0.002 n=6)     59.45n ±  2%  +252.06% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=120/buckets=0/time=no-st/codec/decode            9.208n ± 2%     7.925n ±  0%   -13.94% (p=0.002 n=6)     3.291n ±  1%   -64.26% (p=0.002 n=6)
+ALPMatrix/float/counter/n=32/buckets=0/time=no-st/codec/encode                15.44n ± 5%     13.27n ± 13%   -14.05% (p=0.002 n=6)     56.01n ±  9%  +262.73% (p=0.002 n=6)
+ALPMatrix/float/counter/n=32/buckets=0/time=no-st/codec/decode                6.306n ± 2%     6.901n ±  3%    +9.44% (p=0.002 n=6)     4.220n ±  1%   -33.09% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=1024/buckets=0/time=no-st/codec/encode          17.88n ± 2%     22.52n ±  1%   +25.89% (p=0.002 n=6)     99.68n ±  5%  +457.34% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=1024/buckets=0/time=no-st/codec/decode          9.104n ± 0%    19.520n ±  1%  +114.40% (p=0.002 n=6)     2.513n ±  2%   -72.40% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=32/buckets=0/time=no-st/codec/encode               22.50n ± 1%     17.38n ±  0%   -22.75% (p=0.002 n=6)    183.85n ±  0%  +716.93% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=32/buckets=0/time=no-st/codec/decode               9.457n ± 1%     8.048n ±  1%   -14.90% (p=0.002 n=6)     4.572n ±  1%   -51.66% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/encode           18.83n ± 1%     18.51n ±  0%    -1.70% (p=0.002 n=6)    101.20n ±  1%  +437.44% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/decode           9.213n ± 1%     7.862n ±  1%   -14.66% (p=0.002 n=6)     2.555n ±  0%   -72.27% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/decode-cold      9.481n ± 0%     8.135n ±  0%   -14.20% (p=0.002 n=6)     3.411n ±  0%   -64.02% (p=0.002 n=6)
+geomean                                                                       11.67n          12.30n          +5.45%                   12.65n          +8.44%
+
+                                                                         │   simd-xor.txt   │              simd-xor2.txt               │              simd-alp.txt               │
+                                                                         │ encoded-B/sample │ encoded-B/sample  vs base                │ encoded-B/sample  vs base               │
+ALPMatrix/float/random-finite/n=120/buckets=0/time=no-st/codec/encode            8.467 ± 0%         8.475 ± 0%    +0.09% (p=0.002 n=6)         7.475 ± 0%  -11.72% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=120/buckets=0/time=no-st/codec/decode            8.467 ± 0%         8.475 ± 0%    +0.09% (p=0.002 n=6)         7.475 ± 0%  -11.72% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=1024/buckets=0/time=no-st/codec/encode                5.676 ± 0%         8.310 ± 0%   +46.41% (p=0.002 n=6)         1.206 ± 0%  -78.75% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=1024/buckets=0/time=no-st/codec/decode                5.676 ± 0%         8.310 ± 0%   +46.41% (p=0.002 n=6)         1.206 ± 0%  -78.75% (p=0.002 n=6)
+ALPMatrix/float/constant/n=120/buckets=0/time=no-st/codec/encode                0.4000 ± 0%        0.2833 ± 0%   -29.18% (p=0.002 n=6)        0.3333 ± 0%  -16.68% (p=0.002 n=6)
+ALPMatrix/float/constant/n=120/buckets=0/time=no-st/codec/decode                0.4000 ± 0%        0.2833 ± 0%   -29.18% (p=0.002 n=6)        0.3333 ± 0%  -16.68% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=32/buckets=0/time=no-st/codec/encode               8.781 ± 0%         8.812 ± 0%    +0.35% (p=0.002 n=6)         9.000 ± 0%   +2.49% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=32/buckets=0/time=no-st/codec/decode               8.781 ± 0%         8.812 ± 0%    +0.35% (p=0.002 n=6)         9.000 ± 0%   +2.49% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st/codec/encode                 7.108 ± 0%         7.117 ± 0%    +0.13% (p=0.002 n=6)         6.742 ± 0%   -5.15% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st/codec/decode                 7.108 ± 0%         7.117 ± 0%    +0.13% (p=0.002 n=6)         6.742 ± 0%   -5.15% (p=0.002 n=6)
+ALPMatrix/float/constant/n=32/buckets=0/time=no-st/codec/encode                 0.8125 ± 0%        0.7188 ± 0%   -11.53% (p=0.002 n=6)        1.2500 ± 0%  +53.85% (p=0.002 n=6)
+ALPMatrix/float/constant/n=32/buckets=0/time=no-st/codec/decode                 0.8125 ± 0%        0.7188 ± 0%   -11.53% (p=0.002 n=6)        1.2500 ± 0%  +53.85% (p=0.002 n=6)
+ALPMatrix/float/computed/n=32/buckets=0/time=no-st/codec/encode                  7.406 ± 0%         7.438 ± 0%    +0.43% (p=0.002 n=6)         8.031 ± 0%   +8.44% (p=0.002 n=6)
+ALPMatrix/float/computed/n=32/buckets=0/time=no-st/codec/decode                  7.406 ± 0%         7.438 ± 0%    +0.43% (p=0.002 n=6)         8.031 ± 0%   +8.44% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/codec/encode            7.117 ± 0%         7.125 ± 0%    +0.11% (p=0.002 n=6)         2.175 ± 0%  -69.44% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/codec/decode            7.117 ± 0%         7.125 ± 0%    +0.11% (p=0.002 n=6)         2.175 ± 0%  -69.44% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=1024/buckets=0/time=no-st/codec/encode           7.014 ± 0%         9.647 ± 0%   +37.54% (p=0.002 n=6)         2.081 ± 0%  -70.33% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=1024/buckets=0/time=no-st/codec/decode           7.014 ± 0%         9.647 ± 0%   +37.54% (p=0.002 n=6)         2.081 ± 0%  -70.33% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=32/buckets=0/time=no-st/codec/encode                7.625 ± 0%         7.656 ± 0%    +0.41% (p=0.002 n=6)         4.594 ± 0%  -39.75% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=32/buckets=0/time=no-st/codec/decode                7.625 ± 0%         7.656 ± 0%    +0.41% (p=0.002 n=6)         4.594 ± 0%  -39.75% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st-jitter/codec/encode          7.617 ± 0%         7.642 ± 0%    +0.33% (p=0.002 n=6)         3.208 ± 0%  -57.88% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st-jitter/codec/decode          7.617 ± 0%         7.642 ± 0%    +0.33% (p=0.002 n=6)         3.208 ± 0%  -57.88% (p=0.002 n=6)
+ALPMatrix/float/counter/n=120/buckets=0/time=no-st/codec/encode                  1.967 ± 0%         1.975 ± 0%    +0.41% (p=0.002 n=6)         1.775 ± 0%   -9.76% (p=0.002 n=6)
+ALPMatrix/float/counter/n=120/buckets=0/time=no-st/codec/decode                  1.967 ± 0%         1.975 ± 0%    +0.41% (p=0.002 n=6)         1.775 ± 0%   -9.76% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=1024/buckets=0/time=no-st/codec/encode              7.383 ± 0%        10.020 ± 0%   +35.72% (p=0.002 n=6)         3.208 ± 0%  -56.55% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=1024/buckets=0/time=no-st/codec/decode              7.383 ± 0%        10.020 ± 0%   +35.72% (p=0.002 n=6)         3.208 ± 0%  -56.55% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/codec/encode                  8.075 ± 0%         8.070 ± 0%    -0.06% (p=0.002 n=6)         1.714 ± 0%  -78.77% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/codec/decode                  8.075 ± 0%         8.070 ± 0%    -0.06% (p=0.002 n=6)         1.714 ± 0%  -78.77% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=1024/buckets=0/time=no-st/codec/encode           8.386 ± 0%        11.020 ± 0%   +31.41% (p=0.002 n=6)         7.401 ± 0%  -11.75% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=1024/buckets=0/time=no-st/codec/decode           8.386 ± 0%        11.020 ± 0%   +31.41% (p=0.002 n=6)         7.401 ± 0%  -11.75% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/codec/encode                    7.094 ± 0%         6.438 ± 0%    -9.25% (p=0.002 n=6)         3.031 ± 0%  -57.27% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/codec/decode                    7.094 ± 0%         6.438 ± 0%    -9.25% (p=0.002 n=6)         3.031 ± 0%  -57.27% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=32/buckets=0/time=no-st/codec/encode             8.719 ± 0%         8.750 ± 0%    +0.36% (p=0.002 n=6)         8.781 ± 0%   +0.71% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=32/buckets=0/time=no-st/codec/decode             8.719 ± 0%         8.750 ± 0%    +0.36% (p=0.002 n=6)         8.781 ± 0%   +0.71% (p=0.002 n=6)
+ALPMatrix/float/computed/n=1024/buckets=0/time=no-st/codec/encode                7.013 ± 0%         9.646 ± 0%   +37.54% (p=0.002 n=6)         6.675 ± 0%   -4.82% (p=0.002 n=6)
+ALPMatrix/float/computed/n=1024/buckets=0/time=no-st/codec/decode                7.013 ± 0%         9.646 ± 0%   +37.54% (p=0.002 n=6)         6.675 ± 0%   -4.82% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=120/buckets=0/time=no-st/codec/encode                   7.700 ± 0%         5.700 ± 0%   -25.97% (p=0.002 n=6)         1.808 ± 0%  -76.52% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=120/buckets=0/time=no-st/codec/decode                   7.700 ± 0%         5.700 ± 0%   -25.97% (p=0.002 n=6)         1.808 ± 0%  -76.52% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st-jitter/codec/encode          8.950 ± 0%         8.958 ± 0%    +0.09% (p=0.002 n=6)         8.642 ± 0%   -3.44% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st-jitter/codec/decode          8.950 ± 0%         8.958 ± 0%    +0.09% (p=0.002 n=6)         8.642 ± 0%   -3.44% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=120/buckets=0/time=no-st/codec/encode                 5.733 ± 0%         5.742 ± 0%    +0.16% (p=0.002 n=6)         1.392 ± 0%  -75.72% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=120/buckets=0/time=no-st/codec/decode                 5.733 ± 0%         5.742 ± 0%    +0.16% (p=0.002 n=6)         1.392 ± 0%  -75.72% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/encode                 5.767 ± 0%         5.775 ± 0%    +0.14% (p=0.002 n=6)         1.308 ± 0%  -77.32% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/decode                 5.767 ± 0%         5.775 ± 0%    +0.14% (p=0.002 n=6)         1.308 ± 0%  -77.32% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/decode-cold            5.767 ± 0%         5.775 ± 0%    +0.14% (p=0.002 n=6)         1.308 ± 0%  -77.32% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=32/buckets=0/time=no-st/codec/encode             7.438 ± 0%         7.469 ± 0%    +0.42% (p=0.002 n=6)         3.406 ± 0%  -54.21% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=32/buckets=0/time=no-st/codec/decode             7.438 ± 0%         7.469 ± 0%    +0.42% (p=0.002 n=6)         3.406 ± 0%  -54.21% (p=0.002 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=no-st/codec/encode                 2.055 ± 0%         4.688 ± 0%  +128.13% (p=0.002 n=6)         1.706 ± 0%  -16.98% (p=0.002 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=no-st/codec/decode                 2.055 ± 0%         4.688 ± 0%  +128.13% (p=0.002 n=6)         1.706 ± 0%  -16.98% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=32/buckets=0/time=no-st/codec/encode                  6.031 ± 0%         6.094 ± 0%    +1.04% (p=0.002 n=6)         2.406 ± 0%  -60.11% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=32/buckets=0/time=no-st/codec/decode                  6.031 ± 0%         6.094 ± 0%    +1.04% (p=0.002 n=6)         2.406 ± 0%  -60.11% (p=0.002 n=6)
+ALPMatrix/float/constant/n=1024/buckets=0/time=no-st/codec/encode               0.2676 ± 0%        2.7760 ± 0%  +937.37% (p=0.002 n=6)        0.2920 ± 0%   +9.12% (p=0.002 n=6)
+ALPMatrix/float/constant/n=1024/buckets=0/time=no-st/codec/decode               0.2676 ± 0%        2.7760 ± 0%  +937.37% (p=0.002 n=6)        0.2920 ± 0%   +9.12% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=1024/buckets=0/time=no-st/codec/encode                5.640 ± 0%         8.273 ± 0%   +46.68% (p=0.002 n=6)         1.294 ± 0%  -77.06% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=1024/buckets=0/time=no-st/codec/decode                5.640 ± 0%         8.273 ± 0%   +46.68% (p=0.002 n=6)         1.294 ± 0%  -77.06% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=120/buckets=0/time=no-st/codec/encode               7.442 ± 0%         7.450 ± 0%    +0.11% (p=0.002 n=6)         4.975 ± 0%  -33.15% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=120/buckets=0/time=no-st/codec/decode               7.442 ± 0%         7.450 ± 0%    +0.11% (p=0.002 n=6)         4.975 ± 0%  -33.15% (p=0.002 n=6)
+ALPMatrix/float/counter/n=32/buckets=0/time=no-st/codec/encode                   2.219 ± 0%         2.250 ± 0%    +1.40% (p=0.002 n=6)         2.906 ± 0%  +30.96% (p=0.002 n=6)
+ALPMatrix/float/counter/n=32/buckets=0/time=no-st/codec/decode                   2.219 ± 0%         2.250 ± 0%    +1.40% (p=0.002 n=6)         2.906 ± 0%  +30.96% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=1024/buckets=0/time=no-st/codec/encode             8.388 ± 0%        11.020 ± 0%   +31.38% (p=0.002 n=6)         8.229 ± 0%   -1.90% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=1024/buckets=0/time=no-st/codec/decode             8.388 ± 0%        11.020 ± 0%   +31.38% (p=0.002 n=6)         8.229 ± 0%   -1.90% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=32/buckets=0/time=no-st/codec/encode                  6.062 ± 0%         6.125 ± 0%    +1.04% (p=0.002 n=6)         2.406 ± 0%  -60.31% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=32/buckets=0/time=no-st/codec/decode                  6.062 ± 0%         6.125 ± 0%    +1.04% (p=0.002 n=6)         2.406 ± 0%  -60.31% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/encode              8.483 ± 0%         8.492 ± 0%    +0.11% (p=0.002 n=6)         8.267 ± 0%   -2.55% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/decode              8.483 ± 0%         8.492 ± 0%    +0.11% (p=0.002 n=6)         8.267 ± 0%   -2.55% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/decode-cold         8.483 ± 0%         8.492 ± 0%    +0.11% (p=0.002 n=6)         8.267 ± 0%   -2.55% (p=0.002 n=6)
+geomean                                                                          5.029              5.786        +15.04%                       2.901       -42.32%
+
+                                                                         │ simd-xor.txt │            simd-xor2.txt            │            simd-alp.txt             │
+                                                                         │  samples/op  │ samples/op   vs base                │ samples/op   vs base                │
+ALPMatrix/float/random-finite/n=120/buckets=0/time=no-st/codec/encode        120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-finite/n=120/buckets=0/time=no-st/codec/decode        120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=1024/buckets=0/time=no-st/codec/encode           1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=1024/buckets=0/time=no-st/codec/decode           1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/constant/n=120/buckets=0/time=no-st/codec/encode             120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/constant/n=120/buckets=0/time=no-st/codec/decode             120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-bits/n=32/buckets=0/time=no-st/codec/encode           32.00 ± 0%    32.00 ± 0%       ~ (p=1.000 n=6) ¹    32.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-bits/n=32/buckets=0/time=no-st/codec/decode           32.00 ± 0%    32.00 ± 0%       ~ (p=1.000 n=6) ¹    32.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st/codec/encode             120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st/codec/decode             120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/constant/n=32/buckets=0/time=no-st/codec/encode              32.00 ± 0%    32.00 ± 0%       ~ (p=1.000 n=6) ¹    32.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/constant/n=32/buckets=0/time=no-st/codec/decode              32.00 ± 0%    32.00 ± 0%       ~ (p=1.000 n=6) ¹    32.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/computed/n=32/buckets=0/time=no-st/codec/encode              32.00 ± 0%    32.00 ± 0%       ~ (p=1.000 n=6) ¹    32.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/computed/n=32/buckets=0/time=no-st/codec/decode              32.00 ± 0%    32.00 ± 0%       ~ (p=1.000 n=6) ¹    32.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/codec/encode        120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/codec/decode        120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=1024/buckets=0/time=no-st/codec/encode      1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=1024/buckets=0/time=no-st/codec/decode      1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/outliers20/n=32/buckets=0/time=no-st/codec/encode            32.00 ± 0%    32.00 ± 0%       ~ (p=1.000 n=6) ¹    32.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/outliers20/n=32/buckets=0/time=no-st/codec/decode            32.00 ± 0%    32.00 ± 0%       ~ (p=1.000 n=6) ¹    32.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st-jitter/codec/encode      120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st-jitter/codec/decode      120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=120/buckets=0/time=no-st/codec/encode              120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=120/buckets=0/time=no-st/codec/decode              120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/outliers20/n=1024/buckets=0/time=no-st/codec/encode         1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/outliers20/n=1024/buckets=0/time=no-st/codec/decode         1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/codec/encode             1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/codec/decode             1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-finite/n=1024/buckets=0/time=no-st/codec/encode      1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-finite/n=1024/buckets=0/time=no-st/codec/decode      1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/codec/encode                32.00 ± 0%    32.00 ± 0%       ~ (p=1.000 n=6) ¹    32.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/codec/decode                32.00 ± 0%    32.00 ± 0%       ~ (p=1.000 n=6) ¹    32.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-finite/n=32/buckets=0/time=no-st/codec/encode         32.00 ± 0%    32.00 ± 0%       ~ (p=1.000 n=6) ¹    32.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-finite/n=32/buckets=0/time=no-st/codec/decode         32.00 ± 0%    32.00 ± 0%       ~ (p=1.000 n=6) ¹    32.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/computed/n=1024/buckets=0/time=no-st/codec/encode           1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/computed/n=1024/buckets=0/time=no-st/codec/decode           1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=120/buckets=0/time=no-st/codec/encode               120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=120/buckets=0/time=no-st/codec/decode               120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st-jitter/codec/encode      120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st-jitter/codec/decode      120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal6/n=120/buckets=0/time=no-st/codec/encode             120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal6/n=120/buckets=0/time=no-st/codec/decode             120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/encode             120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/decode             120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/decode-cold        120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=32/buckets=0/time=no-st/codec/encode         32.00 ± 0%    32.00 ± 0%       ~ (p=1.000 n=6) ¹    32.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=32/buckets=0/time=no-st/codec/decode         32.00 ± 0%    32.00 ± 0%       ~ (p=1.000 n=6) ¹    32.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=1024/buckets=0/time=no-st/codec/encode            1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=1024/buckets=0/time=no-st/codec/decode            1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=32/buckets=0/time=no-st/codec/encode              32.00 ± 0%    32.00 ± 0%       ~ (p=1.000 n=6) ¹    32.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=32/buckets=0/time=no-st/codec/decode              32.00 ± 0%    32.00 ± 0%       ~ (p=1.000 n=6) ¹    32.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/constant/n=1024/buckets=0/time=no-st/codec/encode           1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/constant/n=1024/buckets=0/time=no-st/codec/decode           1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal6/n=1024/buckets=0/time=no-st/codec/encode           1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal6/n=1024/buckets=0/time=no-st/codec/decode           1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/outliers20/n=120/buckets=0/time=no-st/codec/encode           120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/outliers20/n=120/buckets=0/time=no-st/codec/decode           120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=32/buckets=0/time=no-st/codec/encode               32.00 ± 0%    32.00 ± 0%       ~ (p=1.000 n=6) ¹    32.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=32/buckets=0/time=no-st/codec/decode               32.00 ± 0%    32.00 ± 0%       ~ (p=1.000 n=6) ¹    32.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-bits/n=1024/buckets=0/time=no-st/codec/encode        1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-bits/n=1024/buckets=0/time=no-st/codec/decode        1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal6/n=32/buckets=0/time=no-st/codec/encode              32.00 ± 0%    32.00 ± 0%       ~ (p=1.000 n=6) ¹    32.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal6/n=32/buckets=0/time=no-st/codec/decode              32.00 ± 0%    32.00 ± 0%       ~ (p=1.000 n=6) ¹    32.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/encode          120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/decode          120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/decode-cold     120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+geomean                                                                      154.0         154.0       +0.00%                    154.0       +0.00%
+¹ all samples are equal
+
+                                                                         │    simd-xor.txt    │                simd-xor2.txt                │                simd-alp.txt                │
+                                                                         │ sys-cpu-sec/sample │ sys-cpu-sec/sample  vs base                 │ sys-cpu-sec/sample  vs base                │
+ALPMatrix/float/random-finite/n=120/buckets=0/time=no-st/codec/encode         0.07892n ±  26%      0.07630n ±  32%          ~ (p=0.310 n=6)      0.21520n ±  60%  +172.68% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=120/buckets=0/time=no-st/codec/decode        0.011135n ±  21%     0.008911n ±  30%          ~ (p=0.065 n=6)     0.005580n ±  22%   -49.88% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=1024/buckets=0/time=no-st/codec/encode             0.06997n ±  35%      0.09036n ±  15%    +29.14% (p=0.041 n=6)      0.03919n ±  44%   -43.99% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=1024/buckets=0/time=no-st/codec/decode            0.011160n ±  19%     0.022030n ±  13%    +97.40% (p=0.002 n=6)     0.003914n ±  23%   -64.93% (p=0.002 n=6)
+ALPMatrix/float/constant/n=120/buckets=0/time=no-st/codec/encode              0.01412n ±  51%      0.01289n ±  62%          ~ (p=0.180 n=6)      0.13805n ±  87%  +877.69% (p=0.002 n=6)
+ALPMatrix/float/constant/n=120/buckets=0/time=no-st/codec/decode             0.003241n ±  18%     0.004003n ±  23%    +23.51% (p=0.041 n=6)     0.002780n ±  40%         ~ (p=0.065 n=6)
+ALPMatrix/float/random-bits/n=32/buckets=0/time=no-st/codec/encode             0.1168n ±  12%       0.1006n ±  36%          ~ (p=0.143 n=6)       0.4604n ±  53%  +294.35% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=32/buckets=0/time=no-st/codec/decode           0.011715n ±  56%     0.011670n ±  21%          ~ (p=0.937 n=6)     0.004390n ±  53%   -62.53% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st/codec/encode              0.05821n ±  62%      0.06295n ±  85%          ~ (p=0.818 n=6)      0.20835n ±  30%  +257.93% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st/codec/decode             0.012480n ±  13%     0.011700n ± 114%          ~ (p=0.699 n=6)     0.006459n ±  20%   -48.25% (p=0.002 n=6)
+ALPMatrix/float/constant/n=32/buckets=0/time=no-st/codec/encode               0.04772n ±  38%      0.04634n ±  24%          ~ (p=0.699 n=6)      0.17675n ± 123%  +270.43% (p=0.002 n=6)
+ALPMatrix/float/constant/n=32/buckets=0/time=no-st/codec/decode              0.007016n ±  45%     0.007591n ±  22%          ~ (p=0.145 n=6)     0.008481n ±  80%         ~ (p=0.310 n=6)
+ALPMatrix/float/computed/n=32/buckets=0/time=no-st/codec/encode                0.1381n ±  31%       0.1101n ±  24%    -20.24% (p=0.026 n=6)       0.8426n ±  19%  +510.14% (p=0.002 n=6)
+ALPMatrix/float/computed/n=32/buckets=0/time=no-st/codec/decode               0.03419n ±  68%      0.02947n ±  29%          ~ (p=0.699 n=6)      0.02946n ±  25%         ~ (p=0.394 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/codec/encode          0.1120n ±  97%       0.1060n ±  15%          ~ (p=0.394 n=6)       0.2292n ±   6%  +104.78% (p=0.004 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/codec/decode         0.01524n ± 102%      0.02934n ±  17%    +92.49% (p=0.026 n=6)      0.01630n ±  31%         ~ (p=1.000 n=6)
+ALPMatrix/float/noisy-decimal/n=1024/buckets=0/time=no-st/codec/encode         0.2029n ±  26%       0.1733n ±  10%    -14.61% (p=0.026 n=6)       0.1117n ± 167%         ~ (p=0.093 n=6)
+ALPMatrix/float/noisy-decimal/n=1024/buckets=0/time=no-st/codec/decode        0.02961n ±  62%      0.12390n ±  62%   +318.51% (p=0.002 n=6)      0.01064n ± 159%   -64.06% (p=0.041 n=6)
+ALPMatrix/float/outliers20/n=32/buckets=0/time=no-st/codec/encode              0.1201n ±  37%       0.1235n ±  17%          ~ (p=0.853 n=6)       0.7299n ±  99%  +507.79% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=32/buckets=0/time=no-st/codec/decode             0.01774n ±  56%      0.02898n ±  12%    +63.43% (p=0.026 n=6)      0.01501n ±  20%         ~ (p=1.000 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st-jitter/codec/encode        0.1292n ±  24%       0.1217n ±  14%          ~ (p=0.288 n=6)       0.2581n ±  94%   +99.73% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st-jitter/codec/decode       0.02706n ±  47%      0.03158n ±  31%          ~ (p=0.589 n=6)      0.01828n ±  25%         ~ (p=0.485 n=6)
+ALPMatrix/float/counter/n=120/buckets=0/time=no-st/codec/encode               0.04846n ±  45%      0.05083n ±  37%          ~ (p=0.937 n=6)      0.22915n ±  11%  +372.86% (p=0.002 n=6)
+ALPMatrix/float/counter/n=120/buckets=0/time=no-st/codec/decode               0.01021n ±  72%      0.01829n ±  11%    +79.04% (p=0.004 n=6)      0.01061n ±  12%         ~ (p=1.000 n=6)
+ALPMatrix/float/outliers20/n=1024/buckets=0/time=no-st/codec/encode            0.1286n ±  28%       0.1692n ±  11%    +31.57% (p=0.015 n=6)       0.2434n ±  41%   +89.31% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=1024/buckets=0/time=no-st/codec/decode          0.014255n ± 157%     0.061915n ±  20%   +334.34% (p=0.002 n=6)     0.009253n ±  34%   -35.09% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/codec/encode               0.14390n ±  21%      0.16305n ±  16%          ~ (p=0.394 n=6)      0.09081n ±  41%   -36.89% (p=0.004 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/codec/decode              0.017190n ±  93%     0.060505n ±  35%   +251.98% (p=0.002 n=6)     0.009803n ±  18%   -42.97% (p=0.015 n=6)
+ALPMatrix/float/random-finite/n=1024/buckets=0/time=no-st/codec/encode         0.1415n ±  40%       0.1815n ±  16%    +28.23% (p=0.026 n=6)       0.3783n ±  35%  +167.35% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=1024/buckets=0/time=no-st/codec/decode        0.01884n ±  68%      0.07512n ±  27%   +298.75% (p=0.002 n=6)      0.01705n ±  22%         ~ (p=0.937 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/codec/encode                  0.1410n ±  32%       0.1163n ±  28%          ~ (p=0.065 n=6)       0.3384n ±  57%  +140.09% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/codec/decode                 0.02129n ±  95%      0.02528n ±  32%          ~ (p=0.699 n=6)      0.01882n ± 308%         ~ (p=0.818 n=6)
+ALPMatrix/float/random-finite/n=32/buckets=0/time=no-st/codec/encode           0.1671n ±  34%       0.1678n ±  11%          ~ (p=0.818 n=6)       1.0310n ±  20%  +517.00% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=32/buckets=0/time=no-st/codec/decode          0.01476n ± 127%      0.02785n ±   8%          ~ (p=0.240 n=6)      0.02389n ±  13%         ~ (p=0.394 n=6)
+ALPMatrix/float/computed/n=1024/buckets=0/time=no-st/codec/encode              0.1542n ±   7%       0.1676n ±  31%          ~ (p=0.258 n=6)       0.3091n ±  40%  +100.39% (p=0.002 n=6)
+ALPMatrix/float/computed/n=1024/buckets=0/time=no-st/codec/decode             0.01498n ± 138%      0.04334n ±  28%   +189.32% (p=0.002 n=6)      0.01630n ±  12%         ~ (p=0.699 n=6)
+ALPMatrix/float/stale5/n=120/buckets=0/time=no-st/codec/encode                 0.1429n ±  43%       0.1326n ±  49%          ~ (p=0.394 n=6)       0.2478n ±  21%   +73.41% (p=0.004 n=6)
+ALPMatrix/float/stale5/n=120/buckets=0/time=no-st/codec/decode               0.019955n ± 263%     0.024525n ±  45%          ~ (p=0.818 n=6)     0.009864n ±  34%   -50.57% (p=0.009 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st-jitter/codec/encode        0.1474n ±  11%       0.1410n ±  16%          ~ (p=0.394 n=6)       0.4714n ±  22%  +219.92% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st-jitter/codec/decode       0.03095n ±  52%      0.04261n ±  55%          ~ (p=0.132 n=6)      0.02788n ±  15%         ~ (p=0.699 n=6)
+ALPMatrix/float/decimal6/n=120/buckets=0/time=no-st/codec/encode              0.09541n ±  53%      0.07659n ±  23%    -19.73% (p=0.009 n=6)      0.32340n ±  20%  +238.94% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=120/buckets=0/time=no-st/codec/decode              0.02272n ±  52%      0.02318n ± 137%          ~ (p=0.699 n=6)      0.01237n ±  44%         ~ (p=0.093 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/encode              0.09566n ±  49%      0.09498n ±  12%          ~ (p=0.818 n=6)      0.22650n ±  12%  +136.79% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/decode              0.02195n ±  75%      0.02626n ±  14%          ~ (p=1.000 n=6)      0.01150n ± 138%         ~ (p=0.240 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/decode-cold         0.03704n ±  40%      0.02987n ±  31%          ~ (p=0.065 n=6)      0.05187n ±  31%   +40.07% (p=0.015 n=6)
+ALPMatrix/float/noisy-decimal/n=32/buckets=0/time=no-st/codec/encode           0.1598n ±  28%       0.1873n ±  38%          ~ (p=0.065 n=6)       0.4433n ±  17%  +177.50% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=32/buckets=0/time=no-st/codec/decode          0.02524n ±  50%      0.05529n ±  58%   +119.04% (p=0.041 n=6)      0.03627n ±  76%         ~ (p=0.180 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=no-st/codec/encode              0.07585n ±  83%      0.06393n ±  26%          ~ (p=0.180 n=6)      0.08806n ± 109%         ~ (p=0.093 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=no-st/codec/decode              0.02164n ±  63%      0.05810n ±   7%   +168.57% (p=0.002 n=6)      0.01977n ±  40%         ~ (p=0.589 n=6)
+ALPMatrix/float/decimal2/n=32/buckets=0/time=no-st/codec/encode                0.1521n ±  21%       0.1024n ±  32%    -32.64% (p=0.002 n=6)       0.3689n ±  16%  +142.54% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=32/buckets=0/time=no-st/codec/decode               0.02964n ±  87%      0.03909n ±  37%          ~ (p=0.485 n=6)      0.01734n ±  16%   -41.51% (p=0.026 n=6)
+ALPMatrix/float/constant/n=1024/buckets=0/time=no-st/codec/encode             0.01942n ±  27%      0.04470n ±   8%   +130.23% (p=0.002 n=6)      0.03881n ±  34%   +99.90% (p=0.002 n=6)
+ALPMatrix/float/constant/n=1024/buckets=0/time=no-st/codec/decode            0.004967n ± 110%     0.055920n ±  50%  +1025.83% (p=0.002 n=6)     0.008180n ±  14%         ~ (p=0.180 n=6)
+ALPMatrix/float/decimal6/n=1024/buckets=0/time=no-st/codec/encode              0.1672n ±  56%       0.2484n ±  48%          ~ (p=0.240 n=6)       0.1803n ±  85%         ~ (p=0.699 n=6)
+ALPMatrix/float/decimal6/n=1024/buckets=0/time=no-st/codec/decode             0.04559n ±  52%      0.10520n ± 209%   +130.73% (p=0.002 n=6)      0.02138n ±  84%   -53.12% (p=0.009 n=6)
+ALPMatrix/float/outliers20/n=120/buckets=0/time=no-st/codec/encode             0.1200n ±  47%       0.1229n ±  99%          ~ (p=0.589 n=6)       0.4818n ±  60%  +301.58% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=120/buckets=0/time=no-st/codec/decode            0.02379n ± 326%      0.03310n ±  49%          ~ (p=0.485 n=6)      0.01708n ± 105%         ~ (p=0.699 n=6)
+ALPMatrix/float/counter/n=32/buckets=0/time=no-st/codec/encode                 0.1361n ±  76%       0.1676n ±  73%          ~ (p=0.180 n=6)       0.3944n ± 197%  +189.93% (p=0.009 n=6)
+ALPMatrix/float/counter/n=32/buckets=0/time=no-st/codec/decode               0.023527n ± 165%     0.052255n ± 146%          ~ (p=0.065 n=6)     0.006769n ±  21%   -71.23% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=1024/buckets=0/time=no-st/codec/encode           0.1100n ±  25%       0.1318n ±   9%    +19.86% (p=0.030 n=6)       0.7099n ±  35%  +545.36% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=1024/buckets=0/time=no-st/codec/decode          0.01252n ± 109%      0.09998n ±  44%   +698.24% (p=0.002 n=6)      0.01068n ±  78%         ~ (p=0.240 n=6)
+ALPMatrix/float/decimal6/n=32/buckets=0/time=no-st/codec/encode                0.1541n ±  41%       0.1142n ±  15%    -25.86% (p=0.026 n=6)       0.6689n ±  64%  +334.07% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=32/buckets=0/time=no-st/codec/decode               0.01728n ±  97%      0.02911n ±  22%          ~ (p=0.093 n=6)      0.01502n ±  14%         ~ (p=0.818 n=6)
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/encode            0.1246n ±  24%       0.1341n ±   7%          ~ (p=0.258 n=6)       0.6438n ±  19%  +416.69% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/decode           0.01858n ± 108%      0.02549n ±  19%          ~ (p=0.485 n=6)      0.01179n ±  20%   -36.50% (p=0.026 n=6)
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/decode-cold      0.04517n ±  19%      0.04578n ±  23%          ~ (p=0.937 n=6)      0.04153n ±  19%         ~ (p=0.394 n=6)
+geomean                                                                       0.04153n             0.05667n           +36.45%                    0.05705n          +37.37%
+
+                                                                         │    simd-xor.txt     │                simd-xor2.txt                │                simd-alp.txt                 │
+                                                                         │ user-cpu-sec/sample │ user-cpu-sec/sample  vs base                │ user-cpu-sec/sample  vs base                │
+ALPMatrix/float/random-finite/n=120/buckets=0/time=no-st/codec/encode              18.36n ± 0%          18.18n ±  1%    -0.93% (p=0.002 n=6)          89.95n ±  1%  +390.06% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=120/buckets=0/time=no-st/codec/decode              9.159n ± 0%          7.710n ±  1%   -15.83% (p=0.002 n=6)          4.650n ±  1%   -49.23% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=1024/buckets=0/time=no-st/codec/encode                  17.07n ± 1%          19.17n ±  0%   +12.27% (p=0.002 n=6)          14.48n ±  1%   -15.17% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=1024/buckets=0/time=no-st/codec/decode                  8.501n ± 1%         18.200n ±  1%  +114.11% (p=0.002 n=6)          3.113n ±  1%   -63.38% (p=0.002 n=6)
+ALPMatrix/float/constant/n=120/buckets=0/time=no-st/codec/encode                   5.674n ± 0%          4.607n ±  0%   -18.81% (p=0.002 n=6)         10.470n ±  1%   +84.53% (p=0.002 n=6)
+ALPMatrix/float/constant/n=120/buckets=0/time=no-st/codec/decode                   2.702n ± 0%          3.383n ±  5%   +25.23% (p=0.002 n=6)          2.257n ±  0%   -16.45% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=32/buckets=0/time=no-st/codec/encode                 22.05n ± 0%          21.64n ±  0%    -1.90% (p=0.002 n=6)         221.75n ±  1%  +905.44% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=32/buckets=0/time=no-st/codec/decode                 9.620n ± 0%          8.136n ±  1%   -15.43% (p=0.002 n=6)          2.932n ±  1%   -69.52% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st/codec/encode                   20.34n ± 1%          16.16n ±  5%   -20.53% (p=0.002 n=6)          77.34n ±  0%  +280.35% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st/codec/decode                   8.560n ± 0%          7.556n ±  1%   -11.73% (p=0.002 n=6)          4.649n ±  1%   -45.69% (p=0.002 n=6)
+ALPMatrix/float/constant/n=32/buckets=0/time=no-st/codec/encode                    8.868n ± 2%          7.764n ±  1%   -12.44% (p=0.002 n=6)         14.100n ±  3%   +59.00% (p=0.002 n=6)
+ALPMatrix/float/constant/n=32/buckets=0/time=no-st/codec/decode                    5.008n ± 7%          5.439n ±  6%    +8.62% (p=0.002 n=6)          3.621n ± 25%   -27.69% (p=0.002 n=6)
+ALPMatrix/float/computed/n=32/buckets=0/time=no-st/codec/encode                    22.09n ± 1%          18.38n ±  0%   -16.84% (p=0.002 n=6)         207.10n ±  0%  +837.32% (p=0.002 n=6)
+ALPMatrix/float/computed/n=32/buckets=0/time=no-st/codec/decode                    9.211n ± 0%          8.049n ±  0%   -12.62% (p=0.002 n=6)          6.418n ±  1%   -30.33% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/codec/encode              20.12n ± 0%          16.04n ±  0%   -20.28% (p=0.002 n=6)          22.95n ±  1%   +14.07% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/codec/decode              8.588n ± 0%          7.576n ±  0%   -11.78% (p=0.002 n=6)          3.270n ±  0%   -61.92% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=1024/buckets=0/time=no-st/codec/encode             21.38n ± 2%          19.98n ±  0%    -6.50% (p=0.002 n=6)          15.00n ±  5%   -29.85% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=1024/buckets=0/time=no-st/codec/decode             8.292n ± 1%         17.390n ±  2%  +109.72% (p=0.002 n=6)          3.206n ±  3%   -61.34% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=32/buckets=0/time=no-st/codec/encode                  20.52n ± 1%          18.32n ±  0%   -10.74% (p=0.002 n=6)         181.50n ±  1%  +784.29% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=32/buckets=0/time=no-st/codec/decode                  9.038n ± 0%          7.998n ±  1%   -11.50% (p=0.002 n=6)          4.693n ±  1%   -48.07% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st-jitter/codec/encode            19.95n ± 0%          17.34n ±  0%   -13.08% (p=0.002 n=6)          24.32n ±  0%   +21.90% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st-jitter/codec/decode           12.760n ± 0%          9.687n ±  1%   -24.09% (p=0.002 n=6)          5.765n ±  0%   -54.82% (p=0.002 n=6)
+ALPMatrix/float/counter/n=120/buckets=0/time=no-st/codec/encode                    12.02n ± 1%          10.21n ±  5%   -15.06% (p=0.002 n=6)          22.50n ±  1%   +87.19% (p=0.002 n=6)
+ALPMatrix/float/counter/n=120/buckets=0/time=no-st/codec/decode                    5.332n ± 0%          5.846n ±  1%    +9.64% (p=0.002 n=6)          3.095n ±  0%   -41.95% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=1024/buckets=0/time=no-st/codec/encode                16.20n ± 1%          20.72n ±  1%   +27.94% (p=0.002 n=6)          59.40n ±  0%  +266.78% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=1024/buckets=0/time=no-st/codec/decode                9.032n ± 0%         18.180n ±  0%  +101.28% (p=0.002 n=6)          3.250n ±  1%   -64.01% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/codec/encode                    21.77n ± 1%          19.09n ±  0%   -12.33% (p=0.002 n=6)          18.97n ±  0%   -12.88% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/codec/decode                    8.884n ± 0%         18.615n ±  0%  +109.52% (p=0.002 n=6)          3.164n ±  1%   -64.38% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=1024/buckets=0/time=no-st/codec/encode             17.52n ± 1%          22.26n ±  0%   +26.99% (p=0.002 n=6)          86.76n ±  0%  +395.04% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=1024/buckets=0/time=no-st/codec/decode             8.979n ± 0%         19.220n ±  0%  +114.06% (p=0.002 n=6)          4.534n ±  0%   -49.51% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/codec/encode                      22.00n ± 1%          17.30n ±  1%   -21.36% (p=0.002 n=6)          51.46n ±  1%  +133.86% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/codec/decode                      8.964n ± 1%          7.377n ±  2%   -17.71% (p=0.002 n=6)          4.556n ±  0%   -49.17% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=32/buckets=0/time=no-st/codec/encode               21.40n ± 1%          21.27n ±  0%    -0.63% (p=0.002 n=6)         225.95n ±  2%  +955.84% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=32/buckets=0/time=no-st/codec/decode               9.502n ± 0%          8.014n ±  0%   -15.65% (p=0.002 n=6)          6.436n ±  0%   -32.27% (p=0.002 n=6)
+ALPMatrix/float/computed/n=1024/buckets=0/time=no-st/codec/encode                  20.99n ± 2%          20.54n ±  7%         ~ (p=0.119 n=6)          72.19n ±  1%  +243.93% (p=0.002 n=6)
+ALPMatrix/float/computed/n=1024/buckets=0/time=no-st/codec/decode                  8.251n ± 0%         13.250n ±  2%   +60.59% (p=0.002 n=6)          4.550n ±  0%   -44.85% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=120/buckets=0/time=no-st/codec/encode                     21.89n ± 0%          14.93n ±  1%   -31.83% (p=0.002 n=6)          23.02n ±  1%    +5.16% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=120/buckets=0/time=no-st/codec/decode                     9.047n ± 0%          7.267n ±  1%   -19.68% (p=0.002 n=6)          3.231n ±  0%   -64.29% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st-jitter/codec/encode            21.92n ± 1%          18.61n ±  0%   -15.08% (p=0.002 n=6)          78.45n ±  0%  +257.87% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st-jitter/codec/decode           12.805n ± 1%         10.570n ±  0%   -17.45% (p=0.002 n=6)          7.130n ±  0%   -44.32% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=120/buckets=0/time=no-st/codec/encode                   21.54n ± 1%          15.03n ±  1%   -30.24% (p=0.002 n=6)          57.69n ±  1%  +167.74% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=120/buckets=0/time=no-st/codec/decode                   9.082n ± 1%          7.575n ±  1%   -16.59% (p=0.002 n=6)          3.172n ±  1%   -65.08% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/encode                   17.98n ± 1%          14.99n ±  1%   -16.63% (p=0.002 n=6)          22.95n ±  0%   +27.61% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/decode                   8.531n ± 0%          7.325n ±  0%   -14.15% (p=0.002 n=6)          3.208n ±  3%   -62.40% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/decode-cold              8.783n ± 1%          7.580n ±  1%   -13.70% (p=0.002 n=6)          4.239n ±  2%   -51.73% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=32/buckets=0/time=no-st/codec/encode               22.52n ± 1%          18.57n ±  3%   -17.52% (p=0.002 n=6)          52.69n ±  5%  +133.97% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=32/buckets=0/time=no-st/codec/decode               9.348n ± 0%          8.268n ±  1%   -11.55% (p=0.002 n=6)          4.647n ±  1%   -50.29% (p=0.002 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=no-st/codec/encode                   12.72n ± 0%          14.24n ±  1%   +11.87% (p=0.002 n=6)          14.22n ±  4%   +11.71% (p=0.002 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=no-st/codec/decode                   5.264n ± 1%         15.810n ±  1%  +200.37% (p=0.002 n=6)          3.010n ±  1%   -42.81% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=32/buckets=0/time=no-st/codec/encode                    20.50n ± 0%          16.76n ±  0%   -18.26% (p=0.002 n=6)          51.88n ±  1%  +152.99% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=32/buckets=0/time=no-st/codec/decode                    8.340n ± 1%          7.670n ±  1%    -8.03% (p=0.002 n=6)          4.514n ±  0%   -45.87% (p=0.002 n=6)
+ALPMatrix/float/constant/n=1024/buckets=0/time=no-st/codec/encode                  4.498n ± 0%          7.951n ±  2%   +76.75% (p=0.002 n=6)          5.712n ±  0%   +26.96% (p=0.002 n=6)
+ALPMatrix/float/constant/n=1024/buckets=0/time=no-st/codec/decode                  2.239n ± 0%         13.650n ±  1%  +509.78% (p=0.002 n=6)          2.228n ±  0%    -0.45% (p=0.009 n=6)
+ALPMatrix/float/decimal6/n=1024/buckets=0/time=no-st/codec/encode                  20.81n ± 4%          19.92n ±  2%    -4.30% (p=0.002 n=6)          18.95n ±  2%    -8.94% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=1024/buckets=0/time=no-st/codec/decode                  9.151n ± 2%         18.825n ±  2%  +105.72% (p=0.002 n=6)          3.183n ±  5%   -65.21% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=120/buckets=0/time=no-st/codec/encode                 16.77n ± 0%          15.99n ±  3%    -4.65% (p=0.002 n=6)          58.97n ±  2%  +251.61% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=120/buckets=0/time=no-st/codec/decode                 9.188n ± 1%          7.891n ±  0%   -14.12% (p=0.002 n=6)          3.273n ±  1%   -64.37% (p=0.002 n=6)
+ALPMatrix/float/counter/n=32/buckets=0/time=no-st/codec/encode                     15.31n ± 4%          13.07n ± 12%   -14.60% (p=0.002 n=6)          55.61n ±  8%  +263.35% (p=0.002 n=6)
+ALPMatrix/float/counter/n=32/buckets=0/time=no-st/codec/decode                     6.280n ± 2%          6.831n ±  2%    +8.77% (p=0.002 n=6)          4.213n ±  1%   -32.91% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=1024/buckets=0/time=no-st/codec/encode               17.77n ± 2%          22.38n ±  1%   +25.94% (p=0.002 n=6)          99.04n ±  5%  +457.19% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=1024/buckets=0/time=no-st/codec/decode               9.089n ± 0%         19.415n ±  1%  +113.61% (p=0.002 n=6)          2.501n ±  2%   -72.48% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=32/buckets=0/time=no-st/codec/encode                    22.36n ± 1%          17.27n ±  0%   -22.75% (p=0.002 n=6)         183.25n ±  1%  +719.73% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=32/buckets=0/time=no-st/codec/decode                    9.430n ± 0%          8.018n ±  1%   -14.98% (p=0.002 n=6)          4.557n ±  1%   -51.67% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/encode                18.70n ± 1%          18.38n ±  0%    -1.76% (p=0.002 n=6)         100.60n ±  0%  +437.82% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/decode                9.188n ± 1%          7.837n ±  1%   -14.71% (p=0.002 n=6)          2.544n ±  0%   -72.32% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/decode-cold           9.435n ± 0%          8.085n ±  1%   -14.31% (p=0.002 n=6)          3.372n ±  1%   -64.26% (p=0.002 n=6)
+geomean                                                                            11.62n               12.24n          +5.36%                        12.59n          +8.34%
+
+                                                                         │  simd-xor.txt  │              simd-xor2.txt              │               simd-alp.txt               │
+                                                                         │      B/op      │     B/op       vs base                  │     B/op       vs base                   │
+ALPMatrix/float/random-finite/n=120/buckets=0/time=no-st/codec/encode      3.531Ki ± 0%      3.547Ki ± 0%    +0.44% (p=0.002 n=6)      7.422Ki ± 0%   +110.18% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=120/buckets=0/time=no-st/codec/decode        0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=1024/buckets=0/time=no-st/codec/encode          24.53Ki ± 0%      33.80Ki ± 0%   +37.77% (p=0.002 n=6)      10.91Ki ± 0%    -55.54% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=1024/buckets=0/time=no-st/codec/decode            0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/constant/n=120/buckets=0/time=no-st/codec/encode             544.0 ± 0%        560.0 ± 0%    +2.94% (p=0.002 n=6)       7600.0 ± 0%  +1297.06% (p=0.002 n=6)
+ALPMatrix/float/constant/n=120/buckets=0/time=no-st/codec/decode             0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-bits/n=32/buckets=0/time=no-st/codec/encode         1.281Ki ± 0%      1.297Ki ± 0%    +1.22% (p=0.002 n=6)      2.766Ki ± 0%   +115.85% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=32/buckets=0/time=no-st/codec/decode           0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st/codec/encode           2.156Ki ± 0%      2.172Ki ± 0%    +0.72% (p=0.002 n=6)      7.422Ki ± 0%   +244.20% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st/codec/decode             0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/constant/n=32/buckets=0/time=no-st/codec/encode              544.0 ± 0%        560.0 ± 0%    +2.94% (p=0.002 n=6)       2256.0 ± 0%   +314.71% (p=0.002 n=6)
+ALPMatrix/float/constant/n=32/buckets=0/time=no-st/codec/decode              0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/computed/n=32/buckets=0/time=no-st/codec/encode              800.0 ± 0%        816.0 ± 0%    +2.00% (p=0.002 n=6)       2256.0 ± 0%   +182.00% (p=0.002 n=6)
+ALPMatrix/float/computed/n=32/buckets=0/time=no-st/codec/decode              0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/codec/encode      2.156Ki ± 0%      2.172Ki ± 0%    +0.72% (p=0.002 n=6)      7.422Ki ± 0%   +244.20% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/codec/decode        0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=1024/buckets=0/time=no-st/codec/encode     33.78Ki ± 0%      45.80Ki ± 0%   +35.57% (p=0.002 n=6)      16.91Ki ± 0%    -49.95% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=1024/buckets=0/time=no-st/codec/decode       0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/outliers20/n=32/buckets=0/time=no-st/codec/encode            800.0 ± 0%        816.0 ± 0%    +2.00% (p=0.002 n=6)       2256.0 ± 0%   +182.00% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=32/buckets=0/time=no-st/codec/decode            0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st-jitter/codec/encode    3.531Ki ± 0%      3.547Ki ± 0%    +0.44% (p=0.002 n=6)      7.422Ki ± 0%   +110.18% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st-jitter/codec/decode      0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=120/buckets=0/time=no-st/codec/encode              800.0 ± 0%        816.0 ± 0%    +2.00% (p=0.002 n=6)       7600.0 ± 0%   +850.00% (p=0.002 n=6)
+ALPMatrix/float/counter/n=120/buckets=0/time=no-st/codec/decode              0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/outliers20/n=1024/buckets=0/time=no-st/codec/encode        33.78Ki ± 0%      45.80Ki ± 0%   +35.57% (p=0.002 n=6)      22.03Ki ± 0%    -34.78% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=1024/buckets=0/time=no-st/codec/decode          0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/codec/encode            33.78Ki ± 0%      33.80Ki ± 0%    +0.05% (p=0.002 n=6)      13.41Ki ± 0%    -60.31% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/codec/decode              0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-finite/n=1024/buckets=0/time=no-st/codec/encode     33.78Ki ± 0%      45.80Ki ± 0%   +35.57% (p=0.002 n=6)      47.91Ki ± 0%    +41.81% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=1024/buckets=0/time=no-st/codec/decode       0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/codec/encode                800.0 ± 0%        816.0 ± 0%    +2.00% (p=0.002 n=6)       2256.0 ± 0%   +182.00% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/codec/decode                0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-finite/n=32/buckets=0/time=no-st/codec/encode       1.281Ki ± 0%      1.297Ki ± 0%    +1.22% (p=0.002 n=6)      2.766Ki ± 0%   +115.85% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=32/buckets=0/time=no-st/codec/decode         0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/computed/n=1024/buckets=0/time=no-st/codec/encode          33.78Ki ± 0%      45.80Ki ± 0%   +35.57% (p=0.002 n=6)      37.41Ki ± 0%    +10.73% (p=0.002 n=6)
+ALPMatrix/float/computed/n=1024/buckets=0/time=no-st/codec/decode            0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=120/buckets=0/time=no-st/codec/encode             3.531Ki ± 0%      2.172Ki ± 0%   -38.50% (p=0.002 n=6)      7.422Ki ± 0%   +110.18% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=120/buckets=0/time=no-st/codec/decode               0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st-jitter/codec/encode    3.531Ki ± 0%      3.547Ki ± 0%    +0.44% (p=0.002 n=6)      8.797Ki ± 0%   +149.12% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st-jitter/codec/decode      0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal6/n=120/buckets=0/time=no-st/codec/encode           2.156Ki ± 0%      2.172Ki ± 0%    +0.72% (p=0.002 n=6)      7.422Ki ± 0%   +244.20% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=120/buckets=0/time=no-st/codec/decode             0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/encode           2.156Ki ± 0%      2.172Ki ± 0%    +0.72% (p=0.002 n=6)      7.422Ki ± 0%   +244.20% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/decode             0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/decode-cold        128.0 ± 0%        144.0 ± 0%   +12.50% (p=0.002 n=6)       1552.0 ± 0%  +1112.50% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=32/buckets=0/time=no-st/codec/encode         800.0 ± 0%        816.0 ± 0%    +2.00% (p=0.002 n=6)       2256.0 ± 0%   +182.00% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=32/buckets=0/time=no-st/codec/decode         0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=1024/buckets=0/time=no-st/codec/encode           8.531Ki ± 0%     17.797Ki ± 0%  +108.61% (p=0.002 n=6)     13.406Ki ± 0%    +57.14% (p=0.002 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=no-st/codec/decode             0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=32/buckets=0/time=no-st/codec/encode              800.0 ± 0%        816.0 ± 0%    +2.00% (p=0.002 n=6)       2256.0 ± 0%   +182.00% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=32/buckets=0/time=no-st/codec/decode              0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/constant/n=1024/buckets=0/time=no-st/codec/encode          1.281Ki ± 0%      8.547Ki ± 0%  +567.07% (p=0.002 n=6)      7.719Ki ± 0%   +502.44% (p=0.002 n=6)
+ALPMatrix/float/constant/n=1024/buckets=0/time=no-st/codec/decode            0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal6/n=1024/buckets=0/time=no-st/codec/encode          24.53Ki ± 0%      33.80Ki ± 0%   +37.77% (p=0.002 n=6)      11.03Ki ± 0%    -55.03% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=1024/buckets=0/time=no-st/codec/decode            0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/outliers20/n=120/buckets=0/time=no-st/codec/encode         2.156Ki ± 0%      2.172Ki ± 0%    +0.72% (p=0.002 n=6)      7.422Ki ± 0%   +244.20% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=120/buckets=0/time=no-st/codec/decode           0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=32/buckets=0/time=no-st/codec/encode               544.0 ± 0%        560.0 ± 0%    +2.94% (p=0.002 n=6)       2256.0 ± 0%   +314.71% (p=0.002 n=6)
+ALPMatrix/float/counter/n=32/buckets=0/time=no-st/codec/decode               0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-bits/n=1024/buckets=0/time=no-st/codec/encode       33.78Ki ± 0%      45.80Ki ± 0%   +35.57% (p=0.002 n=6)      49.16Ki ± 0%    +45.51% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=1024/buckets=0/time=no-st/codec/decode         0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal6/n=32/buckets=0/time=no-st/codec/encode              800.0 ± 0%        816.0 ± 0%    +2.00% (p=0.002 n=6)       2256.0 ± 0%   +182.00% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=32/buckets=0/time=no-st/codec/decode              0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/encode        3.531Ki ± 0%      3.547Ki ± 0%    +0.44% (p=0.002 n=6)      8.797Ki ± 0%   +149.12% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/decode          0.000 ± 0%        0.000 ± 0%         ~ (p=1.000 n=6) ¹      0.000 ± 0%          ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/decode-cold     128.0 ± 0%        144.0 ± 0%   +12.50% (p=0.002 n=6)       1296.0 ± 0%   +912.50% (p=0.002 n=6)
+geomean                                                                                 ²                    +7.62%               ²                    +57.44%               ²
+¹ all samples are equal
+² summaries must be >0 to compute geomean
+
+                                                                         │ simd-xor.txt  │            simd-xor2.txt             │             simd-alp.txt              │
+                                                                         │   allocs/op   │  allocs/op   vs base                 │  allocs/op   vs base                  │
+ALPMatrix/float/random-finite/n=120/buckets=0/time=no-st/codec/encode       10.00 ± 0%      10.00 ± 0%        ~ (p=1.000 n=6) ¹    14.00 ± 0%   +40.00% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=120/buckets=0/time=no-st/codec/decode       0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=1024/buckets=0/time=no-st/codec/encode           15.00 ± 0%      16.00 ± 0%   +6.67% (p=0.002 n=6)      22.00 ± 0%   +46.67% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=1024/buckets=0/time=no-st/codec/decode           0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/constant/n=120/buckets=0/time=no-st/codec/encode            6.000 ± 0%      6.000 ± 0%        ~ (p=1.000 n=6) ¹   14.000 ± 0%  +133.33% (p=0.002 n=6)
+ALPMatrix/float/constant/n=120/buckets=0/time=no-st/codec/decode            0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-bits/n=32/buckets=0/time=no-st/codec/encode          8.000 ± 0%      8.000 ± 0%        ~ (p=1.000 n=6) ¹   13.000 ± 0%   +62.50% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=32/buckets=0/time=no-st/codec/decode          0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st/codec/encode            9.000 ± 0%      9.000 ± 0%        ~ (p=1.000 n=6) ¹   14.000 ± 0%   +55.56% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st/codec/decode            0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/constant/n=32/buckets=0/time=no-st/codec/encode             6.000 ± 0%      6.000 ± 0%        ~ (p=1.000 n=6) ¹   12.000 ± 0%  +100.00% (p=0.002 n=6)
+ALPMatrix/float/constant/n=32/buckets=0/time=no-st/codec/decode             0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/computed/n=32/buckets=0/time=no-st/codec/encode             7.000 ± 0%      7.000 ± 0%        ~ (p=1.000 n=6) ¹   12.000 ± 0%   +71.43% (p=0.002 n=6)
+ALPMatrix/float/computed/n=32/buckets=0/time=no-st/codec/decode             0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/codec/encode       9.000 ± 0%      9.000 ± 0%        ~ (p=1.000 n=6) ¹   14.000 ± 0%   +55.56% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/codec/decode       0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=1024/buckets=0/time=no-st/codec/encode      16.00 ± 0%      17.00 ± 0%   +6.25% (p=0.002 n=6)      24.00 ± 0%   +50.00% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=1024/buckets=0/time=no-st/codec/decode      0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/outliers20/n=32/buckets=0/time=no-st/codec/encode           7.000 ± 0%      7.000 ± 0%        ~ (p=1.000 n=6) ¹   12.000 ± 0%   +71.43% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=32/buckets=0/time=no-st/codec/decode           0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st-jitter/codec/encode     10.00 ± 0%      10.00 ± 0%        ~ (p=1.000 n=6) ¹    14.00 ± 0%   +40.00% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st-jitter/codec/decode     0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=120/buckets=0/time=no-st/codec/encode             7.000 ± 0%      7.000 ± 0%        ~ (p=1.000 n=6) ¹   14.000 ± 0%  +100.00% (p=0.002 n=6)
+ALPMatrix/float/counter/n=120/buckets=0/time=no-st/codec/decode             0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/outliers20/n=1024/buckets=0/time=no-st/codec/encode         16.00 ± 0%      17.00 ± 0%   +6.25% (p=0.002 n=6)      25.00 ± 0%   +56.25% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=1024/buckets=0/time=no-st/codec/decode         0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/codec/encode             16.00 ± 0%      16.00 ± 0%        ~ (p=1.000 n=6) ¹    23.00 ± 0%   +43.75% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/codec/decode             0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-finite/n=1024/buckets=0/time=no-st/codec/encode      16.00 ± 0%      17.00 ± 0%   +6.25% (p=0.002 n=6)      28.00 ± 0%   +75.00% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=1024/buckets=0/time=no-st/codec/decode      0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/codec/encode               7.000 ± 0%      7.000 ± 0%        ~ (p=1.000 n=6) ¹   12.000 ± 0%   +71.43% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/codec/decode               0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-finite/n=32/buckets=0/time=no-st/codec/encode        8.000 ± 0%      8.000 ± 0%        ~ (p=1.000 n=6) ¹   13.000 ± 0%   +62.50% (p=0.002 n=6)
+ALPMatrix/float/random-finite/n=32/buckets=0/time=no-st/codec/decode        0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/computed/n=1024/buckets=0/time=no-st/codec/encode           16.00 ± 0%      17.00 ± 0%   +6.25% (p=0.002 n=6)      27.00 ± 0%   +68.75% (p=0.002 n=6)
+ALPMatrix/float/computed/n=1024/buckets=0/time=no-st/codec/decode           0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=120/buckets=0/time=no-st/codec/encode             10.000 ± 0%      9.000 ± 0%  -10.00% (p=0.002 n=6)     14.000 ± 0%   +40.00% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=120/buckets=0/time=no-st/codec/decode              0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st-jitter/codec/encode     10.00 ± 0%      10.00 ± 0%        ~ (p=1.000 n=6) ¹    15.00 ± 0%   +50.00% (p=0.002 n=6)
+ALPMatrix/float/computed/n=120/buckets=0/time=no-st-jitter/codec/decode     0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal6/n=120/buckets=0/time=no-st/codec/encode            9.000 ± 0%      9.000 ± 0%        ~ (p=1.000 n=6) ¹   14.000 ± 0%   +55.56% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=120/buckets=0/time=no-st/codec/decode            0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/encode            9.000 ± 0%      9.000 ± 0%        ~ (p=1.000 n=6) ¹   14.000 ± 0%   +55.56% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/decode            0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/codec/decode-cold       2.000 ± 0%      2.000 ± 0%        ~ (p=1.000 n=6) ¹    4.000 ± 0%  +100.00% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=32/buckets=0/time=no-st/codec/encode        7.000 ± 0%      7.000 ± 0%        ~ (p=1.000 n=6) ¹   12.000 ± 0%   +71.43% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=32/buckets=0/time=no-st/codec/decode        0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=1024/buckets=0/time=no-st/codec/encode            12.00 ± 0%      14.00 ± 0%  +16.67% (p=0.002 n=6)      23.00 ± 0%   +91.67% (p=0.002 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=no-st/codec/decode            0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=32/buckets=0/time=no-st/codec/encode             7.000 ± 0%      7.000 ± 0%        ~ (p=1.000 n=6) ¹   12.000 ± 0%   +71.43% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=32/buckets=0/time=no-st/codec/decode             0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/constant/n=1024/buckets=0/time=no-st/codec/encode           8.000 ± 0%     12.000 ± 0%  +50.00% (p=0.002 n=6)     20.000 ± 0%  +150.00% (p=0.002 n=6)
+ALPMatrix/float/constant/n=1024/buckets=0/time=no-st/codec/decode           0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal6/n=1024/buckets=0/time=no-st/codec/encode           15.00 ± 0%      16.00 ± 0%   +6.67% (p=0.002 n=6)      22.00 ± 0%   +46.67% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=1024/buckets=0/time=no-st/codec/decode           0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/outliers20/n=120/buckets=0/time=no-st/codec/encode          9.000 ± 0%      9.000 ± 0%        ~ (p=1.000 n=6) ¹   14.000 ± 0%   +55.56% (p=0.002 n=6)
+ALPMatrix/float/outliers20/n=120/buckets=0/time=no-st/codec/decode          0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=32/buckets=0/time=no-st/codec/encode              6.000 ± 0%      6.000 ± 0%        ~ (p=1.000 n=6) ¹   12.000 ± 0%  +100.00% (p=0.002 n=6)
+ALPMatrix/float/counter/n=32/buckets=0/time=no-st/codec/decode              0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-bits/n=1024/buckets=0/time=no-st/codec/encode        16.00 ± 0%      17.00 ± 0%   +6.25% (p=0.002 n=6)      28.00 ± 0%   +75.00% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=1024/buckets=0/time=no-st/codec/decode        0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal6/n=32/buckets=0/time=no-st/codec/encode             7.000 ± 0%      7.000 ± 0%        ~ (p=1.000 n=6) ¹   12.000 ± 0%   +71.43% (p=0.002 n=6)
+ALPMatrix/float/decimal6/n=32/buckets=0/time=no-st/codec/decode             0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/encode         10.00 ± 0%      10.00 ± 0%        ~ (p=1.000 n=6) ¹    15.00 ± 0%   +50.00% (p=0.002 n=6)
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/decode         0.000 ± 0%      0.000 ± 0%        ~ (p=1.000 n=6) ¹    0.000 ± 0%         ~ (p=1.000 n=6) ¹
+ALPMatrix/float/random-bits/n=120/buckets=0/time=no-st/codec/decode-cold    2.000 ± 0%      2.000 ± 0%        ~ (p=1.000 n=6) ¹    3.000 ± 0%   +50.00% (p=0.002 n=6)
+geomean                                                                                ²                 +1.35%               ²                 +30.26%               ²
+¹ all samples are equal
+² summaries must be >0 to compute geomean

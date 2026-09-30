@@ -59,6 +59,8 @@ materializes every value/histogram; it is not a decode-kernel-only measurement.
 
 ## Explore the complete results
 
+- [Direct ALP versus XOR and XOR2 comparison](../alp-xor-xor2-20260930/report.md)
+  adds the original XOR encoding, using identical inputs without start timestamps.
 - [Interactive comparison](explorer.html): filter type, size, SIMD/scalar,
   timestamp pattern, decode mode, throughput, and CPU cost.
 - [All medians in CSV](summary.csv), [machine-readable medians](summary.json),
