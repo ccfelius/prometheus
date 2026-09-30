@@ -39,9 +39,11 @@ func alpMatrixCases() []alpMatrixCase {
 	for _, n := range []int{32, 120, 1024} {
 		for _, pattern := range []string{"constant", "counter", "decimal2", "decimal6", "noisy-decimal", "computed", "random-finite", "random-bits", "stale5", "outliers20"} {
 			cases = append(cases, alpMatrixCase{"float", pattern, "regular", n, 0})
+			cases = append(cases, alpMatrixCase{"float", pattern, "no-st", n, 0})
 		}
 	}
 	for _, pattern := range []string{"decimal2", "computed"} {
+		cases = append(cases, alpMatrixCase{"float", pattern, "no-st-jitter", 120, 0})
 		for _, timing := range []string{"jitter", "changing-st"} {
 			cases = append(cases, alpMatrixCase{"float", pattern, timing, 120, 0})
 		}
@@ -69,6 +71,9 @@ func alpMatrixCases() []alpMatrixCase {
 
 func (c alpMatrixCase) codecs() []string {
 	if c.family == "float" {
+		if c.timing == "no-st" || c.timing == "no-st-jitter" {
+			return []string{"XOR", "XOR2", "ALP"}
+		}
 		return []string{"XOR2", "ALP"}
 	}
 	if c.pattern == "smooth" && c.samples == 120 && c.buckets == 8 {
@@ -92,11 +97,15 @@ func alpMatrixData(c alpMatrixCase) alpMatrixFixture {
 	for i := range c.samples {
 		f.times[i] = 1750000000000 + int64(i)*15000
 		f.starts[i] = 1749999900000
-		if c.timing == "jitter" {
+		if c.timing == "jitter" || c.timing == "no-st-jitter" {
 			f.times[i] += int64(r.Intn(2001) - 1000)
 		}
 		if c.timing == "changing-st" {
 			f.starts[i] += int64(i/17) * 15000
+		}
+		// XOR cannot store start timestamps, so three-codec cases omit them.
+		if c.timing == "no-st" || c.timing == "no-st-jitter" {
+			f.starts[i] = 0
 		}
 	}
 	if c.family == "float" {
@@ -221,7 +230,10 @@ func (f alpMatrixFixture) encode(codec string) ([]Chunk, error) {
 	enc := EncXOR2
 	switch f.spec.family {
 	case "float":
-		if codec == "ALP" {
+		switch codec {
+		case "XOR":
+			enc = EncXOR
+		case "ALP":
 			enc = EncALP
 		}
 	case "integer-histogram":
@@ -350,7 +362,7 @@ func BenchmarkALPMatrix(b *testing.B) {
 					if spec.family == "integer-histogram" {
 						operations = append(operations, "decode-float")
 					}
-					if spec.samples == 120 && spec.timing == "regular" && (spec.pattern == "decimal2" || spec.pattern == "random-bits" || spec.pattern == "smooth" && spec.buckets == 8) {
+					if spec.samples == 120 && (spec.timing == "regular" || spec.timing == "no-st") && (spec.pattern == "decimal2" || spec.pattern == "random-bits" || spec.pattern == "smooth" && spec.buckets == 8) {
 						operations = append(operations, "decode-cold")
 					}
 					for _, operation := range operations {
