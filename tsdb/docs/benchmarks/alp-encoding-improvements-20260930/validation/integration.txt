@@ -1,0 +1,3 @@
+ok  	github.com/prometheus/prometheus/tsdb	3.606s
+ok  	github.com/prometheus/prometheus/storage	0.345s [no tests to run]
+ok  	github.com/prometheus/prometheus/storage/remote	0.428s

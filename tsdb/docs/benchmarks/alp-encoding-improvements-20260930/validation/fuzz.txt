@@ -1,0 +1,11 @@
+fuzz: elapsed: 0s, gathering baseline coverage: 0/137 completed
+fuzz: elapsed: 0s, gathering baseline coverage: 137/137 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 96482 (32150/sec), new interesting: 1 (total: 138)
+fuzz: elapsed: 6s, execs: 200839 (34786/sec), new interesting: 2 (total: 139)
+fuzz: elapsed: 9s, execs: 307479 (35547/sec), new interesting: 3 (total: 140)
+fuzz: elapsed: 12s, execs: 416252 (36263/sec), new interesting: 4 (total: 141)
+fuzz: elapsed: 15s, execs: 523679 (35803/sec), new interesting: 6 (total: 143)
+fuzz: elapsed: 18s, execs: 634271 (36864/sec), new interesting: 8 (total: 145)
+fuzz: elapsed: 20s, execs: 705027 (33812/sec), new interesting: 8 (total: 145)
+PASS
+ok  	github.com/prometheus/prometheus/tsdb/chunkenc	20.362s

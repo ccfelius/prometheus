@@ -1,0 +1,3 @@
+ok  	github.com/prometheus/prometheus/tsdb/chunkenc	8.898s
+ok  	github.com/prometheus/prometheus/tsdb	6.716s
+ok  	github.com/prometheus/prometheus/storage/remote	1.509s
