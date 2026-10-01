@@ -27,8 +27,9 @@ import (
 const MaxSamplesPerALPHistogramChunk = histogramSTSampleCountMask
 
 const (
-	alpHistogramCompactVersion  = 2
-	alpHistogramMetadataVersion = 3
+	alpHistogramCompactVersion    = 2
+	alpHistogramMetadataVersion   = 3
+	alpHistogramPredictiveVersion = 4
 )
 
 // ALPHistogramChunk stores histogram sums and floating-point counts in ALP
@@ -46,12 +47,12 @@ type ALPHistogramChunk struct {
 
 // NewALPHistogramChunk returns an empty integer-count histogram chunk.
 func NewALPHistogramChunk() *ALPHistogramChunk {
-	return &ALPHistogramChunk{encoding: EncALPHistogram, version: alpVersion, inner: NewHistogramSTChunk()}
+	return &ALPHistogramChunk{encoding: EncALPHistogram, version: alpHistogramMetadataVersion, inner: NewHistogramSTChunk()}
 }
 
 // NewALPFloatHistogramChunk returns an empty floating-count histogram chunk.
 func NewALPFloatHistogramChunk() *ALPHistogramChunk {
-	return &ALPHistogramChunk{encoding: EncALPFloatHistogram, version: alpVersion, inner: NewFloatHistogramSTChunk()}
+	return &ALPHistogramChunk{encoding: EncALPFloatHistogram, version: alpHistogramMetadataVersion, inner: NewFloatHistogramSTChunk()}
 }
 
 // RecodeToALPHistogram converts a finalized histogram chunk while retaining the
@@ -77,7 +78,7 @@ func RecodeToALPHistogramV2(source Chunk) (Chunk, error) {
 }
 
 func alpValidHistogramVersion(version byte, enc Encoding) bool {
-	return version == alpVersion || version == alpHistogramMetadataVersion || version == alpHistogramCompactVersion && enc == EncALPHistogram
+	return version == alpVersion || version == alpHistogramMetadataVersion || version == alpHistogramPredictiveVersion || version == alpHistogramCompactVersion && enc == EncALPHistogram
 }
 
 // Encoding returns the integer- or floating-count ALP histogram encoding.
@@ -109,7 +110,7 @@ func (c *ALPHistogramChunk) NumSamples() int {
 // Reset borrows immutable encoded bytes. Reset(nil) releases retained buffers.
 func (c *ALPHistogramChunk) Reset(b []byte) {
 	c.inner, c.encoded, c.err = nil, slices.Clip(b), nil
-	c.version = alpVersion
+	c.version = alpHistogramMetadataVersion
 	if len(b) >= 4 {
 		c.version = b[2]
 	}
@@ -228,6 +229,9 @@ type alpHistogramNumbers struct {
 	previous, delta           []uint64
 	first                     bool
 	compactFirst              bool
+	predictive                bool
+	predictor                 byte
+	fields                    int
 	src                       []byte
 	floats                    []float64
 	current                   []float64
@@ -259,10 +263,24 @@ func (r *alpHistogramNumbers) refill() bool {
 	r.index = 0
 	if r.integer {
 		r.ints = slices.Grow(r.ints[:0], r.decoded)[:r.decoded]
-		r.err = alpDecodeIntegers(r.ints, b, &r.scratch)
+		if r.predictive {
+			if len(b) == 0 || b[0] > 1 {
+				r.err = errInvalidALP
+				return false
+			}
+			r.predictor = b[0]
+			b = b[1:]
+			r.err = alpDecodePatchedIntegers(r.ints, b, &r.scratch)
+		} else {
+			r.err = alpDecodeIntegers(r.ints, b, &r.scratch)
+		}
 	} else {
 		r.floats = slices.Grow(r.floats[:0], r.decoded)[:r.decoded]
-		r.err = alpDecodeValues(r.floats, b, &r.scratch, alpDecodeNative)
+		if r.predictive {
+			r.err = alpDecodeTemporalFloats(r.floats, b, &r.scratch, r.fields)
+		} else {
+			r.err = alpDecodeValues(r.floats, b, &r.scratch, alpDecodeNative)
+		}
 	}
 	return r.err == nil
 }
@@ -281,12 +299,22 @@ func (r *alpHistogramNumbers) integerSample() []uint64 {
 					return r.previous
 				}
 				take := min(r.blockSize, len(r.previous)-offset)
-				r.err = alpDecodeIntegers(r.previous[offset:offset+take], r.src[4:4+int(size)], &r.scratch)
+				if r.predictive {
+					r.err = alpDecodePatchedIntegers(r.previous[offset:offset+take], r.src[4:4+int(size)], &r.scratch)
+				} else {
+					r.err = alpDecodeIntegers(r.previous[offset:offset+take], r.src[4:4+int(size)], &r.scratch)
+				}
 				if r.err != nil {
 					return r.previous
 				}
 				r.src = r.src[4+int(size):]
 				offset += take
+			}
+
+			if r.predictive {
+				for i, z := range r.previous[2:] {
+					r.previous[i+2] = z>>1 ^ (0 - (z & 1))
+				}
 			}
 			r.first = false
 			return r.previous
@@ -307,7 +335,15 @@ func (r *alpHistogramNumbers) integerSample() []uint64 {
 			return r.previous
 		}
 		take := min(len(r.previous)-field, r.decoded-r.index)
-		alpRestoreIntegersNative(r.previous[field:field+take], r.delta[field:field+take], r.ints[r.index:r.index+take])
+		if r.predictive && r.predictor == 1 {
+			for j, z := range r.ints[r.index : r.index+take] {
+				d := (z >> 1) ^ (0 - (z & 1))
+				r.delta[field+j] = d
+				r.previous[field+j] += d
+			}
+		} else {
+			alpRestoreIntegersNative(r.previous[field:field+take], r.delta[field:field+take], r.ints[r.index:r.index+take])
+		}
 		r.index += take
 		field += take
 	}
@@ -501,10 +537,13 @@ func alpEncodeHistogramCandidate(inner Chunk, enc Encoding, state *alpEncodeStat
 	defer func() { w.hints = hints }()
 	var layout histogram.FloatHistogram
 	var positive, negative int
-	numeric := w.numeric[:0]
+	// The source size is a useful reservation for a conversion candidate. Bound
+	// transient reservation separately from retained scratch to avoid repeatedly
+	// growing wide streams that releaseLarge intentionally drops after each call.
+	numeric := slices.Grow(w.numeric[:0], min(len(b), 256*1024))
 	defer func() { w.numeric = numeric }()
 	var floats [alpMaxBlockSize]float64
-	var integers [alpMaxBlockSize]uint64
+	var integers, deltas [alpMaxBlockSize]uint64
 	used := 0
 	blocks, probeStart, probeValues := 0, 0, 0
 	flush := func() {
@@ -514,9 +553,30 @@ func alpEncodeHistogramCandidate(inner Chunk, enc Encoding, state *alpEncodeStat
 		start := len(numeric)
 		numeric = append(numeric, 0, 0, 0, 0)
 		if enc == EncALPHistogram {
-			numeric = alpEncodeIntegers(numeric, integers[:used])
+			if version == alpHistogramPredictiveVersion {
+				numeric = append(numeric, 0)
+				numeric = alpEncodePatchedIntegers(numeric, integers[:used])
+				end := len(numeric)
+				// A constant block cannot benefit from trying another predictor.
+				if end-start > 15 {
+					numeric = append(numeric, 1)
+					numeric = alpEncodePatchedIntegers(numeric, deltas[:used])
+					if len(numeric)-end < end-start-4 {
+						size := copy(numeric[start+4:], numeric[end:])
+						numeric = numeric[:start+4+size]
+					} else {
+						numeric = numeric[:end]
+					}
+				}
+			} else {
+				numeric = alpEncodeIntegers(numeric, integers[:used])
+			}
 		} else {
-			numeric = alpEncodeValuesWithState(numeric, floats[:used], state)
+			if version == alpHistogramPredictiveVersion {
+				numeric = alpEncodeTemporalFloats(numeric, floats[:used], state, 2+positive+negative)
+			} else {
+				numeric = alpEncodeValuesWithState(numeric, floats[:used], state)
+			}
 		}
 		binary.LittleEndian.PutUint32(numeric[start:], uint32(len(numeric)-start-4))
 
@@ -564,7 +624,11 @@ func alpEncodeHistogramCandidate(inner Chunk, enc Encoding, state *alpEncodeStat
 			k := 2
 			for _, buckets := range [][]int64{h.PositiveBuckets, h.NegativeBuckets} {
 				for _, v := range buckets {
-					w.fields[k] = uint64(v<<1) ^ uint64(v>>63)
+					if version == alpHistogramPredictiveVersion {
+						w.fields[k] = uint64(v)
+					} else {
+						w.fields[k] = uint64(v<<1) ^ uint64(v>>63)
+					}
 					k++
 				}
 			}
@@ -573,12 +637,23 @@ func alpEncodeHistogramCandidate(inner Chunk, enc Encoding, state *alpEncodeStat
 				w.previous = append(w.previous[:0], w.fields...)
 				w.delta = slices.Grow(w.delta[:0], fields)[:fields]
 				clear(w.delta)
-				if version == alpHistogramMetadataVersion {
+				if version >= alpHistogramMetadataVersion {
 					for remaining := w.fields; len(remaining) > 0; {
 						take := min(blockSize, len(remaining))
 						start := len(numeric)
 						numeric = append(numeric, 0, 0, 0, 0)
-						numeric = alpEncodeIntegers(numeric, remaining[:take])
+						if version == alpHistogramPredictiveVersion {
+							for j, v := range remaining[:take] {
+								if len(w.fields)-len(remaining)+j >= 2 {
+									integers[j] = v<<1 ^ uint64(int64(v)>>63)
+								} else {
+									integers[j] = v
+								}
+							}
+							numeric = alpEncodePatchedIntegers(numeric, integers[:take])
+						} else {
+							numeric = alpEncodeIntegers(numeric, remaining[:take])
+						}
 						binary.LittleEndian.PutUint32(numeric[start:], uint32(len(numeric)-start-4))
 						remaining = remaining[take:]
 					}
@@ -590,9 +665,16 @@ func alpEncodeHistogramCandidate(inner Chunk, enc Encoding, state *alpEncodeStat
 			} else {
 				alpPredictIntegersNative(w.previous, w.delta, w.fields)
 				remaining := w.fields
+				offset := 0
 				for len(remaining) > 0 {
 					take := min(blockSize-used, len(remaining))
 					copy(integers[used:], remaining[:take])
+					if version == alpHistogramPredictiveVersion {
+						for j, d := range w.delta[offset : offset+take] {
+							deltas[used+j] = d<<1 ^ uint64(int64(d)>>63)
+						}
+					}
+					offset += take
 					used += take
 					remaining = remaining[take:]
 					if used == blockSize {
@@ -665,7 +747,7 @@ func alpEncodeHistogramCandidate(inner Chunk, enc Encoding, state *alpEncodeStat
 		}
 	}
 	metadataSize += binary.PutUvarint(sizeScratch[:], uint64(len(layout.CustomValues))) + 8*len(layout.CustomValues) + 4
-	if version == alpHistogramMetadataVersion {
+	if version >= alpHistogramMetadataVersion {
 		metadataSize += (n + 3) / 4
 	} else {
 		metadataSize += n
@@ -684,7 +766,7 @@ func alpEncodeHistogramCandidate(inner Chunk, enc Encoding, state *alpEncodeStat
 	for _, v := range layout.CustomValues {
 		dst = binary.LittleEndian.AppendUint64(dst, math.Float64bits(v))
 	}
-	if version == alpHistogramMetadataVersion {
+	if version >= alpHistogramMetadataVersion {
 		for i := 0; i < len(hints); i += 4 {
 			var packed byte
 			for j := 0; j < min(4, len(hints)-i); j++ {
@@ -762,7 +844,9 @@ func (it *alpHistogramIterator) reset(src []byte, enc Encoding) {
 		it.err = errInvalidALP
 		return
 	}
-	it.packedHints = src[2] == alpHistogramMetadataVersion
+	it.packedHints = src[2] >= alpHistogramMetadataVersion
+	it.numbers.predictive = src[2] == alpHistogramPredictiveVersion
+	it.numbers.predictor = 0
 	it.numbers.compactFirst = it.packedHints
 	it.numbers.blockSize = alpMaxBlockSize
 	if enc == EncALPHistogram && src[2] >= alpHistogramCompactVersion {
@@ -878,6 +962,7 @@ func (it *alpHistogramIterator) reset(src []byte, enc Encoding) {
 	it.times = c.Iterator(it.times)
 	src = src[int(size):]
 	fields := uint64(2) + uint64(it.positive) + uint64(it.negative)
+	it.numbers.fields = int(fields)
 	if fields*uint64(it.n) > uint64(len(src))*alpMaxBlockSize || fields*uint64(it.n) > uint64(math.MaxInt) {
 		it.err = errInvalidALP
 		return
@@ -906,10 +991,7 @@ func (it *alpHistogramIterator) reset(src []byte, enc Encoding) {
 				}
 				block := data[4 : 4+int(size)]
 				take := min(it.numbers.blockSize, remaining)
-				valid := len(block) == 1+8*take && block[0] == 0
-				if len(block) >= 10 && block[0] == 1 && block[1] <= 64 {
-					valid = len(block) == 10+alpPackedSize(take, int(block[1]))
-				}
+				valid := alpValidIntegerBlock(block, take, it.numbers.predictive)
 				if !valid {
 					it.err = errInvalidALP
 					return
@@ -1015,7 +1097,11 @@ func (it *alpHistogramIterator) AtHistogram(h *histogram.Histogram) (int64, *his
 	for _, buckets := range [][]int64{h.PositiveBuckets, h.NegativeBuckets} {
 		for i := range buckets {
 			v := counts[i]
-			buckets[i] = int64(v>>1) ^ -int64(v&1)
+			if it.numbers.predictive {
+				buckets[i] = int64(v)
+			} else {
+				buckets[i] = int64(v>>1) ^ -int64(v&1)
+			}
 		}
 		counts = counts[len(buckets):]
 	}
@@ -1040,7 +1126,11 @@ func (it *alpHistogramIterator) AtFloatHistogram(h *histogram.FloatHistogram) (i
 			for i := range buckets {
 				v := counts[i]
 				// Match Histogram.ToFloat's per-delta conversion and summation.
-				total += float64(int64(v>>1) ^ -int64(v&1))
+				if it.numbers.predictive {
+					total += float64(int64(v))
+				} else {
+					total += float64(int64(v>>1) ^ -int64(v&1))
+				}
 				buckets[i] = total
 			}
 			counts = counts[len(buckets):]

@@ -62,6 +62,10 @@ func alpMultiplyNEON(x archsimd.Uint64x2, p uint64) archsimd.Uint64x2 {
 
 // alpConvertNEON performs exact candidate conversion in 2 lanes.
 func alpConvertNEON(values []float64, integers []int64, accepted []uint64, exponent, factor uint8) {
+	if len(values) < 2 {
+		alpConvertScalar(values, integers, accepted, exponent, factor)
+		return
+	}
 	alpConvertAnalyzeNEON(values, integers, accepted, exponent, factor)
 }
 

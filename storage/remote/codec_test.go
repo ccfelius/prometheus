@@ -1260,11 +1260,13 @@ func TestStreamALPHistogramResponse(t *testing.T) {
 		enc     chunkenc.Encoding
 		version int
 	}{
-		{chunkenc.EncALPHistogram, 1},
-		{chunkenc.EncALPFloatHistogram, 1},
+		{chunkenc.EncALPHistogram, 3},
+		{chunkenc.EncALPFloatHistogram, 3},
 		{chunkenc.EncHistogramST, 2},
 		{chunkenc.EncHistogramST, 3},
 		{chunkenc.EncFloatHistogramST, 3},
+		{chunkenc.EncHistogramST, 4},
+		{chunkenc.EncFloatHistogramST, 4},
 	} {
 		enc := variant.enc
 		for _, st := range []int64{0, 1} {
@@ -1286,7 +1288,11 @@ func TestStreamALPHistogramResponse(t *testing.T) {
 						c, err = chunkenc.RecodeToALPHistogramV2(c)
 					} else {
 						var encoder chunkenc.ALPEncoder
-						c, err = encoder.RecodeHistogramV3(c)
+						if variant.version == 4 {
+							c, err = encoder.RecodeHistogramV4(c)
+						} else {
+							c, err = encoder.RecodeHistogramV3(c)
+						}
 					}
 					require.NoError(t, err)
 				}

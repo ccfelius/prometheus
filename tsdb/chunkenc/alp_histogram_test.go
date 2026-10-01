@@ -28,6 +28,15 @@ import (
 )
 
 func TestALPHistograms(t *testing.T) {
+	t.Run("new chunks use version 3", func(t *testing.T) {
+		for _, enc := range []Encoding{EncALPHistogram, EncALPFloatHistogram} {
+			c, err := NewEmptyChunk(enc)
+			require.NoError(t, err)
+			require.Equal(t, []byte{0, 0, 3, 0}, c.Bytes())
+			c.Reset(nil)
+			require.Equal(t, []byte{0, 0, 3, 0}, c.Bytes())
+		}
+	})
 	t.Run("resume preserves reset hint and snapshot", func(t *testing.T) {
 		for _, floating := range []bool{false, true} {
 			legacy := EncHistogramST
@@ -158,7 +167,14 @@ func TestALPHistograms(t *testing.T) {
 					var encoder ALPEncoder
 					v3, err := encoder.RecodeHistogramV3(want[i])
 					require.NoError(t, err)
-					variants := []Chunk{c, v3}
+					v4, err := encoder.RecodeHistogramV4(want[i])
+					require.NoError(t, err)
+					var state alpEncodeState
+					v1Bytes, err := alpEncodeHistograms(want[i], enc, &state, alpVersion)
+					require.NoError(t, err)
+					v1, err := FromData(enc, v1Bytes)
+					require.NoError(t, err)
+					variants := []Chunk{c, v1, v3, v4}
 					if enc == EncALPHistogram {
 						v2, err := RecodeToALPHistogramV2(want[i])
 						require.NoError(t, err)
@@ -257,6 +273,8 @@ func FuzzALPHistogramDecode(f *testing.F) {
 		var encoder ALPEncoder
 		v3, _ := encoder.RecodeHistogramV3(c.(*ALPHistogramChunk).inner)
 		f.Add(byte(enc), v3.Bytes())
+		v4, _ := encoder.RecodeHistogramV4(c.(*ALPHistogramChunk).inner)
+		f.Add(byte(enc), v4.Bytes())
 		if enc == EncALPHistogram {
 			v2, _ := RecodeToALPHistogramV2(c.(*ALPHistogramChunk).inner)
 			f.Add(byte(enc), v2.Bytes())

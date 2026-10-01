@@ -77,9 +77,9 @@ func (c alpMatrixCase) codecs() []string {
 		return []string{"XOR2", "ALP"}
 	}
 	if c.pattern == "smooth" && c.samples == 120 && c.buckets == 8 {
-		return []string{"legacy", "ALPv1", "ALPv3"}
+		return []string{"legacy", "ALPv1", "ALPv3", "ALPv4"}
 	}
-	return []string{"legacy", "ALPv3"}
+	return []string{"legacy", "ALPv3", "ALPv4"}
 }
 
 type alpMatrixFixture struct {
@@ -252,8 +252,13 @@ func (f alpMatrixFixture) encode(codec string) ([]Chunk, error) {
 	if err != nil {
 		return nil, err
 	}
-	if codec == "ALPv3" {
+	switch codec {
+	case "ALPv1":
+		c.(*ALPHistogramChunk).version = alpVersion
+	case "ALPv3":
 		c.(*ALPHistogramChunk).version = alpHistogramMetadataVersion
+	case "ALPv4":
+		c.(*ALPHistogramChunk).version = alpHistogramPredictiveVersion
 	}
 	a, err := c.Appender()
 	if err != nil {

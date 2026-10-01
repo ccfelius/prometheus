@@ -42,11 +42,11 @@ func (e *ALPEncoder) Recode(source Chunk) (Chunk, error) {
 		if source.Encoding() == EncFloatHistogram || source.Encoding() == EncFloatHistogramST {
 			enc = EncALPFloatHistogram
 		}
-		b, err := alpEncodeHistogramsWithWorkspace(source, enc, &e.counts, alpVersion, &e.hist)
+		b, err := alpEncodeHistogramsWithWorkspace(source, enc, &e.counts, alpHistogramMetadataVersion, &e.hist)
 		if err != nil {
 			return nil, err
 		}
-		return &ALPHistogramChunk{encoding: enc, version: alpVersion, encoded: b}, nil
+		return &ALPHistogramChunk{encoding: enc, version: alpHistogramMetadataVersion, encoded: b}, nil
 	default:
 		return nil, errInvalidALP
 	}
@@ -244,7 +244,8 @@ func (e *ALPEncoder) RecodeHistogramIfSmaller(source Chunk) (Chunk, error) {
 		header = c.GetCounterResetHeader()
 	}
 	add(uint64(header))
-	if typ == ValHistogram {
+	switch typ {
+	case ValHistogram:
 		_, e.hist.integerHistogram = it.AtHistogram(e.hist.integerHistogram)
 		h := e.hist.integerHistogram
 		add(uint64(h.Schema))
@@ -261,7 +262,7 @@ func (e *ALPEncoder) RecodeHistogramIfSmaller(source Chunk) (Chunk, error) {
 		for _, v := range h.CustomValues {
 			add(math.Float64bits(v))
 		}
-	} else if typ == ValFloatHistogram {
+	case ValFloatHistogram:
 		_, e.hist.floatHistogram = it.AtFloatHistogram(e.hist.floatHistogram)
 		h := e.hist.floatHistogram
 		add(uint64(h.Schema))
@@ -278,7 +279,7 @@ func (e *ALPEncoder) RecodeHistogramIfSmaller(source Chunk) (Chunk, error) {
 		for _, v := range h.CustomValues {
 			add(math.Float64bits(v))
 		}
-	} else {
+	default:
 		return nil, errInvalidALP
 	}
 	if key != e.histogramKey {
@@ -299,4 +300,24 @@ func (e *ALPEncoder) RecodeHistogramIfSmaller(source Chunk) (Chunk, error) {
 		return nil, nil
 	}
 	return &ALPHistogramChunk{encoding: enc, version: alpHistogramMetadataVersion, encoded: data}, nil
+}
+
+// RecodeHistogramV4 converts a finalized histogram using sparse integer
+// exceptions, adaptive integer prediction, and exact temporal decimal counts.
+// Version 4 requires upgraded readers and is an explicit experimental choice.
+// The result owns its bytes and the encoder retains only bounded scratch.
+func (e *ALPEncoder) RecodeHistogramV4(source Chunk) (Chunk, error) {
+	enc := EncALPHistogram
+	switch source.Encoding() {
+	case EncHistogram, EncHistogramST:
+	case EncFloatHistogram, EncFloatHistogramST:
+		enc = EncALPFloatHistogram
+	default:
+		return nil, errInvalidALP
+	}
+	data, err := alpEncodeHistogramsWithWorkspace(source, enc, &e.counts, alpHistogramPredictiveVersion, &e.hist)
+	if err != nil {
+		return nil, err
+	}
+	return &ALPHistogramChunk{encoding: enc, version: alpHistogramPredictiveVersion, encoded: data}, nil
 }

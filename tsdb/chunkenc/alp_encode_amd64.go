@@ -15,11 +15,7 @@
 
 package chunkenc
 
-import (
-	"math"
-
-	"simd/archsimd"
-)
+import "simd/archsimd"
 
 // alpPredictIntegersAVX2 predicts independent fields modulo 2^64 in 4 lanes.
 func alpPredictIntegersAVX2(previous, delta, fields []uint64) {
@@ -36,8 +32,8 @@ func alpPredictIntegersAVX2(previous, delta, fields []uint64) {
 }
 
 func alpReduceAVX2(integers []int64, accepted []uint64) (lo, hi int64, exceptions int) {
-	low := archsimd.BroadcastInt64x4(math.MaxInt64)
-	high := archsimd.BroadcastInt64x4(math.MinInt64)
+	low := archsimd.BroadcastInt64x4(1<<63 - 1)
+	high := archsimd.BroadcastInt64x4(-1 << 63)
 	zero := archsimd.BroadcastUint64x4(0)
 	one := archsimd.BroadcastUint64x4(1)
 	counts := zero
@@ -78,8 +74,8 @@ func alpPredictIntegersAVX512(previous, delta, fields []uint64) {
 }
 
 func alpReduceAVX512(integers []int64, accepted []uint64) (lo, hi int64, exceptions int) {
-	low := archsimd.BroadcastInt64x8(math.MaxInt64)
-	high := archsimd.BroadcastInt64x8(math.MinInt64)
+	low := archsimd.BroadcastInt64x8(1<<63 - 1)
+	high := archsimd.BroadcastInt64x8(-1 << 63)
 	zero := archsimd.BroadcastUint64x8(0)
 	one := archsimd.BroadcastUint64x8(1)
 	counts := zero
@@ -131,7 +127,7 @@ func alpReduceNative(integers []int64, accepted []uint64) (int64, int64, int) {
 // partial row without reading beyond the caller's value slice.
 func alpPackWordsAVX2(words, values []uint64, width int) {
 	rows := len(values) / alpLanes
-	for row := 0; row < rows; row++ {
+	for row := range rows {
 		bit := row * width
 		word, shift := bit/64*alpLanes, uint64(bit%64)
 		for lane := 0; lane < alpLanes; lane += 4 {
@@ -156,7 +152,7 @@ func alpPackWordsAVX2(words, values []uint64, width int) {
 // partial row without reading beyond the caller's value slice.
 func alpPackWordsAVX512(words, values []uint64, width int) {
 	rows := len(values) / alpLanes
-	for row := 0; row < rows; row++ {
+	for row := range rows {
 		bit := row * width
 		word, shift := bit/64*alpLanes, uint64(bit%64)
 		for lane := 0; lane < alpLanes; lane += 8 {
@@ -185,5 +181,124 @@ func alpPackWordsNative(words, values []uint64, width int) {
 		alpPackWordsAVX2(words, values, width)
 	default:
 		alpPackWordsScalar(words, values, width)
+	}
+}
+
+// alpRestoreTemporalAVX2 reconstructs independent fields before applying the
+// exact decimal transform. Invalid arithmetic is reported before output escapes.
+func alpRestoreTemporalAVX2(dst []float64, encoded []uint64, stride int, exponent, factor uint8) bool {
+	if stride < 4 {
+		return alpRestoreTemporalScalar(dst, encoded, stride, exponent, factor)
+	}
+	zero := archsimd.BroadcastUint64x4(0)
+	one := archsimd.BroadcastUint64x4(1)
+	low := archsimd.BroadcastInt64x4(1<<63 - 1)
+	high := archsimd.BroadcastInt64x4(-1 << 63)
+	scale := archsimd.BroadcastFloat64x4(alpFractions[exponent])
+	for phase := range 2 {
+		start, end := 0, stride
+		if phase == 1 {
+			start, end = stride, len(dst)
+		}
+		i := start
+		for ; i+4 <= end; i += 4 {
+			z := archsimd.LoadUint64x4(encoded[i:])
+			q := z.ShiftAllRight(1).Xor(zero.Sub(z.And(one)))
+			if phase == 1 {
+				q = q.Add(archsimd.LoadUint64x4(encoded[i-stride:]))
+			}
+			q.Store(encoded[i:])
+			signed := q.BitsToInt64()
+			low = signed.IfElse(signed.Less(low), low)
+			high = signed.IfElse(signed.Greater(high), high)
+			alpInt64ToFloat64AVX2(alpMultiplyAVX2(q, uint64(alpFactors[factor]))).Mul(scale).Store(dst[i:])
+		}
+		for ; i < end; i++ {
+			z := encoded[i]
+			q := z>>1 ^ (0 - (z & 1))
+			if phase == 1 {
+				q += encoded[i-stride]
+			}
+			encoded[i] = q
+			x := int64(q)
+			if x < alpLower[factor] || x > alpUpper[factor] {
+				return false
+			}
+			dst[i] = float64(x*alpFactors[factor]) * alpFractions[exponent]
+		}
+	}
+	var lows, highs [4]int64
+	low.Store(lows[:])
+	high.Store(highs[:])
+	for i := range lows {
+		if lows[i] < alpLower[factor] || highs[i] > alpUpper[factor] {
+			return false
+		}
+	}
+	return true
+}
+
+// alpRestoreTemporalAVX512 reconstructs independent fields before applying the
+// exact decimal transform. Invalid arithmetic is reported before output escapes.
+func alpRestoreTemporalAVX512(dst []float64, encoded []uint64, stride int, exponent, factor uint8) bool {
+	if stride < 8 {
+		return alpRestoreTemporalScalar(dst, encoded, stride, exponent, factor)
+	}
+	zero := archsimd.BroadcastUint64x8(0)
+	one := archsimd.BroadcastUint64x8(1)
+	low := archsimd.BroadcastInt64x8(1<<63 - 1)
+	high := archsimd.BroadcastInt64x8(-1 << 63)
+	scale := archsimd.BroadcastFloat64x8(alpFractions[exponent])
+	for phase := range 2 {
+		start, end := 0, stride
+		if phase == 1 {
+			start, end = stride, len(dst)
+		}
+		i := start
+		for ; i+8 <= end; i += 8 {
+			z := archsimd.LoadUint64x8(encoded[i:])
+			q := z.ShiftAllRight(1).Xor(zero.Sub(z.And(one)))
+			if phase == 1 {
+				q = q.Add(archsimd.LoadUint64x8(encoded[i-stride:]))
+			}
+			q.Store(encoded[i:])
+			signed := q.BitsToInt64()
+			low = signed.IfElse(signed.Less(low), low)
+			high = signed.IfElse(signed.Greater(high), high)
+			q.BitsToInt64().Mul(archsimd.BroadcastInt64x8(alpFactors[factor])).ConvertToFloat64().Mul(scale).Store(dst[i:])
+		}
+		for ; i < end; i++ {
+			z := encoded[i]
+			q := z>>1 ^ (0 - (z & 1))
+			if phase == 1 {
+				q += encoded[i-stride]
+			}
+			encoded[i] = q
+			x := int64(q)
+			if x < alpLower[factor] || x > alpUpper[factor] {
+				return false
+			}
+			dst[i] = float64(x*alpFactors[factor]) * alpFractions[exponent]
+		}
+	}
+	var lows, highs [8]int64
+	low.Store(lows[:])
+	high.Store(highs[:])
+	for i := range lows {
+		if lows[i] < alpLower[factor] || highs[i] > alpUpper[factor] {
+			return false
+		}
+	}
+	return true
+}
+
+func alpRestoreTemporalNative(dst []float64, encoded []uint64, stride int, exponent, factor uint8) bool {
+	switch alpBackend {
+	case "avx512":
+		return alpRestoreTemporalAVX512(dst, encoded, stride, exponent, factor)
+	case "avx2":
+		return alpRestoreTemporalAVX2(dst, encoded, stride, exponent, factor)
+	default:
+		return alpRestoreTemporalScalar(dst, encoded, stride, exponent, factor)
 	}
 }

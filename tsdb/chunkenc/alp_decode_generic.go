@@ -46,3 +46,7 @@ func alpPackWordsNative(words, values []uint64, width int) { alpPackWordsScalar(
 func alpConvertAnalyzeNative(values []float64, integers []int64, accepted []uint64, exponent, factor uint8) (int64, int64, int) {
 	return alpConvertAnalyzeScalar(values, integers, accepted, exponent, factor)
 }
+
+func alpRestoreTemporalNative(dst []float64, encoded []uint64, stride int, exponent, factor uint8) bool {
+	return alpRestoreTemporalScalar(dst, encoded, stride, exponent, factor)
+}

@@ -8,8 +8,13 @@ always support start timestamps. They remain experimental and opt-in.
 
 `histograms: auto` keeps the existing histogram codec in Head and trials ALP
 at compaction, retaining the source unless the candidate saves at least 5%
-including headers. Integer and float candidates use version 3. Small or oversized legacy chunks can bypass the trial. Explicit `alp` continues
-writing version 1.
+including headers. Integer and float candidates and explicit `alp` writing use
+version 3. Small or oversized legacy chunks can bypass the trial. Adaptive
+conversion also uses bounded prefix estimates, abandons trials whose emitted
+bytes exceed the savings budget, and retries rejected layouts every eighth
+chunk. Schema/layout/reset-header or sample-count changes retry immediately;
+series boundaries clear the hint. Sampling can miss savings, but acceptance
+always checks complete bytes. Readers continue to support versions 1 and 2.
 
 The mutable representation uses the existing ST histogram appender to maintain
 schema changes, bucket expansion, counter resets, gauge semantics, and staleness.
@@ -122,9 +127,68 @@ Floating-count numeric blocks remain at most 1,024 values. All other fields
 retain version 1 semantics; the embedded timestamp/sum stream is version 1.
 Empty chunks contain only the four-byte header. Append resumption preserves
 version 3, including chunks created by layout/reset handling. Version 1/2
-readers reject version 3. Adaptive histogram compaction now opts into this
-format for both integer and float histograms; explicit `alp` still writes
-version 1. A 120-sample chunk uses 30 hint bytes instead of 120.
+readers reject version 3. Both adaptive histogram compaction and explicit `alp`
+writing use this format for integer and float histograms. A 120-sample chunk
+uses 30 hint bytes instead of 120. Existing version 1/2 chunks preserve their
+version when resumed; newly created chunks use version 3.
+
+## Experimental format, version 4
+
+`ALPEncoder.RecodeHistogramV4` is an explicit conversion API for this experiment.
+Configuration-selected writers remain on version 3. Version 4 readers accept
+all earlier versions, but earlier readers reject version 4. The header, packed
+reset hints, layout, and timestamp/sum stream are identical to version 3.
+Integer blocks still contain at most 128 values; float blocks at most 1,024.
+
+Integer blocks additionally support sparse exceptions:
+
+| Field | Encoding |
+| --- | --- |
+| Mode | Byte 2. |
+| Width | Byte, 0–64. |
+| Frame base | Little-endian uint64. |
+| Exception count | Little-endian uint16, no greater than the value count. |
+| Packed residuals | Existing vertical packing, with zero placeholders at exception positions. |
+| Exceptions | Strictly increasing uint16 positions, each followed by an exact uint64 value. |
+
+The writer retains mode 0 or 1 when it is smaller. First-sample blocks use
+these integer modes directly. Each subsequent length-prefixed integer block
+starts with one predictor byte before the integer payload: 0 is delta-of-delta,
+1 is delta. Both predictors operate on the same per-field state. After each
+value, update the previous value and previous first difference, irrespective
+of the selected predictor. All arithmetic wraps modulo 2^64; signed differences
+are zigzag encoded. Unlike v3, bucket prediction operates on the signed bucket
+delta bits before zigzag, avoiding the nonlinear zigzag transform in temporal
+prediction. First-sample bucket fields are still zigzag encoded for storage;
+invert that transform before initializing predictor state. Count and zero count
+remain unsigned. A block can cross histogram sample boundaries, but every
+field depends only on its own preceding values. The writer tries the alternative
+predictor only when the delta-of-delta block is not already constant-sized.
+
+Float blocks retain ordinary ALP modes unless an exact temporal alternative
+is smaller. Temporal mode 5 has this payload:
+
+| Field | Encoding |
+| --- | --- |
+| Mode | Byte 5. |
+| Decimal exponent and factor | One byte each; 0 ≤ factor ≤ exponent ≤ 18. |
+| Field stride | Little-endian uint16, exactly `2 + positive buckets + negative buckets`. |
+| Initial integers byte length | Little-endian uint32. |
+| Initial integers | One patched/raw/packed integer block for the first `stride` values. |
+| Differences | One integer block for the remaining values. |
+
+All values must first pass the ordinary ALP exact decimal round-trip check.
+The initial signed integers and subsequent signed differences are zigzag
+encoded. Difference `i` uses integer `i-stride` within the same numeric block;
+there is no dependency on a previous block. Reconstruction checks the signed
+integer product bounds before converting to binary64. The mode is unavailable
+when a vector contains no complete preceding sample or any value needs an
+exception; ordinary ALP preserves those values, including signed zero and NaNs.
+This is integer prediction after exact conversion, not floating subtraction.
+
+Readers validate lengths, field stride, sorted unique exception positions,
+frame overflow, predictor identifiers, and decimal bounds. Append resumption
+preserves v4, and remote read converts it to the existing histogram encodings.
 
 ## Integration and compatibility
 

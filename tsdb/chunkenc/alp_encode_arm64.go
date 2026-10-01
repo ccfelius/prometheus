@@ -15,11 +15,7 @@
 
 package chunkenc
 
-import (
-	"math"
-
-	"simd/archsimd"
-)
+import "simd/archsimd"
 
 // alpPredictIntegersNEON predicts independent fields modulo 2^64 in 2 lanes.
 func alpPredictIntegersNEON(previous, delta, fields []uint64) {
@@ -36,8 +32,8 @@ func alpPredictIntegersNEON(previous, delta, fields []uint64) {
 }
 
 func alpReduceNEON(integers []int64, accepted []uint64) (lo, hi int64, exceptions int) {
-	low := archsimd.BroadcastInt64x2(math.MaxInt64)
-	high := archsimd.BroadcastInt64x2(math.MinInt64)
+	low := archsimd.BroadcastInt64x2(1<<63 - 1)
+	high := archsimd.BroadcastInt64x2(-1 << 63)
 	zero := archsimd.BroadcastUint64x2(0)
 	one := archsimd.BroadcastUint64x2(1)
 	counts := zero
@@ -75,7 +71,7 @@ func alpReduceNative(integers []int64, accepted []uint64) (int64, int64, int) {
 // partial row without reading beyond the caller's value slice.
 func alpPackWordsNEON(words, values []uint64, width int) {
 	rows := len(values) / alpLanes
-	for row := 0; row < rows; row++ {
+	for row := range rows {
 		bit := row * width
 		word, shift := bit/64*alpLanes, uint64(bit%64)
 		for lane := 0; lane < alpLanes; lane += 2 {
@@ -97,3 +93,61 @@ func alpPackWordsNEON(words, values []uint64, width int) {
 }
 
 func alpPackWordsNative(words, values []uint64, width int) { alpPackWordsNEON(words, values, width) }
+
+// alpRestoreTemporalNEON reconstructs independent fields before applying the
+// exact decimal transform. Invalid arithmetic is reported before output escapes.
+func alpRestoreTemporalNEON(dst []float64, encoded []uint64, stride int, exponent, factor uint8) bool {
+	if stride < 2 {
+		return alpRestoreTemporalScalar(dst, encoded, stride, exponent, factor)
+	}
+	zero := archsimd.BroadcastUint64x2(0)
+	one := archsimd.BroadcastUint64x2(1)
+	low := archsimd.BroadcastInt64x2(1<<63 - 1)
+	high := archsimd.BroadcastInt64x2(-1 << 63)
+	scale := archsimd.BroadcastFloat64x2(alpFractions[exponent])
+	for phase := range 2 {
+		start, end := 0, stride
+		if phase == 1 {
+			start, end = stride, len(dst)
+		}
+		i := start
+		for ; i+2 <= end; i += 2 {
+			z := archsimd.LoadUint64x2(encoded[i:])
+			q := z.ShiftAllRight(1).Xor(zero.Sub(z.And(one)))
+			if phase == 1 {
+				q = q.Add(archsimd.LoadUint64x2(encoded[i-stride:]))
+			}
+			q.Store(encoded[i:])
+			signed := q.BitsToInt64()
+			low = signed.IfElse(signed.Less(low), low)
+			high = signed.IfElse(signed.Greater(high), high)
+			alpMultiplyNEON(q, uint64(alpFactors[factor])).BitsToInt64().ConvertToFloat64().Mul(scale).Store(dst[i:])
+		}
+		for ; i < end; i++ {
+			z := encoded[i]
+			q := z>>1 ^ (0 - (z & 1))
+			if phase == 1 {
+				q += encoded[i-stride]
+			}
+			encoded[i] = q
+			x := int64(q)
+			if x < alpLower[factor] || x > alpUpper[factor] {
+				return false
+			}
+			dst[i] = float64(x*alpFactors[factor]) * alpFractions[exponent]
+		}
+	}
+	var lows, highs [2]int64
+	low.Store(lows[:])
+	high.Store(highs[:])
+	for i := range lows {
+		if lows[i] < alpLower[factor] || highs[i] > alpUpper[factor] {
+			return false
+		}
+	}
+	return true
+}
+
+func alpRestoreTemporalNative(dst []float64, encoded []uint64, stride int, exponent, factor uint8) bool {
+	return alpRestoreTemporalNEON(dst, encoded, stride, exponent, factor)
+}

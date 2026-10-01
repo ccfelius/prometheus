@@ -1,5 +1,11 @@
 # ALP implementation: architecture, formats, execution, and tradeoffs
 
+> October 1 update: explicit histogram ALP writing now uses v3. Adaptive
+> histogram trials use early rejection and per-series retry hints. SIMD packing,
+> fused conversion, allocation changes, and an explicit experimental v4 API are
+> described in the [encoding improvement report](benchmarks/alp-encoding-improvements-20260930/report.md)
+> and [histogram format specification](format/alp_histograms.md).
+
 > Subsequent changes on `tsdb-alp-next-optimizations` are documented in the
 > [next optimization report](benchmarks/alp-next-20260929/report.md), including
 > histogram version 3, adaptive sampling, additional SIMD encoding, workspace
