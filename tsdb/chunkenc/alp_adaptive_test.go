@@ -234,3 +234,82 @@ func TestALPEncoderBoundsRetainedScratch(t *testing.T) {
 	require.Equal(t, ValNone, it.Next())
 	require.NoError(t, it.Err())
 }
+
+func TestALPAdaptiveHistogram(t *testing.T) {
+	for _, spec := range alpMatrixCases() {
+		if spec.family == "float" {
+			continue
+		}
+		t.Run(spec.name(), func(t *testing.T) {
+			sources, err := alpMatrixData(spec).encode("legacy")
+			require.NoError(t, err)
+			var e ALPEncoder
+			var outputs []Chunk
+			var snapshots [][]byte
+			for round := range 10 {
+				for _, source := range sources {
+					before := slices.Clone(source.Bytes())
+					got, err := e.RecodeHistogramIfSmaller(source)
+					require.NoError(t, err)
+					require.Equal(t, before, source.Bytes())
+					if got == nil {
+						continue
+					}
+					require.LessOrEqual(t, len(got.Bytes())*100, len(before)*95)
+					require.Equal(t, alpMatrixDecoded(t, []Chunk{source}), alpMatrixDecoded(t, []Chunk{got}))
+					outputs = append(outputs, got)
+					snapshots = append(snapshots, slices.Clone(got.Bytes()))
+				}
+				if round == 4 {
+					e.ResetSeries()
+				}
+			}
+			for i, output := range outputs {
+				require.Equal(t, snapshots[i], output.Bytes())
+			}
+		})
+	}
+	t.Run("retry and reset", func(t *testing.T) {
+		bad, err := alpMatrixData(alpMatrixCase{"integer-histogram", "bursty", "regular", 120, 128}).encode("legacy")
+		require.NoError(t, err)
+		good, err := alpMatrixData(alpMatrixCase{"integer-histogram", "smooth", "regular", 120, 128}).encode("legacy")
+		require.NoError(t, err)
+		var e ALPEncoder
+		c, err := e.RecodeHistogramIfSmaller(bad[0])
+		require.NoError(t, err)
+		require.Nil(t, c)
+		for range 7 {
+			c, err = e.RecodeHistogramIfSmaller(good[0])
+			require.NoError(t, err)
+			require.Nil(t, c)
+		}
+		c, err = e.RecodeHistogramIfSmaller(good[0])
+		require.NoError(t, err)
+		require.NotNil(t, c)
+		c, err = e.RecodeHistogramIfSmaller(bad[0])
+		require.NoError(t, err)
+		require.Nil(t, c)
+		e.ResetSeries()
+		c, err = e.RecodeHistogramIfSmaller(good[0])
+		require.NoError(t, err)
+		require.NotNil(t, c)
+	})
+	t.Run("changed layout retries immediately", func(t *testing.T) {
+		bad, err := alpMatrixData(alpMatrixCase{"integer-histogram", "bursty", "regular", 120, 128}).encode("legacy")
+		require.NoError(t, err)
+		good, err := alpMatrixData(alpMatrixCase{"integer-histogram", "smooth", "regular", 120, 8}).encode("legacy")
+		require.NoError(t, err)
+		var e ALPEncoder
+		c, err := e.RecodeHistogramIfSmaller(bad[0])
+		require.NoError(t, err)
+		require.Nil(t, c)
+		c, err = e.RecodeHistogramIfSmaller(good[0])
+		require.NoError(t, err)
+		require.NotNil(t, c)
+	})
+	t.Run("invalid source", func(t *testing.T) {
+		var e ALPEncoder
+		_, err := e.RecodeHistogramIfSmaller(NewXORChunk())
+		require.Error(t, err)
+	})
+}

@@ -126,3 +126,64 @@ func alpReduceNative(integers []int64, accepted []uint64) (int64, int64, int) {
 		return alpReduceScalar(integers, accepted)
 	}
 }
+
+// alpPackWordsAVX2 packs independent lanes in complete rows, then handles a
+// partial row without reading beyond the caller's value slice.
+func alpPackWordsAVX2(words, values []uint64, width int) {
+	rows := len(values) / alpLanes
+	for row := 0; row < rows; row++ {
+		bit := row * width
+		word, shift := bit/64*alpLanes, uint64(bit%64)
+		for lane := 0; lane < alpLanes; lane += 4 {
+			v := archsimd.LoadUint64x4(values[row*alpLanes+lane:])
+			v.ShiftAllLeft(shift).Or(archsimd.LoadUint64x4(words[word+lane:])).Store(words[word+lane:])
+			if shift+uint64(width) > 64 {
+				v.ShiftAllRight(64 - shift).Or(archsimd.LoadUint64x4(words[word+lane+alpLanes:])).Store(words[word+lane+alpLanes:])
+			}
+		}
+	}
+	for i := rows * alpLanes; i < len(values); i++ {
+		bit := rows * width
+		word, shift := bit/64*alpLanes+i%alpLanes, uint(bit%64)
+		words[word] |= values[i] << shift
+		if shift+uint(width) > 64 {
+			words[word+alpLanes] |= values[i] >> (64 - shift)
+		}
+	}
+}
+
+// alpPackWordsAVX512 packs independent lanes in complete rows, then handles a
+// partial row without reading beyond the caller's value slice.
+func alpPackWordsAVX512(words, values []uint64, width int) {
+	rows := len(values) / alpLanes
+	for row := 0; row < rows; row++ {
+		bit := row * width
+		word, shift := bit/64*alpLanes, uint64(bit%64)
+		for lane := 0; lane < alpLanes; lane += 8 {
+			v := archsimd.LoadUint64x8(values[row*alpLanes+lane:])
+			v.ShiftAllLeft(shift).Or(archsimd.LoadUint64x8(words[word+lane:])).Store(words[word+lane:])
+			if shift+uint64(width) > 64 {
+				v.ShiftAllRight(64 - shift).Or(archsimd.LoadUint64x8(words[word+lane+alpLanes:])).Store(words[word+lane+alpLanes:])
+			}
+		}
+	}
+	for i := rows * alpLanes; i < len(values); i++ {
+		bit := rows * width
+		word, shift := bit/64*alpLanes+i%alpLanes, uint(bit%64)
+		words[word] |= values[i] << shift
+		if shift+uint(width) > 64 {
+			words[word+alpLanes] |= values[i] >> (64 - shift)
+		}
+	}
+}
+
+func alpPackWordsNative(words, values []uint64, width int) {
+	switch alpBackend {
+	case "avx512":
+		alpPackWordsAVX512(words, values, width)
+	case "avx2":
+		alpPackWordsAVX2(words, values, width)
+	default:
+		alpPackWordsScalar(words, values, width)
+	}
+}

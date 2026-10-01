@@ -62,6 +62,11 @@ func alpMultiplyNEON(x archsimd.Uint64x2, p uint64) archsimd.Uint64x2 {
 
 // alpConvertNEON performs exact candidate conversion in 2 lanes.
 func alpConvertNEON(values []float64, integers []int64, accepted []uint64, exponent, factor uint8) {
+	alpConvertAnalyzeNEON(values, integers, accepted, exponent, factor)
+}
+
+// alpConvertAnalyzeNEON also reduces extrema and exceptions in the same pass.
+func alpConvertAnalyzeNEON(values []float64, integers []int64, accepted []uint64, exponent, factor uint8) (lo, hi int64, exceptions int) {
 	power := archsimd.BroadcastFloat64x2(alpPowers[exponent])
 	fraction := archsimd.BroadcastFloat64x2(alpFractions[factor])
 	inverse := archsimd.BroadcastFloat64x2(alpFractions[exponent])
@@ -70,6 +75,10 @@ func alpConvertNEON(values []float64, integers []int64, accepted []uint64, expon
 	upper := archsimd.BroadcastInt64x2(alpUpper[factor])
 	domainLo := archsimd.BroadcastFloat64x2(-0x1p63)
 	domainHi := archsimd.BroadcastFloat64x2(0x1p63)
+	low := archsimd.BroadcastInt64x2(1<<63 - 1)
+	high := archsimd.BroadcastInt64x2(-1 << 63)
+	missing := archsimd.BroadcastUint64x2(0)
+	one := archsimd.BroadcastUint64x2(1)
 	i := 0
 	for ; i+2 <= len(values); i += 2 {
 		original := archsimd.LoadFloat64x2(values[i:])
@@ -85,8 +94,22 @@ func alpConvertNEON(values []float64, integers []int64, accepted []uint64, expon
 		valid = valid.And(restored.ToBits().Equal(original.ToBits()))
 		q.Store(integers[i:])
 		valid.ToInt64x2().ToBits().Store(accepted[i:])
+		low = q.IfElse(q.Less(low).And(valid), low)
+		high = q.IfElse(q.Greater(high).And(valid), high)
+		missing = missing.Add(one.Masked(valid.Not()))
 	}
-	alpConvertScalar(values[i:], integers[i:], accepted[i:], exponent, factor)
+	lo, hi, exceptions = alpConvertAnalyzeScalar(values[i:], integers[i:], accepted[i:], exponent, factor)
+	var lows, highs [2]int64
+	var counts [2]uint64
+	low.Store(lows[:])
+	high.Store(highs[:])
+	missing.Store(counts[:])
+	for lane := range lows {
+		lo = min(lo, lows[lane])
+		hi = max(hi, highs[lane])
+		exceptions += int(counts[lane])
+	}
+	return lo, hi, exceptions
 }
 
 func alpConvertNative(values []float64, integers []int64, accepted []uint64, exponent, factor uint8) {
@@ -137,4 +160,8 @@ func alpRestoreIntegersNEON(previous, delta, encoded []uint64) {
 
 func alpRestoreIntegersNative(previous, delta, encoded []uint64) {
 	alpRestoreIntegersNEON(previous, delta, encoded)
+}
+
+func alpConvertAnalyzeNative(values []float64, integers []int64, accepted []uint64, exponent, factor uint8) (int64, int64, int) {
+	return alpConvertAnalyzeNEON(values, integers, accepted, exponent, factor)
 }

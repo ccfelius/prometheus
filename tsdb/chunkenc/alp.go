@@ -85,7 +85,7 @@ func (c *ALPChunk) Bytes() []byte {
 	if c.serialized != nil {
 		return c.serialized
 	}
-	b := make([]byte, alpHeaderSize, alpHeaderSize+len(c.sealed)+len(c.pending)*8)
+	b := make([]byte, alpHeaderSize, alpHeaderSize+len(c.sealed)+alpBlockHeaderSize+len(c.pending)*8+32)
 	binary.BigEndian.PutUint16(b, uint16(c.numSamples))
 	b[2] = alpVersion
 	b = append(b, c.sealed...)
@@ -132,6 +132,12 @@ func (a *alpAppender) Append(st, t int64, v float64) {
 	c := a.c
 	if c.numSamples == math.MaxUint16 {
 		panic("chunk capacity exceeded")
+	}
+
+	if c.pending == nil {
+		// Allocate the bounded value block only when the first sample arrives.
+		// This avoids geometric growth while leaving empty chunks allocation-free.
+		c.pending = make([]alpSample, 0, alpBlockSize)
 	}
 	c.pending = append(c.pending, alpSample{st: st, t: t, v: v})
 	c.numSamples++

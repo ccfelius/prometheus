@@ -40,3 +40,9 @@ func alpPredictIntegersNative(previous, delta, fields []uint64) {
 func alpReduceNative(integers []int64, accepted []uint64) (int64, int64, int) {
 	return alpReduceScalar(integers, accepted)
 }
+
+func alpPackWordsNative(words, values []uint64, width int) { alpPackWordsScalar(words, values, width) }
+
+func alpConvertAnalyzeNative(values []float64, integers []int64, accepted []uint64, exponent, factor uint8) (int64, int64, int) {
+	return alpConvertAnalyzeScalar(values, integers, accepted, exponent, factor)
+}

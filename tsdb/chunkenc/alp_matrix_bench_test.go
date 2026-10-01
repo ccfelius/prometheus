@@ -545,9 +545,10 @@ func BenchmarkALPMatrixTranscode(b *testing.B) {
 								c, err = e.Recode(source)
 							}
 						} else {
-							c, err = e.RecodeHistogramV3(source)
-							if err == nil && policy == "adaptive" && len(c.Bytes())*100 > len(source.Bytes())*95 {
-								c = nil
+							if policy == "adaptive" {
+								c, err = e.RecodeHistogramIfSmaller(source)
+							} else {
+								c, err = e.RecodeHistogramV3(source)
 							}
 						}
 						if err != nil {

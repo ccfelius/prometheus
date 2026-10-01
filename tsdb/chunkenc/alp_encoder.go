@@ -25,6 +25,8 @@ import (
 type ALPEncoder struct {
 	values, counts alpEncodeState
 	skipFloats     uint8
+	skipHistograms uint8
+	histogramKey   uint64
 	samples        [alpBlockSize]alpSample
 	hist           alpHistogramWorkspace
 }
@@ -81,10 +83,12 @@ func (e *ALPEncoder) RecodeFloatIfSmaller(source Chunk) (Chunk, error) {
 		if err := it.Err(); err != nil {
 			return nil, err
 		}
-		if n == 0 || !alpPromisingDecimal(sample[:n]) {
+		plan, promising := alpPromisingDecimal(sample[:n])
+		if n == 0 || !promising {
 			e.skipFloats = 7
 			return nil, nil
 		}
+		e.values = alpEncodeState{exponent: plan.exponent, factor: plan.factor, valid: true}
 	}
 	c, err := e.recodeFloats(source, it, n)
 	if err != nil {
@@ -99,14 +103,16 @@ func (e *ALPEncoder) RecodeFloatIfSmaller(source Chunk) (Chunk, error) {
 
 // alpPromisingDecimal bounds the sampling work, not the compression guarantee.
 // The full writer validates every value and the caller checks complete bytes.
-func alpPromisingDecimal(values []float64) bool {
+func alpPromisingDecimal(values []float64) (alpDecimalPlan, bool) {
+	var plan alpDecimalPlan
 	promising := func(exponent, factor uint8) bool {
 		p := alpAnalyze(values, exponent, factor, 1)
+		plan = p
 		return p.exceptions < len(values) && alpDecimalCost(p, len(values)) <= 14+2*len(values)
 	}
 	for exponent := uint8(0); exponent <= 6; exponent++ {
 		if promising(exponent, 0) {
-			return true
+			return plan, true
 		}
 	}
 	maximum := 0.0
@@ -123,18 +129,18 @@ func alpPromisingDecimal(values []float64) bool {
 		e := exponent - offset
 		for digits := uint8(0); digits <= min(e, 6); digits++ {
 			if promising(e, e-digits) {
-				return true
+				return plan, true
 			}
 		}
 	}
-	return false
+	return alpDecimalPlan{}, false
 }
 
 // ResetSeries forgets prediction and rejection hints while retaining bounded
 // scratch buffers. It must be called before converting a different series.
 func (e *ALPEncoder) ResetSeries() {
 	e.values, e.counts, e.hist.sums = alpEncodeState{}, alpEncodeState{}, alpEncodeState{}
-	e.skipFloats = 0
+	e.skipFloats, e.skipHistograms, e.histogramKey = 0, 0, 0
 }
 
 func (e *ALPEncoder) recodeFloats(source Chunk, it Iterator, used int) (Chunk, error) {
@@ -201,4 +207,96 @@ func (e *ALPEncoder) RecodeHistogramV3(source Chunk) (Chunk, error) {
 		return nil, err
 	}
 	return &ALPHistogramChunk{encoding: enc, version: alpHistogramMetadataVersion, encoded: b}, nil
+}
+
+// RecodeHistogramIfSmaller considers a finalized histogram for adaptive v3
+// storage. A nil result retains the source. Rejected layouts are retried every
+// eighth chunk; layout or reset changes retry immediately. A prefix estimate
+// may miss savings, but accepted chunks are exact and save at least 5% of bytes.
+// The encoder retains no source buffers and returned chunks own their bytes.
+func (e *ALPEncoder) RecodeHistogramIfSmaller(source Chunk) (Chunk, error) {
+	enc := EncALPHistogram
+	switch source.Encoding() {
+	case EncHistogram, EncHistogramST:
+	case EncFloatHistogram, EncFloatHistogramST:
+		enc = EncALPFloatHistogram
+	default:
+		return nil, errInvalidALP
+	}
+	n := source.NumSamples()
+	if n < 0 {
+		return nil, errInvalidALP
+	}
+	if n > MaxSamplesPerALPHistogramChunk || len(source.Bytes()) <= n+32 {
+		return nil, nil
+	}
+	defer e.hist.releaseLarge()
+	it := source.Iterator(nil)
+	typ := it.Next()
+	if typ == ValNone {
+		return nil, it.Err()
+	}
+	// A layout hash is only a selection hint, never part of decoding correctness.
+	key := uint64(source.Encoding()) + uint64(n)<<8
+	add := func(v uint64) { key = (key ^ v) * 1099511628211 }
+	var header CounterResetHeader
+	if c, ok := source.(interface{ GetCounterResetHeader() CounterResetHeader }); ok {
+		header = c.GetCounterResetHeader()
+	}
+	add(uint64(header))
+	if typ == ValHistogram {
+		_, e.hist.integerHistogram = it.AtHistogram(e.hist.integerHistogram)
+		h := e.hist.integerHistogram
+		add(uint64(h.Schema))
+		add(math.Float64bits(h.ZeroThreshold))
+		for _, span := range h.PositiveSpans {
+			add(uint64(span.Offset))
+			add(uint64(span.Length))
+		}
+		add(math.MaxUint64)
+		for _, span := range h.NegativeSpans {
+			add(uint64(span.Offset))
+			add(uint64(span.Length))
+		}
+		for _, v := range h.CustomValues {
+			add(math.Float64bits(v))
+		}
+	} else if typ == ValFloatHistogram {
+		_, e.hist.floatHistogram = it.AtFloatHistogram(e.hist.floatHistogram)
+		h := e.hist.floatHistogram
+		add(uint64(h.Schema))
+		add(math.Float64bits(h.ZeroThreshold))
+		for _, span := range h.PositiveSpans {
+			add(uint64(span.Offset))
+			add(uint64(span.Length))
+		}
+		add(math.MaxUint64)
+		for _, span := range h.NegativeSpans {
+			add(uint64(span.Offset))
+			add(uint64(span.Length))
+		}
+		for _, v := range h.CustomValues {
+			add(math.Float64bits(v))
+		}
+	} else {
+		return nil, errInvalidALP
+	}
+	if key != e.histogramKey {
+		e.skipHistograms = 0
+		e.histogramKey = key
+	}
+	if e.skipHistograms != 0 {
+		e.skipHistograms--
+		return nil, nil
+	}
+	budget := len(source.Bytes())/100*95 + len(source.Bytes())%100*95/100
+	data, err := alpEncodeHistogramCandidate(source, enc, &e.counts, alpHistogramMetadataVersion, &e.hist, budget, it, typ)
+	if err != nil {
+		return nil, err
+	}
+	if data == nil || len(data) > budget {
+		e.skipHistograms = 7
+		return nil, nil
+	}
+	return &ALPHistogramChunk{encoding: enc, version: alpHistogramMetadataVersion, encoded: data}, nil
 }

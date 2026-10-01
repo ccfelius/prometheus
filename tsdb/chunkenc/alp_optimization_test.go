@@ -29,7 +29,18 @@ import (
 	"github.com/prometheus/prometheus/tsdb/tsdbutil"
 )
 
-func TestALPEncodeConversions(t *testing.T) { testALPEncodeConversions(t, alpConvertNative) }
+func TestALPEncodeConversions(t *testing.T) {
+	t.Run("conversion", func(t *testing.T) { testALPEncodeConversions(t, alpConvertNative) })
+	t.Run("fused analysis", func(t *testing.T) {
+		testALPEncodeConversions(t, func(values []float64, integers []int64, accepted []uint64, exponent, factor uint8) {
+			lo, hi, missing := alpConvertAnalyzeNative(values, integers, accepted, exponent, factor)
+			wantLo, wantHi, wantMissing := alpReduceScalar(integers, accepted)
+			require.Equal(t, wantLo, lo)
+			require.Equal(t, wantHi, hi)
+			require.Equal(t, wantMissing, missing)
+		})
+	})
+}
 
 func testALPEncodeConversions(t *testing.T, kernel alpEncodeKernel) {
 	r := rand.New(rand.NewSource(51))

@@ -37,14 +37,7 @@ func alpPack(dst []byte, values []uint64, width int) []byte {
 		return dst
 	}
 	var words [alpMaxBlockSize + 2*alpLanes]uint64
-	for i, v := range values {
-		bit := (i / alpLanes) * width
-		word, shift := (bit/64)*alpLanes+i%alpLanes, uint(bit%64)
-		words[word] |= v << shift
-		if shift+uint(width) > 64 {
-			words[word+alpLanes] |= v >> (64 - shift)
-		}
-	}
+	alpPackWordsNative(words[:], values, width)
 	common := (len(values) / alpLanes) * width / 64
 	for _, word := range words[:common*alpLanes] {
 		dst = binary.LittleEndian.AppendUint64(dst, word)
@@ -117,5 +110,17 @@ func alpDecodeScalar(dst []float64, words []uint64, width int, base int64, facto
 	for i := range dst {
 		q := int64(uint64(base) + alpUnpackAt(words, i, width))
 		dst[i] = float64(q*alpFactors[factor]) * alpFractions[exponent]
+	}
+}
+
+// alpPackWordsScalar is the format oracle for vector packing.
+func alpPackWordsScalar(words, values []uint64, width int) {
+	for i, v := range values {
+		bit := (i / alpLanes) * width
+		word, shift := (bit/64)*alpLanes+i%alpLanes, uint(bit%64)
+		words[word] |= v << shift
+		if shift+uint(width) > 64 {
+			words[word+alpLanes] |= v >> (64 - shift)
+		}
 	}
 }

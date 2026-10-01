@@ -35,3 +35,18 @@ func alpReduceScalar(integers []int64, accepted []uint64) (lo, hi int64, excepti
 	}
 	return lo, hi, exceptions
 }
+
+func alpConvertAnalyzeScalar(values []float64, integers []int64, accepted []uint64, exponent, factor uint8) (lo, hi int64, exceptions int) {
+	lo, hi = math.MaxInt64, math.MinInt64
+	for i, v := range values {
+		q, ok := alpEncodeNumber(v, exponent, factor)
+		integers[i], accepted[i] = q, 0
+		if !ok {
+			exceptions++
+			continue
+		}
+		accepted[i] = 1
+		lo, hi = min(lo, q), max(hi, q)
+	}
+	return lo, hi, exceptions
+}

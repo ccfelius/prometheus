@@ -82,11 +82,19 @@ func TestALPValues(t *testing.T) {
 func TestALPPacking(t *testing.T) {
 	r := rand.New(rand.NewSource(42))
 	for width := 0; width <= 64; width++ {
-		for n := 1; n <= 129; n++ {
+		for n := 1; n <= alpMaxBlockSize; n++ {
+			if n > 129 && n != 511 && n != 512 && n != 513 && n != alpMaxBlockSize {
+				continue
+			}
 			values := make([]uint64, n)
 			for i := range values {
 				values[i] = r.Uint64() & alpMask(width)
 			}
+
+			var scalarWords, nativeWords [alpMaxBlockSize + 2*alpLanes]uint64
+			alpPackWordsScalar(scalarWords[:], values, width)
+			alpPackWordsNative(nativeWords[:], values, width)
+			require.Equal(t, scalarWords, nativeWords, "width %d count %d", width, n)
 			packed := alpPack(nil, values, width)
 			require.Len(t, packed, alpPackedSize(n, width))
 			words := alpUnpackWords(nil, packed, n, width)

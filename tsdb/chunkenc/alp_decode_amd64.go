@@ -102,6 +102,11 @@ func alpDecodeAVX512Generic(dst []float64, words []uint64, width int, base int64
 
 // alpConvertAVX512 performs exact candidate conversion in 8 lanes.
 func alpConvertAVX512(values []float64, integers []int64, accepted []uint64, exponent, factor uint8) {
+	alpConvertAnalyzeAVX512(values, integers, accepted, exponent, factor)
+}
+
+// alpConvertAnalyzeAVX512 also reduces extrema and exceptions in the same pass.
+func alpConvertAnalyzeAVX512(values []float64, integers []int64, accepted []uint64, exponent, factor uint8) (lo, hi int64, exceptions int) {
 	power := archsimd.BroadcastFloat64x8(alpPowers[exponent])
 	fraction := archsimd.BroadcastFloat64x8(alpFractions[factor])
 	inverse := archsimd.BroadcastFloat64x8(alpFractions[exponent])
@@ -110,6 +115,10 @@ func alpConvertAVX512(values []float64, integers []int64, accepted []uint64, exp
 	upper := archsimd.BroadcastInt64x8(alpUpper[factor])
 	domainLo := archsimd.BroadcastFloat64x8(-0x1p63)
 	domainHi := archsimd.BroadcastFloat64x8(0x1p63)
+	low := archsimd.BroadcastInt64x8(1<<63 - 1)
+	high := archsimd.BroadcastInt64x8(-1 << 63)
+	missing := archsimd.BroadcastUint64x8(0)
+	one := archsimd.BroadcastUint64x8(1)
 	i := 0
 	for ; i+8 <= len(values); i += 8 {
 		original := archsimd.LoadFloat64x8(values[i:])
@@ -121,8 +130,22 @@ func alpConvertAVX512(values []float64, integers []int64, accepted []uint64, exp
 		valid = valid.And(restored.ToBits().Equal(original.ToBits()))
 		q.Store(integers[i:])
 		valid.ToInt64x8().ToBits().Store(accepted[i:])
+		low = q.IfElse(q.Less(low).And(valid), low)
+		high = q.IfElse(q.Greater(high).And(valid), high)
+		missing = missing.Add(one.Masked(valid.ToInt64x8().Equal(archsimd.BroadcastInt64x8(0))))
 	}
-	alpConvertScalar(values[i:], integers[i:], accepted[i:], exponent, factor)
+	lo, hi, exceptions = alpConvertAnalyzeScalar(values[i:], integers[i:], accepted[i:], exponent, factor)
+	var lows, highs [8]int64
+	var counts [8]uint64
+	low.Store(lows[:])
+	high.Store(highs[:])
+	missing.Store(counts[:])
+	for lane := range lows {
+		lo = min(lo, lows[lane])
+		hi = max(hi, highs[lane])
+		exceptions += int(counts[lane])
+	}
+	return lo, hi, exceptions
 }
 
 // alpConvertAVX2 performs exact candidate conversion in 4 lanes.
@@ -278,5 +301,17 @@ func alpRestoreIntegersNative(previous, delta, encoded []uint64) {
 		alpRestoreIntegersAVX2(previous, delta, encoded)
 	default:
 		alpRestoreIntegersScalar(previous, delta, encoded)
+	}
+}
+
+func alpConvertAnalyzeNative(values []float64, integers []int64, accepted []uint64, exponent, factor uint8) (int64, int64, int) {
+	switch alpBackend {
+	case "avx512":
+		return alpConvertAnalyzeAVX512(values, integers, accepted, exponent, factor)
+	case "avx2":
+		alpConvertAVX2(values, integers, accepted, exponent, factor)
+		return alpReduceAVX2(integers, accepted)
+	default:
+		return alpConvertAnalyzeScalar(values, integers, accepted, exponent, factor)
 	}
 }

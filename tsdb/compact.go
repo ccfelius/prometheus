@@ -1092,17 +1092,14 @@ func (p DefaultBlockPopulator) PopulateBlock(ctx context.Context, metrics *Compa
 					var c chunkenc.Chunk
 					var err error
 					if autoHistograms {
-						c, err = alpEncoder.RecodeHistogramV3(old)
+						c, err = alpEncoder.RecodeHistogramIfSmaller(old)
 					} else {
 						c, err = alpEncoder.Recode(old)
 					}
 					if err != nil {
 						return fmt.Errorf("transcode ALP histogram: %w", err)
 					}
-					if autoHistograms && len(c.Bytes())*100 > len(old.Bytes())*95 {
-						if err := chunkPool.Put(c); err != nil {
-							return err
-						}
+					if c == nil {
 						converted = append(converted, meta)
 						continue
 					}

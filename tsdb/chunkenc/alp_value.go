@@ -152,9 +152,10 @@ func alpEncodeValuesWithState(dst []byte, values []float64, state *alpEncodeStat
 	bestSize := 1 + 8*n
 	mode := byte(alpRaw)
 	var best alpDecimalPlan
+	var evaluated [19]uint32
 	evaluate := func(exponent, factor uint8) int {
-		alpConvertNative(values, integers[:n], accepted[:n], exponent, factor)
-		lo, hi, exceptions := alpReduceNative(integers[:n], accepted[:n])
+		evaluated[exponent] |= 1 << factor
+		lo, hi, exceptions := alpConvertAnalyzeNative(values, integers[:n], accepted[:n], exponent, factor)
 		p := alpDecimalPlan{exponent: exponent, factor: factor, base: lo, exceptions: exceptions}
 		if p.exceptions == n {
 			return 1 + 8*n
@@ -233,7 +234,11 @@ func alpEncodeValuesWithState(dst []byte, values []float64, state *alpEncodeStat
 		if costs[0] <= 14+2*n+10*((fixedSampleExceptions*n+sampled-1)/sampled) {
 			fast = evaluate(candidates[0].exponent, candidates[0].factor) <= 14+2*n
 		}
-		if !fast {
+
+		// Sampling is a selection heuristic, not a losslessness check. If none of
+		// the common or large-product scales beats raw storage even on the sample,
+		// avoid expanding a failing search to all 190 pairs. RD/raw remain exact.
+		if !fast && costs[0] < 1+8*n {
 			for exponent := range uint8(len(alpPowers)) {
 				for factor := uint8(0); factor <= exponent; factor++ {
 					if factor == 0 && exponent <= 6 {
@@ -242,7 +247,11 @@ func alpEncodeValuesWithState(dst []byte, values []float64, state *alpEncodeStat
 					consider(exponent, factor)
 				}
 			}
+
 			for _, candidate := range candidates {
+				if evaluated[candidate.exponent]&(1<<candidate.factor) != 0 {
+					continue
+				}
 				// Exact cost decides acceptance; sampling alone never determines losslessness.
 				cost := evaluate(candidate.exponent, candidate.factor)
 				if cost <= 14+2*n {

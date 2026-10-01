@@ -465,6 +465,12 @@ func alpEncodeHistograms(inner Chunk, enc Encoding, state *alpEncodeState, versi
 }
 
 func alpEncodeHistogramsWithWorkspace(inner Chunk, enc Encoding, state *alpEncodeState, version byte, w *alpHistogramWorkspace) ([]byte, error) {
+	return alpEncodeHistogramCandidate(inner, enc, state, version, w, 0, nil, ValNone)
+}
+
+// alpEncodeHistogramCandidate can abandon an adaptive trial without publishing
+// partial output. A supplied iterator is positioned on first and is not retained.
+func alpEncodeHistogramCandidate(inner Chunk, enc Encoding, state *alpEncodeState, version byte, w *alpHistogramWorkspace, budget int, it Iterator, first ValueType) ([]byte, error) {
 	defer w.releaseLarge()
 	n := inner.NumSamples()
 	if !alpValidHistogramVersion(version, enc) {
@@ -500,6 +506,7 @@ func alpEncodeHistogramsWithWorkspace(inner Chunk, enc Encoding, state *alpEncod
 	var floats [alpMaxBlockSize]float64
 	var integers [alpMaxBlockSize]uint64
 	used := 0
+	blocks, probeStart, probeValues := 0, 0, 0
 	flush := func() {
 		if used == 0 {
 			return
@@ -512,6 +519,13 @@ func alpEncodeHistogramsWithWorkspace(inner Chunk, enc Encoding, state *alpEncod
 			numeric = alpEncodeValuesWithState(numeric, floats[:used], state)
 		}
 		binary.LittleEndian.PutUint32(numeric[start:], uint32(len(numeric)-start-4))
+
+		blocks++
+		if blocks == 1 {
+			probeStart = len(numeric)
+		} else {
+			probeValues += used
+		}
 		used = 0
 	}
 	put := func(v uint64) {
@@ -525,11 +539,14 @@ func alpEncodeHistogramsWithWorkspace(inner Chunk, enc Encoding, state *alpEncod
 			flush()
 		}
 	}
-	it := inner.Iterator(nil)
+	if it == nil {
+		it = inner.Iterator(nil)
+		first = it.Next()
+	}
 	integerHistogram := w.integerHistogram
 	floatHistogram := w.floatHistogram
 	defer func() { w.integerHistogram, w.floatHistogram = integerHistogram, floatHistogram }()
-	for typ := it.Next(); typ != ValNone; typ = it.Next() {
+	for typ := first; typ != ValNone; typ = it.Next() {
 		var sum float64
 		var hint histogram.CounterResetHint
 		if typ == ValHistogram {
@@ -605,6 +622,20 @@ func alpEncodeHistogramsWithWorkspace(inner Chunk, enc Encoding, state *alpEncod
 				}
 			}
 		}
+
+		// Only committed blocks count toward this lower bound. No discarded scratch
+		// or predicted future savings can cause a profitable candidate to exceed it.
+		if budget > 0 && len(numeric)+len(w.times) > budget {
+			return nil, nil
+		}
+		// Ignore the initial predictor transient. Require two complete later blocks
+		// and a generous margin before extrapolating the prefix to the full stream.
+		if budget > 0 && len(hints) == 31 && n >= 96 && blocks >= 3 {
+			projected := int64(len(numeric)-probeStart) * int64(n) * int64(2+positive+negative) / int64(probeValues)
+			if projected > int64(budget)*5/4 {
+				return nil, nil
+			}
+		}
 		hints = append(hints, byte(hint))
 		w.samples[sumUsed] = alpSample{st: it.AtST(), t: it.AtT(), v: sum}
 		sumUsed++
@@ -623,7 +654,27 @@ func alpEncodeHistogramsWithWorkspace(inner Chunk, enc Encoding, state *alpEncod
 	if sumUsed != 0 {
 		w.times = alpEncodeSamplesWithState(w.times, w.samples[:sumUsed], &w.sums)
 	}
-	dst := binary.BigEndian.AppendUint16(nil, uint16(n))
+
+	// The streams are complete, so reserve their final owned output once.
+	var sizeScratch [binary.MaxVarintLen64]byte
+	metadataSize := 4 + binary.PutVarint(sizeScratch[:], int64(layout.Schema)) + 8
+	for _, spans := range [][]histogram.Span{layout.PositiveSpans, layout.NegativeSpans} {
+		metadataSize += binary.PutUvarint(sizeScratch[:], uint64(len(spans)))
+		for _, span := range spans {
+			metadataSize += binary.PutVarint(sizeScratch[:], int64(span.Offset)) + binary.PutUvarint(sizeScratch[:], uint64(span.Length))
+		}
+	}
+	metadataSize += binary.PutUvarint(sizeScratch[:], uint64(len(layout.CustomValues))) + 8*len(layout.CustomValues) + 4
+	if version == alpHistogramMetadataVersion {
+		metadataSize += (n + 3) / 4
+	} else {
+		metadataSize += n
+	}
+	totalSize := metadataSize + len(w.times) + len(numeric)
+	if budget > 0 && totalSize > budget {
+		return nil, nil
+	}
+	dst := binary.BigEndian.AppendUint16(make([]byte, 0, totalSize), uint16(n))
 	dst = append(dst, version, header)
 	dst = binary.AppendVarint(dst, int64(layout.Schema))
 	dst = binary.LittleEndian.AppendUint64(dst, math.Float64bits(layout.ZeroThreshold))
