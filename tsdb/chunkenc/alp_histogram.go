@@ -1095,11 +1095,13 @@ func (it *alpHistogramIterator) AtHistogram(h *histogram.Histogram) (int64, *his
 	h.NegativeBuckets = slices.Grow(h.NegativeBuckets[:0], it.negative)[:it.negative]
 	counts := it.numbers.previous[2:]
 	for _, buckets := range [][]int64{h.PositiveBuckets, h.NegativeBuckets} {
-		for i := range buckets {
-			v := counts[i]
-			if it.numbers.predictive {
-				buckets[i] = int64(v)
-			} else {
+		if it.numbers.predictive {
+			for i := range buckets {
+				buckets[i] = int64(counts[i])
+			}
+		} else {
+			for i := range buckets {
+				v := counts[i]
 				buckets[i] = int64(v>>1) ^ -int64(v&1)
 			}
 		}
@@ -1123,15 +1125,18 @@ func (it *alpHistogramIterator) AtFloatHistogram(h *histogram.FloatHistogram) (i
 		counts := it.numbers.previous[2:]
 		for _, buckets := range [][]float64{h.PositiveBuckets, h.NegativeBuckets} {
 			var total float64
-			for i := range buckets {
-				v := counts[i]
-				// Match Histogram.ToFloat's per-delta conversion and summation.
-				if it.numbers.predictive {
-					total += float64(int64(v))
-				} else {
-					total += float64(int64(v>>1) ^ -int64(v&1))
+			// Match Histogram.ToFloat's per-delta conversion and summation.
+			if it.numbers.predictive {
+				for i := range buckets {
+					total += float64(int64(counts[i]))
+					buckets[i] = total
 				}
-				buckets[i] = total
+			} else {
+				for i := range buckets {
+					v := counts[i]
+					total += float64(int64(v>>1) ^ -int64(v&1))
+					buckets[i] = total
+				}
 			}
 			counts = counts[len(buckets):]
 		}
