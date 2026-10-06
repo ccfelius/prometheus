@@ -1,7 +1,7 @@
-# ALP: summary of the last eight questions
+# ALP: summary of seven benchmark questions
 
-This summarizes the eight questions and requests preceding the original request
-for this document, excluding the later requests to create, expand, and push it.
+This summarizes seven questions about the ALP implementation and benchmark
+results, excluding requests to publish or edit the documentation.
 Measurements come from the [comprehensive benchmark report](report.md).
 Unless specified otherwise, examples use the SIMD build and 120 samples.
 For histograms, one sample means an entire histogram snapshot, including its
@@ -33,20 +33,7 @@ The results favor evaluating ALP for workloads where storage and repeated reads
 justify extra writing cost. They do not establish ALP as a universal replacement.
 V4 improves histogram compression coverage but can decode more slowly than v3.
 
-## 2. Can you push the report to a Git branch?
-
-The report and supporting benchmark artifacts were committed and pushed to
-the `tsdb-alp-encoding-improvements` branch of `ccfelius/prometheus`.
-The report commit is `8c61ada11`.
-
-- [Published benchmark report](https://github.com/ccfelius/prometheus/blob/tsdb-alp-encoding-improvements/tsdb/docs/benchmarks/alp-comprehensive-20261001/report.md).
-- [Branch and implementation](https://github.com/ccfelius/prometheus/tree/tsdb-alp-encoding-improvements).
-- [Machine-readable results](summary.csv) and [interactive results explorer](explorer.html).
-
-The benchmark measures source revision `0647ddc2d`; publishing the report did
-not change the implementation measured by those frozen benchmark binaries.
-
-## 3. Does decoding also use less CPU?
+## 2. Does decoding also use less CPU?
 
 Yes, in these measured examples. CPU time includes both user and system process
 CPU, rather than merely the elapsed duration of decoding.
@@ -66,7 +53,7 @@ processes more data within the same CPU budget. This does not directly measure
 whole-server CPU savings, energy use, or query latency. Encoding CPU often rises,
 and decoding savings depend on the workload and iterator usage.
 
-## 4. Where was ALP significantly slower?
+## 3. Where was ALP significantly slower?
 
 The main disadvantage was encoding cost, especially for small chunks, values
 that need more decimal-plan searching or exceptions, and histograms that split
@@ -90,7 +77,7 @@ about 8% longer. Smooth 128-bucket float histograms decoded in 29.227 µs with
 v4 versus 15.996 µs with v3: v4 took 1.83× as long, although both beat the
 existing codec's 97.469 µs.
 
-## 5. How was this benchmarked?
+## 4. How was this benchmarked?
 
 - **Environment:** Apple M5 Pro ARM64, Go 1.27.1, `GOMAXPROCS=1`, `GOGC=100`.
   Both scalar and SIMD builds were measured.
@@ -120,7 +107,7 @@ query benchmarks. The host was not exclusively reserved, so small differences
 and flagged variable results need caution. Comparisons with original XOR only
 use inputs without start timestamps, which XOR cannot represent.
 
-## 6. Where was ALP much better?
+## 5. Where was ALP much better?
 
 The strongest results combined faster decoding with smaller chunks, particularly
 for decimal floats and several histogram workloads.
@@ -142,7 +129,7 @@ ALP decoded 5.77× faster than XOR2, used about 85% fewer bytes, and used about
 and its storage reduction about 79%. The distinction matters because XOR2 has
 additional overhead in this larger-chunk workload, described below.
 
-## 7. What changed between v3 and v4?
+## 6. What changed between v3 and v4?
 
 These are **histogram format versions**. Ordinary float ALP and the embedded
 timestamp/sum stream remain version 1.
@@ -177,7 +164,7 @@ Configuration-selected ALP histogram writers use **v3**. V4 remains an explicit
 experiment through `ALPEncoder.RecodeHistogramV4`; older readers cannot read it.
 See the [histogram format specification](../../format/alp_histograms.md).
 
-## 8. Why is XOR2 better than original XOR?
+## 7. Why is XOR2 better than original XOR?
 
 XOR2 improves some cases, but is not universally better. Both codecs compress
 float values by XORing their bits with the preceding value. XOR2 changes the
