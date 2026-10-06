@@ -1,13 +1,72 @@
-# ALP: summary of the last five questions
+# ALP: summary of the last eight questions
 
-This summarizes the five questions preceding the request for this document.
+This summarizes the eight questions and requests preceding the original request
+for this document, excluding the later requests to create, expand, and push it.
 Measurements come from the [comprehensive benchmark report](report.md).
 Unless specified otherwise, examples use the SIMD build and 120 samples.
 For histograms, one sample means an entire histogram snapshot, including its
 buckets. Histogram baselines are the existing histogram codecs; XOR and XOR2
 are the baselines for ordinary floats.
 
-## 1. Where was ALP significantly slower?
+## 1. Can you generate a report on the results?
+
+The [full report](report.md) records compression, encoding and decoding speed,
+CPU time, allocations, and scalar versus SIMD performance. Its main finding
+is that ALP usually improves decoding throughput, often reduces storage, and
+generally requires more encoding CPU.
+
+| Comparison | Cases with fewer stored bytes | Cases with warm decoding over 5% faster | Cases with encoding CPU over 5% higher |
+| --- | ---: | ---: | ---: |
+| Float ALP vs XOR | 26/32 | 30/32 | 25/32 |
+| Float ALP vs XOR2 | 54/66 | 66/66 | 54/66 |
+| Integer histogram v3 vs existing codec | 8/17 | 17/17 | 17/17 |
+| Integer histogram v4 vs existing codec | 12/17 | 17/17 | 17/17 |
+| Float histogram v3 vs existing codec | 13/21 | 21/21 | 21/21 |
+| Float histogram v4 vs existing codec | 20/21 | 21/21 | 21/21 |
+
+These are counts of synthetic benchmark cases, not production workload
+frequencies. The 5% threshold is descriptive, not a statistical significance
+test. Variable cases have separate confirmation results, and fresh-iterator
+decoding can behave differently from warm scans.
+
+The results favor evaluating ALP for workloads where storage and repeated reads
+justify extra writing cost. They do not establish ALP as a universal replacement.
+V4 improves histogram compression coverage but can decode more slowly than v3.
+
+## 2. Can you push the report to a Git branch?
+
+The report and supporting benchmark artifacts were committed and pushed to
+the `tsdb-alp-encoding-improvements` branch of `ccfelius/prometheus`.
+The report commit is `8c61ada11`.
+
+- [Published benchmark report](https://github.com/ccfelius/prometheus/blob/tsdb-alp-encoding-improvements/tsdb/docs/benchmarks/alp-comprehensive-20261001/report.md).
+- [Branch and implementation](https://github.com/ccfelius/prometheus/tree/tsdb-alp-encoding-improvements).
+- [Machine-readable results](summary.csv) and [interactive results explorer](explorer.html).
+
+The benchmark measures source revision `0647ddc2d`; publishing the report did
+not change the implementation measured by those frozen benchmark binaries.
+
+## 3. Does decoding also use less CPU?
+
+Yes, in these measured examples. CPU time includes both user and system process
+CPU, rather than merely the elapsed duration of decoding.
+
+| Workload | Baseline | Baseline CPU ns/sample | ALP CPU ns/sample | CPU reduction |
+| --- | --- | ---: | ---: | ---: |
+| Two-decimal floats | XOR2 | 7.13 | 3.11 | About 56% |
+| Fractional float histograms, 128 buckets | Existing float-histogram codec | 1,040.00 | v3: 167.65 | About 84% |
+| Smooth float histograms, 128 buckets | Existing float-histogram codec | 812.30 | v4: 243.55 | About 70% |
+
+For histograms, each sample is a complete snapshot, not one bucket. These
+figures describe warm decoding of 120-sample batches in the SIMD build.
+
+Both codecs can keep a core fully busy in a continuous benchmark. ALP's lower
+CPU time per sample means it processes the same data with less CPU work, or
+processes more data within the same CPU budget. This does not directly measure
+whole-server CPU savings, energy use, or query latency. Encoding CPU often rises,
+and decoding savings depend on the workload and iterator usage.
+
+## 4. Where was ALP significantly slower?
 
 The main disadvantage was encoding cost, especially for small chunks, values
 that need more decimal-plan searching or exceptions, and histograms that split
@@ -31,7 +90,7 @@ about 8% longer. Smooth 128-bucket float histograms decoded in 29.227 µs with
 v4 versus 15.996 µs with v3: v4 took 1.83× as long, although both beat the
 existing codec's 97.469 µs.
 
-## 2. How was this benchmarked?
+## 5. How was this benchmarked?
 
 - **Environment:** Apple M5 Pro ARM64, Go 1.27.1, `GOMAXPROCS=1`, `GOGC=100`.
   Both scalar and SIMD builds were measured.
@@ -61,7 +120,7 @@ query benchmarks. The host was not exclusively reserved, so small differences
 and flagged variable results need caution. Comparisons with original XOR only
 use inputs without start timestamps, which XOR cannot represent.
 
-## 3. Where was ALP much better?
+## 6. Where was ALP much better?
 
 The strongest results combined faster decoding with smaller chunks, particularly
 for decimal floats and several histogram workloads.
@@ -83,7 +142,7 @@ ALP decoded 5.77× faster than XOR2, used about 85% fewer bytes, and used about
 and its storage reduction about 79%. The distinction matters because XOR2 has
 additional overhead in this larger-chunk workload, described below.
 
-## 4. What changed between v3 and v4?
+## 7. What changed between v3 and v4?
 
 These are **histogram format versions**. Ordinary float ALP and the embedded
 timestamp/sum stream remain version 1.
@@ -118,7 +177,7 @@ Configuration-selected ALP histogram writers use **v3**. V4 remains an explicit
 experiment through `ALPEncoder.RecodeHistogramV4`; older readers cannot read it.
 See the [histogram format specification](../../format/alp_histograms.md).
 
-## 5. Why is XOR2 better than original XOR?
+## 8. Why is XOR2 better than original XOR?
 
 XOR2 improves some cases, but is not universally better. Both codecs compress
 float values by XORing their bits with the preceding value. XOR2 changes the
