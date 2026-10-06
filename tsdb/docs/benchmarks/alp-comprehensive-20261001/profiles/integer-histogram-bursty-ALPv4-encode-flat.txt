@@ -1,0 +1,23 @@
+File: alp-big-simd.test
+Type: cpu
+Time: 2026-10-06 09:01:06 CEST
+Duration: 5.87s, Total samples = 5430ms (92.50%)
+Showing nodes accounting for 4500ms, 82.87% of 5430ms total
+Dropped 78 nodes (cum <= 27.15ms)
+Showing top 15 nodes out of 77
+      flat  flat%   sum%        cum   cum%
+     710ms 13.08% 13.08%     1130ms 20.81%  github.com/prometheus/prometheus/tsdb/chunkenc.alpEncodePatchedIntegers
+     700ms 12.89% 25.97%      730ms 13.44%  github.com/prometheus/prometheus/tsdb/chunkenc.(*bstream).writeBit (inline)
+     390ms  7.18% 33.15%      390ms  7.18%  runtime.madvise
+     370ms  6.81% 39.96%     1060ms 19.52%  github.com/prometheus/prometheus/tsdb/chunkenc.(*bstream).writeBits
+     320ms  5.89% 45.86%      320ms  5.89%  runtime.kevent
+     310ms  5.71% 51.57%      350ms  6.45%  github.com/prometheus/prometheus/tsdb/chunkenc.alpPack
+     290ms  5.34% 56.91%      880ms 16.21%  github.com/prometheus/prometheus/tsdb/chunkenc.(*histogramIterator).Next
+     270ms  4.97% 61.88%      750ms 13.81%  github.com/prometheus/prometheus/tsdb/chunkenc.expandIntSpansAndBuckets
+     220ms  4.05% 65.93%      250ms  4.60%  github.com/prometheus/prometheus/tsdb/chunkenc.(*bucketIterator).Next
+     190ms  3.50% 69.43%      580ms 10.68%  github.com/prometheus/prometheus/tsdb/chunkenc.readVarbitInt
+     180ms  3.31% 72.74%     1480ms 27.26%  github.com/prometheus/prometheus/tsdb/chunkenc.(*HistogramAppender).appendHistogram
+     180ms  3.31% 76.06%      180ms  3.31%  github.com/prometheus/prometheus/tsdb/chunkenc.(*bstreamReader).readBitFast (inline)
+     130ms  2.39% 78.45%     1240ms 22.84%  github.com/prometheus/prometheus/tsdb/chunkenc.putVarbitInt
+     120ms  2.21% 80.66%     2420ms 44.57%  github.com/prometheus/prometheus/tsdb/chunkenc.alpEncodeHistogramCandidate
+     120ms  2.21% 82.87%      250ms  4.60%  github.com/prometheus/prometheus/tsdb/chunkenc.expandIntSpansAndBuckets.func3 (inline)

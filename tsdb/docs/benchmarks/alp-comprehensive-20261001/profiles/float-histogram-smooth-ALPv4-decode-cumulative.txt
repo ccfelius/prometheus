@@ -1,0 +1,23 @@
+File: alp-big-simd.test
+Type: cpu
+Time: 2026-10-06 09:01:20 CEST
+Duration: 6.19s, Total samples = 5.72s (92.40%)
+Showing nodes accounting for 4.52s, 79.02% of 5.72s total
+Dropped 19 nodes (cum <= 0.03s)
+Showing top 15 nodes out of 33
+      flat  flat%   sum%        cum   cum%
+     0.01s  0.17%  0.17%      5.66s 98.95%  github.com/prometheus/prometheus/tsdb/chunkenc.(*alpMatrixReader).scan
+         0     0%  0.17%      5.66s 98.95%  github.com/prometheus/prometheus/tsdb/chunkenc.BenchmarkALPMatrix.func1.1.1
+         0     0%  0.17%      5.66s 98.95%  testing.(*B).run1.func1
+         0     0%  0.17%      5.66s 98.95%  testing.(*B).runN
+     0.11s  1.92%  2.10%      5.31s 92.83%  github.com/prometheus/prometheus/tsdb/chunkenc.(*alpHistogramIterator).Next
+     0.03s  0.52%  2.62%      5.12s 89.51%  github.com/prometheus/prometheus/tsdb/chunkenc.(*alpHistogramNumbers).floatSample
+     0.01s  0.17%  2.80%      5.01s 87.59%  github.com/prometheus/prometheus/tsdb/chunkenc.(*alpHistogramNumbers).refill
+     0.42s  7.34% 10.14%         5s 87.41%  github.com/prometheus/prometheus/tsdb/chunkenc.alpDecodeTemporalFloats
+     0.02s  0.35% 10.49%      4.81s 84.09%  github.com/prometheus/prometheus/tsdb/chunkenc.(*alpHistogramNumbers).readFloats
+     2.29s 40.03% 50.52%      2.70s 47.20%  github.com/prometheus/prometheus/tsdb/chunkenc.alpRestoreTemporalNEON
+         0     0% 50.52%      2.70s 47.20%  github.com/prometheus/prometheus/tsdb/chunkenc.alpRestoreTemporalNative (inline)
+     0.02s  0.35% 50.87%      1.88s 32.87%  github.com/prometheus/prometheus/tsdb/chunkenc.alpDecodePatchedIntegers
+     1.50s 26.22% 77.10%      1.52s 26.57%  github.com/prometheus/prometheus/tsdb/chunkenc.alpDecodeIntegersNEON
+         0     0% 77.10%      1.52s 26.57%  github.com/prometheus/prometheus/tsdb/chunkenc.alpDecodeIntegersNative (inline)
+     0.11s  1.92% 79.02%      0.35s  6.12%  github.com/prometheus/prometheus/tsdb/chunkenc.alpMultiplyNEON (inline)

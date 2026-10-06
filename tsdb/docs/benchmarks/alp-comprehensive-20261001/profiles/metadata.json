@@ -1,0 +1,89 @@
+{
+  "completed_utc": "2026-10-06T07:01:27.803019+00:00",
+  "binary_sha256": "c9cc07bbfe59ae16a6d99b152f6ac32346a7301fede1db48eba88aa8e995eebf",
+  "analyzer": [
+    "go",
+    "run",
+    "github.com/google/pprof@v0.0.0-20260906184651-6331bc6350fe"
+  ],
+  "records": [
+    {
+      "case": "BenchmarkALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/XOR2/encode",
+      "profile": "profiles/float-decimal2-XOR2-encode.pprof",
+      "command": [
+        "/private/tmp/alp-big-simd.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkALPMatrix$/^float$/^decimal2$/^n=120$/^buckets=0$/^time=no\\-st$/^XOR2$/^encode$",
+        "-test.benchtime=5s",
+        "-test.count=1",
+        "-test.cpu=1",
+        "-test.cpuprofile=/Users/charlottefelius/Documents/Projects/hackathon/sept-2026/prometheus/tsdb/docs/benchmarks/alp-comprehensive-20261001/profiles/float-decimal2-XOR2-encode.pprof"
+      ]
+    },
+    {
+      "case": "BenchmarkALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/ALP/encode",
+      "profile": "profiles/float-decimal2-ALP-encode.pprof",
+      "command": [
+        "/private/tmp/alp-big-simd.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkALPMatrix$/^float$/^decimal2$/^n=120$/^buckets=0$/^time=no\\-st$/^ALP$/^encode$",
+        "-test.benchtime=5s",
+        "-test.count=1",
+        "-test.cpu=1",
+        "-test.cpuprofile=/Users/charlottefelius/Documents/Projects/hackathon/sept-2026/prometheus/tsdb/docs/benchmarks/alp-comprehensive-20261001/profiles/float-decimal2-ALP-encode.pprof"
+      ]
+    },
+    {
+      "case": "BenchmarkALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/ALP/decode",
+      "profile": "profiles/float-decimal2-ALP-decode.pprof",
+      "command": [
+        "/private/tmp/alp-big-simd.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkALPMatrix$/^float$/^decimal2$/^n=120$/^buckets=0$/^time=no\\-st$/^ALP$/^decode$",
+        "-test.benchtime=5s",
+        "-test.count=1",
+        "-test.cpu=1",
+        "-test.cpuprofile=/Users/charlottefelius/Documents/Projects/hackathon/sept-2026/prometheus/tsdb/docs/benchmarks/alp-comprehensive-20261001/profiles/float-decimal2-ALP-decode.pprof"
+      ]
+    },
+    {
+      "case": "BenchmarkALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/ALPv4/encode",
+      "profile": "profiles/integer-histogram-bursty-ALPv4-encode.pprof",
+      "command": [
+        "/private/tmp/alp-big-simd.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkALPMatrix$/^integer\\-histogram$/^bursty$/^n=120$/^buckets=128$/^time=regular$/^ALPv4$/^encode$",
+        "-test.benchtime=5s",
+        "-test.count=1",
+        "-test.cpu=1",
+        "-test.cpuprofile=/Users/charlottefelius/Documents/Projects/hackathon/sept-2026/prometheus/tsdb/docs/benchmarks/alp-comprehensive-20261001/profiles/integer-histogram-bursty-ALPv4-encode.pprof"
+      ]
+    },
+    {
+      "case": "BenchmarkALPMatrix/float-histogram/noisy-fractional/n=120/buckets=128/time=regular/ALPv3/encode",
+      "profile": "profiles/float-histogram-noisy-fractional-ALPv3-encode.pprof",
+      "command": [
+        "/private/tmp/alp-big-simd.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkALPMatrix$/^float\\-histogram$/^noisy\\-fractional$/^n=120$/^buckets=128$/^time=regular$/^ALPv3$/^encode$",
+        "-test.benchtime=5s",
+        "-test.count=1",
+        "-test.cpu=1",
+        "-test.cpuprofile=/Users/charlottefelius/Documents/Projects/hackathon/sept-2026/prometheus/tsdb/docs/benchmarks/alp-comprehensive-20261001/profiles/float-histogram-noisy-fractional-ALPv3-encode.pprof"
+      ]
+    },
+    {
+      "case": "BenchmarkALPMatrix/float-histogram/smooth/n=120/buckets=128/time=regular/ALPv4/decode",
+      "profile": "profiles/float-histogram-smooth-ALPv4-decode.pprof",
+      "command": [
+        "/private/tmp/alp-big-simd.test",
+        "-test.run=^$",
+        "-test.bench=^BenchmarkALPMatrix$/^float\\-histogram$/^smooth$/^n=120$/^buckets=128$/^time=regular$/^ALPv4$/^decode$",
+        "-test.benchtime=5s",
+        "-test.count=1",
+        "-test.cpu=1",
+        "-test.cpuprofile=/Users/charlottefelius/Documents/Projects/hackathon/sept-2026/prometheus/tsdb/docs/benchmarks/alp-comprehensive-20261001/profiles/float-histogram-smooth-ALPv4-decode.pprof"
+      ]
+    }
+  ]
+}

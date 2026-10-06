@@ -1,0 +1,23 @@
+File: alp-big-simd.test
+Type: cpu
+Time: 2026-10-06 09:01:13 CEST
+Duration: 6.01s, Total samples = 5570ms (92.64%)
+Showing nodes accounting for 4850ms, 87.07% of 5570ms total
+Dropped 47 nodes (cum <= 27.85ms)
+Showing top 15 nodes out of 64
+      flat  flat%   sum%        cum   cum%
+    1450ms 26.03% 26.03%     1450ms 26.03%  runtime.kevent
+     630ms 11.31% 37.34%     1050ms 18.85%  github.com/prometheus/prometheus/tsdb/chunkenc.alpAnalyzeRD
+     610ms 10.95% 48.29%      660ms 11.85%  github.com/prometheus/prometheus/tsdb/chunkenc.(*bstream).writeByte (inline)
+     440ms  7.90% 56.19%      440ms  7.90%  github.com/prometheus/prometheus/tsdb/chunkenc.(*bstream).writeBit (inline)
+     310ms  5.57% 61.76%      310ms  5.57%  slices.partialInsertionSortOrdered[go.shape.uint16]
+     290ms  5.21% 66.97%     1330ms 23.88%  github.com/prometheus/prometheus/tsdb/chunkenc.(*bstream).writeBits
+     200ms  3.59% 70.56%      280ms  5.03%  github.com/prometheus/prometheus/tsdb/chunkenc.(*bstreamReader).readBits
+     180ms  3.23% 73.79%      420ms  7.54%  github.com/prometheus/prometheus/tsdb/chunkenc.expandFloatSpansAndBuckets
+     170ms  3.05% 76.84%      170ms  3.05%  github.com/prometheus/prometheus/tsdb/chunkenc.(*bstreamReader).readBitFast
+     140ms  2.51% 79.35%      260ms  4.67%  github.com/prometheus/prometheus/tsdb/chunkenc.alpEncodeRD
+     130ms  2.33% 81.69%      130ms  2.33%  github.com/prometheus/prometheus/tsdb/chunkenc.(*bucketIterator).Next
+      80ms  1.44% 83.12%       80ms  1.44%  github.com/prometheus/prometheus/tsdb/chunkenc.(*bstreamReader).loadNextBuffer
+      80ms  1.44% 84.56%      100ms  1.80%  github.com/prometheus/prometheus/tsdb/chunkenc.alpPackWordsNEON
+      80ms  1.44% 86.00%     1500ms 26.93%  github.com/prometheus/prometheus/tsdb/chunkenc.xorWrite
+      60ms  1.08% 87.07%     1430ms 25.67%  github.com/prometheus/prometheus/tsdb/chunkenc.alpEncodeHistogramCandidate.func4

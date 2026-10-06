@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Comprehensive ALP benchmark results</title>
+<style>
+:root{color-scheme:light;--ink:#193348;--muted:#496273;--line:#d8e1e7;--blue:#176da0}*{box-sizing:border-box}body{margin:0;background:#f4f7f9;color:var(--ink);font:15px system-ui,sans-serif}main{max-width:1500px;padding:28px;margin:auto}h1{font-size:28px;margin:0 0 12px}p{max-width:1000px;line-height:1.55}a{color:var(--blue)}.controls{display:flex;flex-wrap:wrap;gap:14px;padding:18px;background:white;border:1px solid var(--line);border-radius:8px;margin:20px 0}label{display:grid;gap:5px;font-size:13px;font-weight:600}select{font:inherit;padding:8px;max-width:260px;color:var(--ink);background:white;border:1px solid #acbfcd;border-radius:4px}.scroll{overflow:auto;border:1px solid var(--line);border-radius:8px;background:white}table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:13px}th,td{padding:11px 12px;text-align:right;border-bottom:1px solid #e1e8ed;white-space:nowrap}th{background:#eaf1f6;position:sticky;top:0}th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}tr:hover td{background:#f5faff}button{border:0;background:transparent;color:inherit;font:inherit;font-weight:600;cursor:pointer;padding:0}button:focus-visible{outline:2px solid var(--blue)}.good{color:#117049}.bad{color:#ac4c28}.note{color:var(--muted);font-size:13px}#count{font-weight:600}.bars{height:4px;background:#e3edf4;margin-top:5px;min-width:40px}.bar{height:4px;background:var(--blue)}footer{margin-top:20px;color:var(--muted)}
+</style>
+</head>
+<body><main>
+<h1>Comprehensive ALP benchmark results</h1>
+<p>7,728 measurements across 111 synthetic scenarios on Apple M5 Pro. Six repetitions at 250 ms per operation. Tables show medians. Compare the existing codecs with ALP, including histogram v3 and experimental v4, and compare scalar with ARM64 SIMD execution.</p>
+<p><a href="report.md">Report and methodology</a> · <a href="summary.csv">All medians CSV</a> · <a href="comparisons.csv">Codec comparisons CSV</a> · <a href="metadata.json">Execution metadata</a></p>
+<div class="controls" id="controls"></div>
+<p id="count" aria-live="polite"></p>
+<div class="scroll"><table><thead id="header"></thead><tbody id="body"></tbody></table></div>
+<p class="note">Click a column heading to sort. CPU bars compare CPU nanoseconds per complete input sample within the current selection. Lower time, CPU cost, and stored size are better; higher throughput is better. The ratio column uses raw numeric payload divided by encoded size, including encoded headers and timestamps.</p>
+<footer><p>Histogram samples are whole snapshots, not individual buckets. Allocation figures are per input batch. Reset and layout cases can produce multiple chunks per batch. Fresh-iterator scans do not flush caches or access disk. Adaptive compaction reuses an encoder for repeated chunks from one homogeneous series.</p><p>CPU percentage is relative to one core. Similar utilization does not imply similar CPU cost. These results do not measure end-to-end ingestion, PromQL, multi-core scaling, or production workload frequency.</p></footer>
+</main>
+<script>
+'use strict';
+const rows=__DATA__;
+const definitions=[['backend','Build','simd'],['suite','Work','BenchmarkALPMatrix'],['family','Input','float'],['samples','Samples per batch','120'],['buckets','Buckets','0'],['timing','Timestamps','no-st'],['operation','Operation','encode'],['pattern','Pattern','all'],['codec','Codec','all']];
+const labels={simd:'SIMD / NEON',scalar:'Scalar',BenchmarkALPMatrix:'Full codec',BenchmarkALPMatrixTranscode:'Compaction conversion',float:'Floats','integer-histogram':'Integer histograms','float-histogram':'Float histograms',regular:'Regular, constant start timestamp','no-st':'Regular, no start timestamp',jitter:'Jitter, constant start timestamp','no-st-jitter':'Jitter, no start timestamp','changing-st':'Changing start timestamp',encode:'Encode',decode:'Decode with reused iterator','decode-cold':'Decode with fresh iterator','decode-float':'Decode as float histograms',transcode:'Convert source chunks',all:'All'};
+const controls={};
+for(const [key,label,initial] of definitions){const wrapper=document.createElement('label');wrapper.textContent=label;const select=document.createElement('select');select.dataset.initial=initial;select.setAttribute('aria-label',label);wrapper.append(select);document.getElementById('controls').append(wrapper);controls[key]=select;select.addEventListener('change',render);}
+const columns=[['pattern','Pattern'],['codec','Codec'],['ns/op','Time µs/batch',v=>v/1000],['M-samples/s','M samples/s'],['cpu-ns/sample','CPU ns/sample'],['cpu-%core','CPU % core'],['encoded-B/sample','Stored B/sample'],['numeric-compression-ratio','Numeric ratio'],['B/op','Allocated B/batch'],['allocs/op','Allocations/batch'],['chunks/op','Chunks/batch'],['accepted-%','Accepted %']];
+let sortKey='pattern',descending=false;
+const formatter=new Intl.NumberFormat(undefined,{maximumFractionDigits:3});
+function escape(value){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function render(){
+ let selected=rows;
+ for(const [key] of definitions){const select=controls[key],old=select.value||select.dataset.initial;const all=key==='pattern'||key==='codec';const values=[...new Set(selected.map(r=>String(r[key])))].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));if(all)values.unshift('all');select.replaceChildren(...values.map(value=>{const option=document.createElement('option');option.value=value;option.textContent=labels[value]||value;return option;}));select.value=values.includes(old)?old:values[0];if(select.value!=='all')selected=selected.filter(r=>String(r[key])===select.value);}
+ selected.sort((a,b)=>{const x=a[sortKey],y=b[sortKey];const cmp=typeof x==='number'?x-y:String(x).localeCompare(String(y));return descending?-cmp:cmp;});
+ const visible=columns.filter(([key])=>selected.some(r=>r[key]!==undefined));
+ document.getElementById('header').innerHTML='<tr>'+visible.map(([key,label])=>`<th><button data-sort="${key}">${label}${key===sortKey?(descending?' ↓':' ↑'):''}</button></th>`).join('')+'</tr>';
+ for(const button of document.querySelectorAll('[data-sort]'))button.addEventListener('click',()=>{const key=button.dataset.sort;descending=sortKey===key?!descending:false;sortKey=key;render();});
+ const maximum=Math.max(1,...selected.map(r=>r['cpu-ns/sample']));
+ document.getElementById('body').innerHTML=selected.map(r=>'<tr>'+visible.map(([key,label,transform])=>{const value=r[key];if(value===undefined)return '<td>—</td>';const text=typeof value==='number'?formatter.format(transform?transform(value):value):escape(value);const bar=key==='cpu-ns/sample'?`<div class="bars"><div class="bar" style="width:${value/maximum*100}%"></div></div>`:'';return `<td>${text}${bar}</td>`;}).join('')+'</tr>').join('');
+ document.getElementById('count').textContent=`${selected.length} measured rows · six observations per row`;
+}
+render();
+</script></body></html>

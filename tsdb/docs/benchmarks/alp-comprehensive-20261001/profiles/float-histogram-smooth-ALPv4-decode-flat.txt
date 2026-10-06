@@ -1,0 +1,23 @@
+File: alp-big-simd.test
+Type: cpu
+Time: 2026-10-06 09:01:20 CEST
+Duration: 6.19s, Total samples = 5.72s (92.40%)
+Showing nodes accounting for 5.54s, 96.85% of 5.72s total
+Dropped 19 nodes (cum <= 0.03s)
+Showing top 15 nodes out of 33
+      flat  flat%   sum%        cum   cum%
+     2.29s 40.03% 40.03%      2.70s 47.20%  github.com/prometheus/prometheus/tsdb/chunkenc.alpRestoreTemporalNEON
+     1.50s 26.22% 66.26%      1.52s 26.57%  github.com/prometheus/prometheus/tsdb/chunkenc.alpDecodeIntegersNEON
+     0.42s  7.34% 73.60%         5s 87.41%  github.com/prometheus/prometheus/tsdb/chunkenc.alpDecodeTemporalFloats
+     0.33s  5.77% 79.37%      0.33s  5.77%  runtime.memmove
+     0.27s  4.72% 84.09%      0.34s  5.94%  github.com/prometheus/prometheus/tsdb/chunkenc.alpUnpackWords
+     0.24s  4.20% 88.29%      0.24s  4.20%  simd/archsimd.BroadcastUint32x4 (inline)
+     0.11s  1.92% 90.21%      5.31s 92.83%  github.com/prometheus/prometheus/tsdb/chunkenc.(*alpHistogramIterator).Next
+     0.11s  1.92% 92.13%      0.35s  6.12%  github.com/prometheus/prometheus/tsdb/chunkenc.alpMultiplyNEON (inline)
+     0.06s  1.05% 93.18%      0.32s  5.59%  github.com/prometheus/prometheus/model/histogram.(*FloatHistogram).CopyTo
+     0.04s   0.7% 93.88%      0.04s   0.7%  encoding/binary.littleEndian.Uint64 (inline)
+     0.04s   0.7% 94.58%      0.04s   0.7%  github.com/prometheus/prometheus/tsdb/chunkenc.(*alpIterator).At
+     0.04s   0.7% 95.28%      0.04s   0.7%  simd/archsimd.Int64x2.IfElse (inline)
+     0.03s  0.52% 95.80%      5.12s 89.51%  github.com/prometheus/prometheus/tsdb/chunkenc.(*alpHistogramNumbers).floatSample
+     0.03s  0.52% 96.33%      0.04s   0.7%  github.com/prometheus/prometheus/tsdb/chunkenc.(*alpIterator).Next
+     0.03s  0.52% 96.85%      0.03s  0.52%  simd/archsimd.LoadUint64x2 (inline)

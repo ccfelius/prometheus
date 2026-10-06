@@ -1,0 +1,6 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+BenchmarkALPMatrix/float/decimal2/n=120/buckets=0/time=no-st/ALP/encode         	 2213502	      2722 ns/op	 352.74 MB/s	         1.000 chunks/op	        98.38 cpu-%core	        22.31 cpu-ns/sample	         1.308 encoded-B/sample	       120.0 samples/op	         0.4197 sys-cpu-ns/sample	        21.89 user-cpu-ns/sample	    4552 B/op	       7 allocs/op
+PASS

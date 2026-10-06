@@ -1,0 +1,417 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/prometheus/prometheus/tsdb/chunkenc
+cpu: Apple M5 Pro
+                                                                                      │ scalar-primary.txt │       scalar-confirmation.txt       │
+                                                                                      │       sec/op       │    sec/op     vs base               │
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/legacy/decode        10.96µ ±   1%   10.34µ ± 48%        ~ (p=0.065 n=6)
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/ALPv3/decode         4.635µ ± 121%   4.173µ ± 48%   -9.95% (p=0.039 n=6)
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/ALPv4/decode         4.417µ ±   5%   4.248µ ±  1%        ~ (p=0.394 n=6)
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/legacy/decode                 78.68µ ±  99%   77.52µ ± 43%        ~ (p=0.065 n=6)
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/ALPv3/decode                  27.54µ ±   1%   29.30µ ± 15%        ~ (p=0.310 n=6)
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/ALPv4/decode                  36.19µ ±   0%   35.90µ ± 48%        ~ (p=0.065 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=changing-st/XOR2/encode                        2.341µ ±   1%   3.966µ ± 12%  +69.39% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=changing-st/ALP/encode                         3.049µ ±  80%   5.717µ ± 10%  +87.49% (p=0.009 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/legacy/decode              46.34µ ±   6%   82.40µ ±  7%  +77.81% (p=0.002 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/legacy/decode-float        51.05µ ±   2%   49.23µ ±  1%   -3.57% (p=0.002 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv3/decode               31.31µ ±   0%   53.52µ ±  1%  +70.95% (p=0.002 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv3/decode-float         32.95µ ±   2%   31.55µ ±  7%        ~ (p=0.065 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv4/decode               31.26µ ±  93%   49.53µ ±  9%        ~ (p=0.065 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv4/decode-float         33.74µ ±   1%   34.67µ ± 13%        ~ (p=0.699 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/XOR/decode                                9.054µ ±   0%   8.644µ ± 95%        ~ (p=0.065 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/XOR2/decode                               18.93µ ±   1%   18.04µ ±  3%   -4.67% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/ALP/decode                                3.614µ ±  77%   3.290µ ± 50%   -8.97% (p=0.041 n=6)
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/legacy/decode-float        99.95µ ±   0%   97.54µ ± 50%        ~ (p=0.065 n=6)
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/ALPv3/decode-float         38.81µ ±  78%   37.91µ ± 19%        ~ (p=0.818 n=6)
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/ALPv4/decode-float         36.98µ ±   0%   37.83µ ± 71%   +2.29% (p=0.002 n=6)
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/legacy/encode                286.1µ ±   1%   269.6µ ±  1%   -5.77% (p=0.002 n=6)
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/ALPv3/encode                 501.0µ ±  12%   475.1µ ± 45%        ~ (p=0.065 n=6)
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/ALPv4/encode                 629.6µ ±   8%   569.4µ ± 45%        ~ (p=0.065 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/XOR/encode                          2.443µ ±   7%   2.286µ ± 43%        ~ (p=0.056 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/XOR2/encode                         1.921µ ±   1%   1.854µ ± 14%        ~ (p=0.394 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/ALP/encode                          2.677µ ± 116%   3.873µ ± 22%        ~ (p=0.065 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/XOR/decode                                  293.1n ±   7%   568.2n ± 14%  +93.86% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/XOR2/decode                                 263.8n ±  10%   459.5n ± 18%  +74.22% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/ALP/decode                                  144.5n ± 173%   315.4n ± 21%        ~ (p=0.065 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/XOR2/encode                            21.84µ ±   0%   13.97µ ± 43%  -36.03% (p=0.002 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/XOR2/decode                            15.36µ ±  64%   26.53µ ± 10%  +72.67% (p=0.009 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/ALP/encode                             17.35µ ±  62%   14.80µ ±  4%  -14.69% (p=0.015 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/ALP/decode                             3.664µ ±   6%   5.324µ ±  0%  +45.29% (p=0.002 n=6)
+geomean                                                                                      13.12µ          15.11µ        +15.19%
+
+                                                                                      │ scalar-primary.txt │       scalar-confirmation.txt        │
+                                                                                      │        B/s         │      B/s       vs base               │
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/legacy/decode        919.2Mi ±  1%   973.7Mi ± 32%        ~ (p=0.065 n=6)
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/ALPv3/decode         2.126Gi ± 55%   2.357Gi ± 33%  +10.86% (p=0.041 n=6)
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/ALPv4/decode         2.228Gi ±  6%   2.315Gi ±  1%        ~ (p=0.394 n=6)
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/legacy/decode                 1.067Gi ± 50%   1.083Gi ± 30%        ~ (p=0.065 n=6)
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/ALPv3/decode                  3.047Gi ±  1%   2.868Gi ± 13%        ~ (p=0.310 n=6)
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/ALPv4/decode                  2.319Gi ±  0%   2.338Gi ± 33%        ~ (p=0.065 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=changing-st/XOR2/encode                        391.1Mi ±  1%   230.9Mi ± 11%  -40.96% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=changing-st/ALP/encode                         300.3Mi ± 45%   160.2Mi ± 11%  -46.67% (p=0.009 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/legacy/decode              2.547Gi ±  6%   1.436Gi ±  7%  -43.61% (p=0.002 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/legacy/decode-float        2.312Gi ±  2%   2.397Gi ±  1%   +3.70% (p=0.002 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv3/decode               3.769Gi ±  0%   2.205Gi ±  1%  -41.50% (p=0.002 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv3/decode-float         3.582Gi ±  2%   3.740Gi ±  6%        ~ (p=0.065 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv4/decode               3.776Gi ± 48%   2.385Gi ±  8%        ~ (p=0.065 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv4/decode-float         3.498Gi ±  1%   3.406Gi ± 11%        ~ (p=0.699 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/XOR/decode                                862.9Mi ±  0%   903.8Mi ± 49%        ~ (p=0.065 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/XOR2/decode                               412.7Mi ±  1%   433.0Mi ±  3%   +4.90% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/ALP/decode                                2.113Gi ± 44%   2.319Gi ± 33%   +9.79% (p=0.041 n=6)
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/legacy/decode-float        1.172Gi ±  0%   1.201Gi ± 33%        ~ (p=0.065 n=6)
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/ALPv3/decode-float         3.018Gi ± 44%   3.094Gi ± 16%        ~ (p=0.818 n=6)
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/ALPv4/decode-float         3.167Gi ±  0%   3.096Gi ± 42%   -2.23% (p=0.002 n=6)
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/legacy/encode                422.4Mi ±  1%   448.2Mi ±  1%   +6.13% (p=0.002 n=6)
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/ALPv3/encode                 241.2Mi ± 11%   254.3Mi ± 31%        ~ (p=0.065 n=6)
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/ALPv4/encode                 192.1Mi ±  8%   212.2Mi ± 31%        ~ (p=0.065 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/XOR/encode                          374.7Mi ±  7%   400.6Mi ± 30%        ~ (p=0.056 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/XOR2/encode                         476.8Mi ±  1%   493.9Mi ± 12%        ~ (p=0.394 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/ALP/encode                          342.2Mi ± 54%   236.5Mi ± 28%        ~ (p=0.065 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/XOR/decode                                  833.1Mi ±  6%   430.0Mi ± 16%  -48.39% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/XOR2/decode                                 926.0Mi ± 11%   531.3Mi ± 16%  -42.62% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/ALP/decode                                 1689.8Mi ± 63%   775.2Mi ± 26%        ~ (p=0.065 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/XOR2/encode                            357.7Mi ±  0%   559.2Mi ± 30%  +56.32% (p=0.002 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/XOR2/decode                            508.5Mi ± 39%   294.5Mi ± 11%  -42.09% (p=0.009 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/ALP/encode                             450.5Mi ± 38%   527.9Mi ±  4%  +17.20% (p=0.015 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/ALP/decode                             2.082Gi ±  5%   1.433Gi ±  0%  -31.17% (p=0.002 n=6)
+geomean                                                                                      1.056Gi         939.0Mi        -13.18%
+
+                                                                                      │ scalar-primary.txt │      scalar-confirmation.txt       │
+                                                                                      │     chunks/op      │ chunks/op   vs base                │
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/legacy/decode           1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/ALPv3/decode            1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/ALPv4/decode            1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/legacy/decode                    1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/ALPv3/decode                     1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/ALPv4/decode                     1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=120/buckets=0/time=changing-st/XOR2/encode                           1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=120/buckets=0/time=changing-st/ALP/encode                            1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/legacy/decode                 2.000 ± 0%   2.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/legacy/decode-float           2.000 ± 0%   2.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv3/decode                  2.000 ± 0%   2.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv3/decode-float            2.000 ± 0%   2.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv4/decode                  2.000 ± 0%   2.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv4/decode-float            2.000 ± 0%   2.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/XOR/decode                                   1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/XOR2/decode                                  1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/ALP/decode                                   1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/legacy/decode-float           1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/ALPv3/decode-float            1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/ALPv4/decode-float            1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/legacy/encode                   2.000 ± 0%   2.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/ALPv3/encode                    2.000 ± 0%   2.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/ALPv4/encode                    2.000 ± 0%   2.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/XOR/encode                             1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/XOR2/encode                            1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/ALP/encode                             1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/XOR/decode                                     1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/XOR2/decode                                    1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/ALP/decode                                     1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/XOR2/encode                               1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/XOR2/decode                               1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/ALP/encode                                1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/ALP/decode                                1.000 ± 0%   1.000 ± 0%       ~ (p=1.000 n=6) ¹
+geomean                                                                                         1.208        1.208       +0.00%
+¹ all samples are equal
+
+                                                                                      │ scalar-primary.txt │      scalar-confirmation.txt       │
+                                                                                      │     cpu-%core      │  cpu-%core    vs base              │
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/legacy/decode         100.00 ±  0%    99.98 ± 27%       ~ (p=0.740 n=6)
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/ALPv3/decode           99.98 ± 50%    99.98 ± 27%       ~ (p=0.619 n=6)
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/ALPv4/decode          100.00 ±  0%    99.99 ±  0%       ~ (p=0.297 n=6)
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/legacy/decode                   99.81 ± 45%    99.99 ± 26%       ~ (p=0.318 n=6)
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/ALPv3/decode                   100.00 ±  0%    99.99 ±  0%       ~ (p=0.567 n=6)
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/ALPv4/decode                   100.00 ±  0%    99.99 ± 28%  -0.01% (p=0.011 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=changing-st/XOR2/encode                          98.90 ±  0%    99.41 ±  0%  +0.52% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=changing-st/ALP/encode                           97.42 ± 45%    99.56 ±  0%  +2.20% (p=0.002 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/legacy/decode                99.99 ±  2%   100.10 ±  0%  +0.11% (p=0.002 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/legacy/decode-float          99.99 ±  1%    99.89 ±  0%       ~ (p=0.372 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv3/decode                 99.99 ±  0%   100.10 ±  0%  +0.11% (p=0.002 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv3/decode-float          100.00 ±  0%    99.99 ±  1%       ~ (p=0.762 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv4/decode                 99.99 ± 45%   100.10 ±  0%  +0.11% (p=0.002 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv4/decode-float           100.0 ±  0%    100.0 ±  0%       ~ (p=1.000 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/XOR/decode                                  99.99 ±  0%   100.00 ± 44%       ~ (p=0.459 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/XOR2/decode                                100.00 ±  0%    99.98 ±  0%       ~ (p=0.697 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/ALP/decode                                  98.58 ± 44%    99.99 ± 28%       ~ (p=0.450 n=6)
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/legacy/decode-float          99.99 ±  0%    99.99 ± 29%       ~ (p=0.394 n=6)
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/ALPv3/decode-float           97.93 ± 43%    99.99 ±  0%       ~ (p=0.197 n=6)
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/ALPv4/decode-float          100.00 ±  0%    99.99 ± 37%  -0.01% (p=0.015 n=6)
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/legacy/encode                  99.81 ±  0%    99.78 ±  0%  -0.04% (p=0.006 n=6)
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/ALPv3/encode                   99.74 ±  3%    99.70 ± 29%       ~ (p=0.320 n=6)
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/ALPv4/encode                   99.88 ±  0%    99.85 ± 27%  -0.03% (p=0.022 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/XOR/encode                            99.37 ±  2%    99.34 ± 26%       ~ (p=0.310 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/XOR2/encode                           99.22 ±  0%    99.17 ±  0%       ~ (p=0.147 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/ALP/encode                            98.78 ± 43%    99.23 ±  0%  +0.46% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/XOR/decode                                    100.0 ±  3%    100.1 ±  0%  +0.11% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/XOR2/decode                                   100.0 ±  0%    100.1 ±  0%  +0.11% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/ALP/decode                                    99.97 ± 56%   100.10 ±  0%  +0.13% (p=0.002 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/XOR2/encode                              99.47 ±  0%    99.06 ± 27%  -0.41% (p=0.002 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/XOR2/decode                              99.99 ±  0%   100.10 ±  0%  +0.11% (p=0.015 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/ALP/encode                               98.19 ± 46%    99.55 ±  0%  +1.37% (p=0.011 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/ALP/decode                               98.79 ±  2%   100.10 ±  0%  +1.32% (p=0.002 n=6)
+geomean                                                                                        99.57          99.85        +0.29%
+
+                                                                                      │ scalar-primary.txt │        scalar-confirmation.txt         │
+                                                                                      │   cpu-sec/sample   │ cpu-sec/sample  vs base                │
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/legacy/decode         91.30n ±  1%     86.17n ±  8%         ~ (p=0.058 n=6)
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/ALPv3/decode          38.62n ± 10%     34.77n ±  8%    -9.98% (p=0.015 n=6)
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/ALPv4/decode          36.81n ±  5%     35.41n ±  1%         ~ (p=0.394 n=6)
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/legacy/decode                  76.69n ± 11%     75.70n ±  5%    -1.28% (p=0.041 n=6)
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/ALPv3/decode                   26.90n ±  1%     28.61n ± 15%         ~ (p=0.288 n=6)
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/ALPv4/decode                   35.34n ±  0%     35.05n ±  6%         ~ (p=0.056 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=changing-st/XOR2/encode                         19.30n ±  1%     32.85n ± 12%   +70.21% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=changing-st/ALP/encode                          24.48n ± 13%     47.43n ± 10%   +93.75% (p=0.002 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/legacy/decode               386.1n ±  4%     687.3n ±  7%   +77.99% (p=0.002 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/legacy/decode-float         425.1n ±  1%     409.8n ±  1%    -3.61% (p=0.002 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv3/decode                260.8n ±  0%     446.4n ±  1%   +71.13% (p=0.002 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv3/decode-float          274.5n ±  2%     262.9n ±  5%    -4.23% (p=0.022 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv4/decode                260.4n ±  7%     413.1n ±  9%   +58.59% (p=0.002 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv4/decode-float          280.8n ±  1%     288.9n ± 13%         ~ (p=0.589 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/XOR/decode                                 8.841n ±  0%     8.442n ± 10%         ~ (p=0.065 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/XOR2/decode                                18.48n ±  1%     17.62n ±  3%    -4.63% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/ALP/decode                                 3.428n ±  5%     3.212n ±  8%    -6.27% (p=0.026 n=6)
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/legacy/decode-float         832.8n ±  0%     812.8n ±  6%         ~ (p=0.056 n=6)
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/ALPv3/decode-float          316.7n ±  6%     315.8n ± 19%         ~ (p=0.818 n=6)
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/ALPv4/decode-float          308.2n ±  0%     315.2n ±  8%    +2.27% (p=0.002 n=6)
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/legacy/encode                 2.381µ ±  1%     2.242µ ±  1%    -5.84% (p=0.002 n=6)
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/ALPv3/encode                  4.164µ ± 10%     3.948µ ±  4%    -5.18% (p=0.002 n=6)
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/ALPv4/encode                  5.241µ ±  8%     4.739µ ±  7%    -9.59% (p=0.004 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/XOR/encode                           20.23n ±  6%     18.92n ±  6%    -6.50% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/XOR2/encode                          15.88n ±  1%     15.32n ± 14%         ~ (p=0.394 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/ALP/encode                           22.04n ± 23%     32.03n ± 22%   +45.33% (p=0.004 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/XOR/decode                                   9.158n ±  4%    17.770n ± 14%   +94.04% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/XOR2/decode                                  8.242n ± 10%    14.375n ± 19%   +74.41% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/ALP/decode                                   4.514n ± 20%     9.868n ± 21%  +118.58% (p=0.002 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/XOR2/encode                             21.22n ±  0%     13.51n ±  5%   -36.31% (p=0.002 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/XOR2/decode                             14.99n ± 65%     25.93n ± 10%   +72.95% (p=0.009 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/ALP/encode                              16.20n ± 11%     14.38n ±  4%   -11.21% (p=0.024 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/ALP/decode                              3.535n ±  4%     5.204n ±  0%   +47.18% (p=0.002 n=6)
+geomean                                                                                       63.99n           74.04n         +15.71%
+
+                                                                                      │ scalar-primary.txt │         scalar-confirmation.txt          │
+                                                                                      │  encoded-B/sample  │ encoded-B/sample  vs base                │
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/legacy/decode           79.34 ± 0%         79.34 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/ALPv3/decode            73.67 ± 0%         73.67 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/ALPv4/decode            73.67 ± 0%         73.67 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/legacy/decode                    24.82 ± 0%         24.82 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/ALPv3/decode                     25.34 ± 0%         25.34 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/ALPv4/decode                     15.56 ± 0%         15.56 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=120/buckets=0/time=changing-st/XOR2/encode                           8.242 ± 0%         8.242 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=120/buckets=0/time=changing-st/ALP/encode                            2.467 ± 0%         2.467 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/legacy/decode                 27.71 ± 0%         27.71 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/legacy/decode-float           27.71 ± 0%         27.71 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv3/decode                  26.03 ± 0%         26.03 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv3/decode-float            26.03 ± 0%         26.03 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv4/decode                  23.62 ± 0%         23.62 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv4/decode-float            23.62 ± 0%         23.62 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/XOR/decode                                   8.075 ± 0%         8.075 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/XOR2/decode                                  8.070 ± 0%         8.070 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/ALP/decode                                   1.714 ± 0%         1.714 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/legacy/decode-float           94.92 ± 0%         94.92 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/ALPv3/decode-float            131.3 ± 0%         131.3 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/ALPv4/decode-float            94.50 ± 0%         94.50 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/legacy/encode                   186.3 ± 0%         186.3 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/ALPv3/encode                    253.0 ± 0%         253.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/ALPv4/encode                    96.88 ± 0%         96.88 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/XOR/encode                             7.117 ± 0%         7.117 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/XOR2/encode                            7.125 ± 0%         7.125 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/ALP/encode                             2.175 ± 0%         2.175 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/XOR/decode                                     7.094 ± 0%         7.094 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/XOR2/decode                                    6.438 ± 0%         6.438 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/ALP/decode                                     3.031 ± 0%         3.031 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/XOR2/encode                               4.688 ± 0%         4.688 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/XOR2/decode                               4.688 ± 0%         4.688 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/ALP/encode                                1.769 ± 0%         1.769 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/ALP/decode                                1.769 ± 0%         1.769 ± 0%       ~ (p=1.000 n=6) ¹
+geomean                                                                                         16.52              16.52       +0.00%
+¹ all samples are equal
+
+                                                                                      │ scalar-primary.txt │       scalar-confirmation.txt       │
+                                                                                      │     samples/op     │ samples/op   vs base                │
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/legacy/decode           120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/ALPv3/decode            120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/ALPv4/decode            120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/legacy/decode                   1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/ALPv3/decode                    1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/ALPv4/decode                    1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=120/buckets=0/time=changing-st/XOR2/encode                           120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=120/buckets=0/time=changing-st/ALP/encode                            120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/legacy/decode                 120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/legacy/decode-float           120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv3/decode                  120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv3/decode-float            120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv4/decode                  120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv4/decode-float            120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/XOR/decode                                  1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/XOR2/decode                                 1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/ALP/decode                                  1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/legacy/decode-float           120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/ALPv3/decode-float            120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/ALPv4/decode-float            120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/legacy/encode                   120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/ALPv3/encode                    120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/ALPv4/encode                    120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/XOR/encode                             120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/XOR2/encode                            120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/ALP/encode                             120.0 ± 0%    120.0 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/XOR/decode                                     32.00 ± 0%    32.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/XOR2/decode                                    32.00 ± 0%    32.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/ALP/decode                                     32.00 ± 0%    32.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/XOR2/encode                              1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/XOR2/decode                              1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/ALP/encode                               1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/ALP/decode                               1.024k ± 0%   1.024k ± 0%       ~ (p=1.000 n=6) ¹
+geomean                                                                                         203.8         203.8       +0.00%
+¹ all samples are equal
+
+                                                                                      │ scalar-primary.txt │           scalar-confirmation.txt           │
+                                                                                      │ sys-cpu-sec/sample │ sys-cpu-sec/sample  vs base                 │
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/legacy/decode       0.2754n ± 108%       0.1588n ± 329%          ~ (p=0.093 n=6)
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/ALPv3/decode        0.1056n ± 270%       0.2091n ± 462%          ~ (p=0.937 n=6)
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/ALPv4/decode       0.08382n ±  53%      0.95435n ±  86%  +1038.50% (p=0.002 n=6)
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/legacy/decode                0.2826n ± 555%       0.1618n ±  80%          ~ (p=0.240 n=6)
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/ALPv3/decode                0.13005n ±  63%      0.06082n ±  40%    -53.23% (p=0.002 n=6)
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/ALPv4/decode                0.19030n ±  22%      0.08310n ± 128%    -56.33% (p=0.015 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=changing-st/XOR2/encode                       0.1036n ±  32%       0.1575n ±  33%    +51.98% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=changing-st/ALP/encode                        0.4975n ± 108%       0.2208n ±  12%    -55.63% (p=0.002 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/legacy/decode              1.267n ± 208%        1.374n ±  33%          ~ (p=0.310 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/legacy/decode-float        1.391n ±  82%        2.180n ±  57%          ~ (p=0.065 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv3/decode              0.8151n ±  19%       1.0875n ±  30%    +33.42% (p=0.004 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv3/decode-float        0.6216n ±  36%       0.7264n ± 225%          ~ (p=0.394 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv4/decode              0.5570n ± 306%       0.8830n ±  23%          ~ (p=0.093 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv4/decode-float        0.6281n ±  63%       0.7024n ±  28%          ~ (p=0.240 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/XOR/decode                              0.02115n ±  56%      0.01757n ± 473%          ~ (p=0.818 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/XOR2/decode                             0.04117n ±  23%      0.02852n ±  87%          ~ (p=0.310 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/ALP/decode                             0.028190n ± 111%     0.006961n ± 204%    -75.31% (p=0.041 n=6)
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/legacy/decode-float        1.820n ±  11%       11.560n ± 161%          ~ (p=1.000 n=6)
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/ALPv3/decode-float         5.073n ±  90%       10.345n ±  47%   +103.92% (p=0.002 n=6)
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/ALPv4/decode-float         1.142n ±  38%        7.499n ±  68%   +556.65% (p=0.002 n=6)
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/legacy/encode               12.490n ±  52%        5.115n ±  32%    -59.05% (p=0.009 n=6)
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/ALPv3/encode                16.270n ± 226%        9.875n ± 116%          ~ (p=0.180 n=6)
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/ALPv4/encode                 12.88n ±  28%        10.64n ± 157%          ~ (p=0.240 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/XOR/encode                        0.07736n ± 203%      0.07918n ±  54%          ~ (p=0.818 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/XOR2/encode                       0.08446n ±  19%      0.07260n ±  23%          ~ (p=0.065 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/ALP/encode                         0.1921n ± 161%       0.1721n ±  11%          ~ (p=0.818 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/XOR/decode                                0.02647n ± 356%      0.03886n ±  41%          ~ (p=0.310 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/XOR2/decode                               0.01821n ±  32%      0.02853n ± 115%    +56.64% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/ALP/decode                                0.01070n ± 803%      0.02264n ±  65%          ~ (p=0.180 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/XOR2/encode                          0.09255n ±  19%      0.07503n ±  21%    -18.94% (p=0.009 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/XOR2/decode                          0.03621n ±  44%      0.04856n ±  13%          ~ (p=0.093 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/ALP/encode                           0.33170n ±  79%      0.06119n ±  47%    -81.55% (p=0.004 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/ALP/decode                           0.07566n ±  46%      0.01078n ±   8%    -85.75% (p=0.002 n=6)
+geomean                                                                                     0.2657n              0.2679n            +0.82%
+
+                                                                                      │ scalar-primary.txt  │           scalar-confirmation.txt           │
+                                                                                      │ user-cpu-sec/sample │ user-cpu-sec/sample  vs base                │
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/legacy/decode          91.06n ±  0%          86.06n ±  7%         ~ (p=0.065 n=6)
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/ALPv3/decode           38.53n ± 10%          34.52n ±  6%   -10.42% (p=0.004 n=6)
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/ALPv4/decode           36.73n ±  5%          34.46n ±  1%    -6.19% (p=0.004 n=6)
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/legacy/decode                   76.41n ±  9%          75.56n ±  5%    -1.10% (p=0.026 n=6)
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/ALPv3/decode                    26.78n ±  0%          28.55n ± 15%         ~ (p=0.162 n=6)
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/ALPv4/decode                    35.15n ±  0%          34.98n ±  6%         ~ (p=0.065 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=changing-st/XOR2/encode                          19.20n ±  1%          32.71n ± 12%   +70.41% (p=0.002 n=6)
+ALPMatrix/float/decimal2/n=120/buckets=0/time=changing-st/ALP/encode                           24.10n ± 10%          47.22n ± 10%   +95.91% (p=0.002 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/legacy/decode                384.9n ±  3%          686.0n ±  7%   +78.23% (p=0.002 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/legacy/decode-float          423.7n ±  1%          407.1n ±  1%    -3.92% (p=0.002 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv3/decode                 260.0n ±  0%          445.3n ±  1%   +71.27% (p=0.002 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv3/decode-float           273.9n ±  1%          262.2n ±  5%    -4.27% (p=0.015 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv4/decode                 259.8n ±  6%          412.2n ±  9%   +58.66% (p=0.002 n=6)
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv4/decode-float           279.9n ±  1%          288.2n ± 13%         ~ (p=0.589 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/XOR/decode                                  8.820n ±  0%          8.425n ±  9%         ~ (p=0.065 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/XOR2/decode                                 18.43n ±  1%          17.59n ±  3%    -4.56% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/ALP/decode                                  3.399n ±  5%          3.205n ±  7%    -5.72% (p=0.026 n=6)
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/legacy/decode-float          831.1n ±  0%          803.8n ±  4%         ~ (p=0.056 n=6)
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/ALPv3/decode-float           311.6n ±  5%          305.6n ± 18%         ~ (p=0.905 n=6)
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/ALPv4/decode-float           306.9n ±  0%          305.9n ±  9%         ~ (p=0.102 n=6)
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/legacy/encode                  2.369µ ±  1%          2.236µ ±  1%    -5.61% (p=0.002 n=6)
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/ALPv3/encode                   4.148µ ±  9%          3.938µ ±  4%    -5.04% (p=0.002 n=6)
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/ALPv4/encode                   5.229µ ±  8%          4.729µ ±  6%    -9.55% (p=0.004 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/XOR/encode                            20.18n ±  5%          18.85n ±  6%    -6.57% (p=0.002 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/XOR2/encode                           15.79n ±  1%          15.25n ± 14%         ~ (p=0.372 n=6)
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/ALP/encode                            21.85n ± 21%          31.85n ± 22%   +45.77% (p=0.004 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/XOR/decode                                    9.122n ±  3%         17.730n ± 14%   +94.37% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/XOR2/decode                                   8.224n ± 10%         14.345n ± 18%   +74.43% (p=0.002 n=6)
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/ALP/decode                                    4.498n ± 18%          9.838n ± 20%  +118.70% (p=0.002 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/XOR2/encode                              21.12n ±  0%          13.46n ±  5%   -36.31% (p=0.002 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/XOR2/decode                              14.96n ± 65%          25.89n ± 10%   +73.09% (p=0.009 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/ALP/encode                               15.76n ±  9%          14.30n ±  4%    -9.20% (p=0.024 n=6)
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/ALP/decode                               3.473n ±  3%          5.193n ±  0%   +49.52% (p=0.002 n=6)
+geomean                                                                                        63.63n                73.61n         +15.69%
+
+                                                                                      │ scalar-primary.txt │       scalar-confirmation.txt        │
+                                                                                      │        B/op        │     B/op      vs base                │
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/legacy/decode         16.00 ± 0%       16.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/ALPv3/decode          0.000 ± 0%       0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/ALPv4/decode          0.000 ± 0%       0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/legacy/decode                  16.00 ± 0%       16.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/ALPv3/decode                   0.000 ± 0%       0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/ALPv4/decode                   0.000 ± 0%       0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=120/buckets=0/time=changing-st/XOR2/encode                       3.547Ki ± 0%     3.547Ki ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=120/buckets=0/time=changing-st/ALP/encode                        4.445Ki ± 0%     4.445Ki ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/legacy/decode               32.00 ± 0%       32.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/legacy/decode-float         32.00 ± 0%       32.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv3/decode                0.000 ± 0%       0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv3/decode-float          0.000 ± 0%       0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv4/decode                0.000 ± 0%       0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv4/decode-float          0.000 ± 0%       0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/XOR/decode                                 0.000 ± 0%       0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/XOR2/decode                                0.000 ± 0%       0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/ALP/decode                                 0.000 ± 0%       0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/legacy/decode-float         16.00 ± 0%       16.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/ALPv3/decode-float          0.000 ± 0%       0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/ALPv4/decode-float          0.000 ± 0%       0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/legacy/encode               95.95Ki ± 0%     95.95Ki ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/ALPv3/encode                189.2Ki ± 0%     189.2Ki ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/ALPv4/encode                139.2Ki ± 0%     139.2Ki ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/XOR/encode                         2.156Ki ± 0%     2.156Ki ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/XOR2/encode                        2.172Ki ± 0%     2.172Ki ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/ALP/encode                         4.445Ki ± 0%     4.445Ki ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/XOR/decode                                   0.000 ± 0%       0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/XOR2/decode                                  0.000 ± 0%       0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/ALP/decode                                   0.000 ± 0%       0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/XOR2/encode                           17.80Ki ± 0%     17.80Ki ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/XOR2/decode                             0.000 ± 0%       0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/ALP/encode                            10.68Ki ± 0%     10.68Ki ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/ALP/decode                              0.000 ± 0%       0.000 ± 0%       ~ (p=1.000 n=6) ¹
+geomean                                                                                                  ²                 +0.00%               ²
+¹ all samples are equal
+² summaries must be >0 to compute geomean
+
+                                                                                      │ scalar-primary.txt │      scalar-confirmation.txt       │
+                                                                                      │     allocs/op      │ allocs/op   vs base                │
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/legacy/decode         2.000 ± 0%     2.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/ALPv3/decode          0.000 ± 0%     0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/ALPv4/decode          0.000 ± 0%     0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/legacy/decode                  2.000 ± 0%     2.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/ALPv3/decode                   0.000 ± 0%     0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/ALPv4/decode                   0.000 ± 0%     0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=120/buckets=0/time=changing-st/XOR2/encode                         10.00 ± 0%     10.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/decimal2/n=120/buckets=0/time=changing-st/ALP/encode                          7.000 ± 0%     7.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/legacy/decode               4.000 ± 0%     4.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/legacy/decode-float         4.000 ± 0%     4.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv3/decode                0.000 ± 0%     0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv3/decode-float          0.000 ± 0%     0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv4/decode                0.000 ± 0%     0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv4/decode-float          0.000 ± 0%     0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/XOR/decode                                 0.000 ± 0%     0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/XOR2/decode                                0.000 ± 0%     0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/ALP/decode                                 0.000 ± 0%     0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/legacy/decode-float         2.000 ± 0%     2.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/ALPv3/decode-float          0.000 ± 0%     0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/ALPv4/decode-float          0.000 ± 0%     0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/legacy/encode                 41.00 ± 0%     41.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/ALPv3/encode                  93.00 ± 0%     93.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/ALPv4/encode                  91.00 ± 0%     91.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/XOR/encode                           9.000 ± 0%     9.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/XOR2/encode                          9.000 ± 0%     9.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/ALP/encode                           7.000 ± 0%     7.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/XOR/decode                                   0.000 ± 0%     0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/XOR2/decode                                  0.000 ± 0%     0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/stale5/n=32/buckets=0/time=no-st/ALP/decode                                   0.000 ± 0%     0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/XOR2/encode                             14.00 ± 0%     14.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/XOR2/decode                             0.000 ± 0%     0.000 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/ALP/encode                              16.00 ± 0%     16.00 ± 0%       ~ (p=1.000 n=6) ¹
+ALPMatrix/float/counter/n=1024/buckets=0/time=regular/ALP/decode                              0.000 ± 0%     0.000 ± 0%       ~ (p=1.000 n=6) ¹
+geomean                                                                                                  ²               +0.00%               ²
+¹ all samples are equal
+² summaries must be >0 to compute geomean

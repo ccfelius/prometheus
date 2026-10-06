@@ -1,0 +1,23 @@
+File: alp-big-simd.test
+Type: cpu
+Time: 2026-10-06 09:00:59 CEST
+Duration: 6.15s, Total samples = 5.67s (92.14%)
+Showing nodes accounting for 5.58s, 98.41% of 5.67s total
+Dropped 8 nodes (cum <= 0.03s)
+Showing top 15 nodes out of 16
+      flat  flat%   sum%        cum   cum%
+     2.34s 41.27% 41.27%      2.34s 41.27%  github.com/prometheus/prometheus/tsdb/chunkenc.(*alpIterator).At
+     1.33s 23.46% 64.73%      1.45s 25.57%  github.com/prometheus/prometheus/tsdb/chunkenc.alpDecodeNEONWidth7
+     0.83s 14.64% 79.37%      2.93s 51.68%  github.com/prometheus/prometheus/tsdb/chunkenc.(*alpIterator).Next
+     0.32s  5.64% 85.01%      5.66s 99.82%  github.com/prometheus/prometheus/tsdb/chunkenc.(*alpMatrixReader).scan
+     0.26s  4.59% 89.59%      0.47s  8.29%  github.com/prometheus/prometheus/tsdb/chunkenc.alpUnpackWords
+     0.11s  1.94% 91.53%      2.03s 35.80%  github.com/prometheus/prometheus/tsdb/chunkenc.alpDecodeValues
+     0.11s  1.94% 93.47%      0.11s  1.94%  github.com/prometheus/prometheus/tsdb/chunkenc.alpLaneCount (inline)
+     0.09s  1.59% 95.06%      0.09s  1.59%  simd/archsimd.BroadcastUint32x4 (inline)
+     0.08s  1.41% 96.47%      0.08s  1.41%  runtime.memclrNoHeapPointers
+     0.06s  1.06% 97.53%      2.10s 37.04%  github.com/prometheus/prometheus/tsdb/chunkenc.alpDecodeSamples
+     0.05s  0.88% 98.41%      0.07s  1.23%  github.com/prometheus/prometheus/tsdb/chunkenc.(*ALPChunk).Iterator
+         0     0% 98.41%      5.66s 99.82%  github.com/prometheus/prometheus/tsdb/chunkenc.BenchmarkALPMatrix.func1.1.1
+         0     0% 98.41%      1.45s 25.57%  github.com/prometheus/prometheus/tsdb/chunkenc.alpDecodeNEON
+         0     0% 98.41%      0.09s  1.59%  github.com/prometheus/prometheus/tsdb/chunkenc.alpMultiplyNEON (inline)
+         0     0% 98.41%      5.66s 99.82%  testing.(*B).run1.func1

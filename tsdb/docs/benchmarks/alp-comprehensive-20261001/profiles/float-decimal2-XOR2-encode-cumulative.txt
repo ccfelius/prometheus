@@ -1,0 +1,23 @@
+File: alp-big-simd.test
+Type: cpu
+Time: 2026-10-06 09:00:39 CEST
+Duration: 6.24s, Total samples = 5.77s (92.46%)
+Showing nodes accounting for 5.60s, 97.05% of 5.77s total
+Dropped 48 nodes (cum <= 0.03s)
+Showing top 15 nodes out of 20
+      flat  flat%   sum%        cum   cum%
+         0     0%     0%      4.97s 86.14%  runtime.systemstack
+     4.92s 85.27% 85.27%      4.92s 85.27%  runtime.kevent
+         0     0% 85.27%      4.92s 85.27%  runtime.netpoll
+         0     0% 85.27%      4.92s 85.27%  runtime.startTheWorldWithSema
+         0     0% 85.27%      2.82s 48.87%  runtime.gcStart.func4
+         0     0% 85.27%      2.10s 36.40%  runtime.gcMarkTermination.func3
+         0     0% 85.27%      0.80s 13.86%  github.com/prometheus/prometheus/tsdb/chunkenc.BenchmarkALPMatrix.func1.1.1
+     0.07s  1.21% 86.48%      0.80s 13.86%  github.com/prometheus/prometheus/tsdb/chunkenc.alpMatrixFixture.encode
+         0     0% 86.48%      0.80s 13.86%  testing.(*B).run1.func1
+         0     0% 86.48%      0.80s 13.86%  testing.(*B).runN
+     0.11s  1.91% 88.39%      0.69s 11.96%  github.com/prometheus/prometheus/tsdb/chunkenc.(*xor2Appender).Append
+     0.02s  0.35% 88.73%      0.57s  9.88%  github.com/prometheus/prometheus/tsdb/chunkenc.(*xor2Appender).encodeJoint
+     0.42s  7.28% 96.01%      0.46s  7.97%  github.com/prometheus/prometheus/tsdb/chunkenc.(*bstream).writeBitsFast
+     0.06s  1.04% 97.05%      0.46s  7.97%  github.com/prometheus/prometheus/tsdb/chunkenc.(*xor2Appender).writeVDeltaKnownNonZero
+         0     0% 97.05%      0.06s  1.04%  runtime.mallocgc

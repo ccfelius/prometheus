@@ -1,0 +1,23 @@
+File: alp-big-simd.test
+Type: cpu
+Time: 2026-10-06 09:00:39 CEST
+Duration: 6.24s, Total samples = 5.77s (92.46%)
+Showing nodes accounting for 5.66s, 98.09% of 5.77s total
+Dropped 48 nodes (cum <= 0.03s)
+Showing top 15 nodes out of 20
+      flat  flat%   sum%        cum   cum%
+     4.92s 85.27% 85.27%      4.92s 85.27%  runtime.kevent
+     0.42s  7.28% 92.55%      0.46s  7.97%  github.com/prometheus/prometheus/tsdb/chunkenc.(*bstream).writeBitsFast
+     0.11s  1.91% 94.45%      0.69s 11.96%  github.com/prometheus/prometheus/tsdb/chunkenc.(*xor2Appender).Append
+     0.07s  1.21% 95.67%      0.80s 13.86%  github.com/prometheus/prometheus/tsdb/chunkenc.alpMatrixFixture.encode
+     0.06s  1.04% 96.71%      0.46s  7.97%  github.com/prometheus/prometheus/tsdb/chunkenc.(*xor2Appender).writeVDeltaKnownNonZero
+     0.03s  0.52% 97.23%      0.03s  0.52%  math.Float64bits (inline)
+     0.02s  0.35% 97.57%      0.57s  9.88%  github.com/prometheus/prometheus/tsdb/chunkenc.(*xor2Appender).encodeJoint
+     0.02s  0.35% 97.92%      0.03s  0.52%  runtime.mallocgcSmallScanNoHeader
+     0.01s  0.17% 98.09%      0.04s  0.69%  runtime.growslice
+         0     0% 98.09%      0.03s  0.52%  github.com/prometheus/prometheus/model/value.IsStaleNaN (inline)
+         0     0% 98.09%      0.80s 13.86%  github.com/prometheus/prometheus/tsdb/chunkenc.BenchmarkALPMatrix.func1.1.1
+         0     0% 98.09%      2.10s 36.40%  runtime.gcMarkTermination.func3
+         0     0% 98.09%      2.82s 48.87%  runtime.gcStart.func4
+         0     0% 98.09%      0.06s  1.04%  runtime.mallocgc
+         0     0% 98.09%      4.92s 85.27%  runtime.netpoll

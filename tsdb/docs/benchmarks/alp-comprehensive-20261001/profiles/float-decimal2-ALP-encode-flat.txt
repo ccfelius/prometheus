@@ -1,0 +1,23 @@
+File: alp-big-simd.test
+Type: cpu
+Time: 2026-10-06 09:00:51 CEST
+Duration: 6.22s, Total samples = 5.80s (93.27%)
+Showing nodes accounting for 5.38s, 92.76% of 5.80s total
+Dropped 64 nodes (cum <= 0.03s)
+Showing top 15 nodes out of 50
+      flat  flat%   sum%        cum   cum%
+     3.01s 51.90% 51.90%      3.01s 51.90%  runtime.kevent
+     0.74s 12.76% 64.66%      1.57s 27.07%  github.com/prometheus/prometheus/tsdb/chunkenc.alpEncodeValuesWithState
+     0.38s  6.55% 71.21%      0.63s 10.86%  github.com/prometheus/prometheus/tsdb/chunkenc.(*alpAppender).Append
+     0.26s  4.48% 75.69%      0.26s  4.48%  github.com/prometheus/prometheus/tsdb/chunkenc.alpEncodeNumber
+     0.14s  2.41% 78.10%      0.40s  6.90%  github.com/prometheus/prometheus/tsdb/chunkenc.alpAnalyze
+     0.14s  2.41% 80.52%      1.71s 29.48%  github.com/prometheus/prometheus/tsdb/chunkenc.alpEncodeSamplesWithState
+     0.14s  2.41% 82.93%      0.22s  3.79%  github.com/prometheus/prometheus/tsdb/chunkenc.alpPack
+     0.10s  1.72% 84.66%      0.11s  1.90%  github.com/prometheus/prometheus/tsdb/chunkenc.alpConvertAnalyzeNEON
+     0.10s  1.72% 86.38%      0.14s  2.41%  runtime.mallocgcSmallNoscan
+     0.09s  1.55% 87.93%      2.70s 46.55%  github.com/prometheus/prometheus/tsdb/chunkenc.alpMatrixFixture.encode
+     0.07s  1.21% 89.14%      0.08s  1.38%  github.com/prometheus/prometheus/tsdb/chunkenc.alpPackWordsNEON
+     0.07s  1.21% 90.34%      0.07s  1.21%  runtime.typePointers.next
+     0.06s  1.03% 91.38%      0.06s  1.03%  runtime.madvise
+     0.04s  0.69% 92.07%      0.05s  0.86%  gcWriteBarrier
+     0.04s  0.69% 92.76%      0.06s  1.03%  github.com/prometheus/prometheus/tsdb/chunkenc.alpDecimalCost (inline)

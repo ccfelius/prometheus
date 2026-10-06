@@ -1,0 +1,23 @@
+File: alp-big-simd.test
+Type: cpu
+Time: 2026-10-06 09:01:06 CEST
+Duration: 5.87s, Total samples = 5.43s (92.50%)
+Showing nodes accounting for 1.15s, 21.18% of 5.43s total
+Dropped 78 nodes (cum <= 0.03s)
+Showing top 15 nodes out of 77
+      flat  flat%   sum%        cum   cum%
+         0     0%     0%      4.68s 86.19%  testing.(*B).run1.func1
+         0     0%     0%      4.68s 86.19%  testing.(*B).runN
+         0     0%     0%      4.67s 86.00%  github.com/prometheus/prometheus/tsdb/chunkenc.BenchmarkALPMatrix.func1.1.1
+         0     0%     0%      4.67s 86.00%  github.com/prometheus/prometheus/tsdb/chunkenc.alpMatrixFixture.encode
+         0     0%     0%      2.42s 44.57%  github.com/prometheus/prometheus/tsdb/chunkenc.(*ALPHistogramChunk).Bytes
+     0.12s  2.21%  2.21%      2.42s 44.57%  github.com/prometheus/prometheus/tsdb/chunkenc.alpEncodeHistogramCandidate
+         0     0%  2.21%      2.42s 44.57%  github.com/prometheus/prometheus/tsdb/chunkenc.alpEncodeHistograms
+         0     0%  2.21%      2.42s 44.57%  github.com/prometheus/prometheus/tsdb/chunkenc.alpEncodeHistogramsWithWorkspace (inline)
+     0.01s  0.18%  2.39%      2.24s 41.25%  github.com/prometheus/prometheus/tsdb/chunkenc.(*HistogramSTAppender).AppendHistogram
+         0     0%  2.39%      2.24s 41.25%  github.com/prometheus/prometheus/tsdb/chunkenc.(*alpHistogramAppender).AppendHistogram
+     0.18s  3.31%  5.71%      1.48s 27.26%  github.com/prometheus/prometheus/tsdb/chunkenc.(*HistogramAppender).appendHistogram
+         0     0%  5.71%      1.48s 27.26%  github.com/prometheus/prometheus/tsdb/chunkenc.(*HistogramSTAppender).appendHistogramST
+     0.13s  2.39%  8.10%      1.24s 22.84%  github.com/prometheus/prometheus/tsdb/chunkenc.putVarbitInt
+         0     0%  8.10%      1.13s 20.81%  github.com/prometheus/prometheus/tsdb/chunkenc.alpEncodeHistogramCandidate.func3
+     0.71s 13.08% 21.18%      1.13s 20.81%  github.com/prometheus/prometheus/tsdb/chunkenc.alpEncodePatchedIntegers

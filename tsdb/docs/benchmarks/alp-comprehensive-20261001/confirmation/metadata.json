@@ -1,0 +1,137 @@
+{
+  "started_utc": "2026-10-01T13:29:18.597868+00:00",
+  "selection": "Primary ns/op maximum divided by minimum exceeds 1.5; all codecs and both builds for each affected case and operation.",
+  "flagged": [
+    {
+      "backend": "scalar",
+      "benchmark": "BenchmarkALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular/ALPv3/decode",
+      "max_min_ratio": 2.36588752603564
+    },
+    {
+      "backend": "scalar",
+      "benchmark": "BenchmarkALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular/legacy/decode",
+      "max_min_ratio": 2.0116829644879055
+    },
+    {
+      "backend": "scalar",
+      "benchmark": "BenchmarkALPMatrix/float/decimal2/n=120/buckets=0/time=changing-st/ALP/encode",
+      "max_min_ratio": 1.8643608002712784
+    },
+    {
+      "backend": "scalar",
+      "benchmark": "BenchmarkALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/ALPv4/decode",
+      "max_min_ratio": 1.99361350099272
+    },
+    {
+      "backend": "simd",
+      "benchmark": "BenchmarkALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular/legacy/decode-float",
+      "max_min_ratio": 1.9792283024723285
+    },
+    {
+      "backend": "scalar",
+      "benchmark": "BenchmarkALPMatrix/float/stale5/n=1024/buckets=0/time=no-st/ALP/decode",
+      "max_min_ratio": 1.8543661154627211
+    },
+    {
+      "backend": "scalar",
+      "benchmark": "BenchmarkALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular/ALPv3/decode-float",
+      "max_min_ratio": 1.945838020247469
+    },
+    {
+      "backend": "simd",
+      "benchmark": "BenchmarkALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/legacy/encode",
+      "max_min_ratio": 2.0940266801354803
+    },
+    {
+      "backend": "simd",
+      "benchmark": "BenchmarkALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular/ALPv4/encode",
+      "max_min_ratio": 2.237048423101581
+    },
+    {
+      "backend": "scalar",
+      "benchmark": "BenchmarkALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st/ALP/encode",
+      "max_min_ratio": 2.2426127527216173
+    },
+    {
+      "backend": "scalar",
+      "benchmark": "BenchmarkALPMatrix/float/stale5/n=32/buckets=0/time=no-st/ALP/decode",
+      "max_min_ratio": 2.8076923076923075
+    },
+    {
+      "backend": "scalar",
+      "benchmark": "BenchmarkALPMatrix/float/counter/n=1024/buckets=0/time=regular/XOR2/decode",
+      "max_min_ratio": 1.6793481875623546
+    },
+    {
+      "backend": "scalar",
+      "benchmark": "BenchmarkALPMatrix/float/counter/n=1024/buckets=0/time=regular/ALP/encode",
+      "max_min_ratio": 1.9006900284129347
+    }
+  ],
+  "case_order": [
+    [
+      "BenchmarkALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular",
+      "decode-float"
+    ],
+    [
+      "BenchmarkALPMatrix/float-histogram/noisy-fractional/n=120/buckets=8/time=regular",
+      "decode"
+    ],
+    [
+      "BenchmarkALPMatrix/integer-histogram/bursty/n=120/buckets=128/time=regular",
+      "decode-float"
+    ],
+    [
+      "BenchmarkALPMatrix/float-histogram/layout/n=120/buckets=128/time=regular",
+      "encode"
+    ],
+    [
+      "BenchmarkALPMatrix/float/counter/n=1024/buckets=0/time=regular",
+      "encode"
+    ],
+    [
+      "BenchmarkALPMatrix/float-histogram/bursty/n=1024/buckets=8/time=regular",
+      "decode"
+    ],
+    [
+      "BenchmarkALPMatrix/float/stale5/n=1024/buckets=0/time=no-st",
+      "decode"
+    ],
+    [
+      "BenchmarkALPMatrix/float/noisy-decimal/n=120/buckets=0/time=no-st",
+      "encode"
+    ],
+    [
+      "BenchmarkALPMatrix/float/stale5/n=32/buckets=0/time=no-st",
+      "decode"
+    ],
+    [
+      "BenchmarkALPMatrix/integer-histogram/layout/n=120/buckets=128/time=regular",
+      "decode"
+    ],
+    [
+      "BenchmarkALPMatrix/float/decimal2/n=120/buckets=0/time=changing-st",
+      "encode"
+    ],
+    [
+      "BenchmarkALPMatrix/float/counter/n=1024/buckets=0/time=regular",
+      "decode"
+    ]
+  ],
+  "count": 6,
+  "benchtime": "500ms",
+  "binaries": {
+    "scalar": {
+      "path": "/private/tmp/alp-big-scalar.test",
+      "sha256": "7cabd0e1df59a6172081ae5a3a9f1b9f6ebefe182f1734acf665a4dddd4c9d43",
+      "go_version": "/private/tmp/alp-big-scalar.test: go1.27.1\n\tpath\tgithub.com/prometheus/prometheus/tsdb/chunkenc.test\n\tmod\tgithub.com/prometheus/prometheus\t(devel)\t\n\tdep\tgithub.com/beorn7/perks\tv1.0.1\th1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=\n\tdep\tgithub.com/cespare/xxhash/v2\tv2.3.0\th1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=\n\tdep\tgithub.com/google/go-cmp\tv0.7.0\th1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=\n\tdep\tgithub.com/grafana/regexp\tv0.0.0-20250905093917-f7b3be9d1853\th1:cLN4IBkmkYZNnk7EAJ0BHIethd+J6LqxFNw5mSiI2bM=\n\tdep\tgithub.com/kylelemons/godebug\tv1.1.0\th1:RPNrshWIDI6G2gRW9EHilWtl7Z6Sb1BR0xunSBf0SNc=\n\tdep\tgithub.com/munnerz/goautoneg\tv0.0.0-20191010083416-a7dc8b61c822\th1:C3w9PqII01/Oq1c1nUAm88MOHcQC9l5mIlSMApZMrHA=\n\tdep\tgithub.com/prometheus/client_golang\tv1.24.1\th1:JnJkREXzWxUdCuPFpIWZiPispT9xVV59uiuyR2bPlnU=\n\tdep\tgithub.com/prometheus/client_model\tv0.6.3\th1:O0jaTVAYNxTHYInEPFJt5I3+sN8zqBtVMPTB1qyxiEo=\n\tdep\tgithub.com/prometheus/common\tv0.71.0\th1:9KDAKb7Mj3HEVKyFCK6Dc/HIwlBzZIN2l7/lrHl3KK8=\n\tdep\tgithub.com/stretchr/testify\tv1.12.1\th1:EuwCh5fleGS7H32xRwO3wRGT7DxrDhLAT6FF8MpWDWE=\n\tdep\tgo.uber.org/atomic\tv1.12.0\th1:BvcXdFKuviU4fTL/f+SxdQ5qJX/Jix8pAkgdUcb3XOE=\n\tdep\tgo.uber.org/goleak\tv1.3.0\th1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=\n\tdep\tgo.yaml.in/yaml/v3\tv3.0.5\th1:N6y/pJk8buWs9NY5ERU2HSMfm+IuD/OtfdAnq6kESPw=\n\tdep\tgolang.org/x/sys\tv0.48.0\th1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=\n\tdep\tgolang.org/x/text\tv0.42.0\th1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=\n\tdep\tgoogle.golang.org/protobuf\tv1.36.12\th1:pJOKDDOyeXErUroCihFAd5LQuwXBSpVnKGrj5o/fwxc=\n\tbuild\t-buildmode=exe\n\tbuild\t-compiler=gc\n\tbuild\tDefaultGODEBUG=tracebacklabels=0,x509sslcertoverrideplatform=0\n\tbuild\tCGO_ENABLED=1\n\tbuild\tCGO_CFLAGS=\n\tbuild\tCGO_CPPFLAGS=\n\tbuild\tCGO_CXXFLAGS=\n\tbuild\tCGO_LDFLAGS=\n\tbuild\tGOARCH=arm64\n\tbuild\tGOOS=darwin\n\tbuild\tGOARM64=v8.0"
+    },
+    "simd": {
+      "path": "/private/tmp/alp-big-simd.test",
+      "sha256": "c9cc07bbfe59ae16a6d99b152f6ac32346a7301fede1db48eba88aa8e995eebf",
+      "go_version": "/private/tmp/alp-big-simd.test: go1.27.1-X:simd\n\tpath\tgithub.com/prometheus/prometheus/tsdb/chunkenc.test\n\tmod\tgithub.com/prometheus/prometheus\t(devel)\t\n\tdep\tgithub.com/beorn7/perks\tv1.0.1\th1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=\n\tdep\tgithub.com/cespare/xxhash/v2\tv2.3.0\th1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=\n\tdep\tgithub.com/google/go-cmp\tv0.7.0\th1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=\n\tdep\tgithub.com/grafana/regexp\tv0.0.0-20250905093917-f7b3be9d1853\th1:cLN4IBkmkYZNnk7EAJ0BHIethd+J6LqxFNw5mSiI2bM=\n\tdep\tgithub.com/kylelemons/godebug\tv1.1.0\th1:RPNrshWIDI6G2gRW9EHilWtl7Z6Sb1BR0xunSBf0SNc=\n\tdep\tgithub.com/munnerz/goautoneg\tv0.0.0-20191010083416-a7dc8b61c822\th1:C3w9PqII01/Oq1c1nUAm88MOHcQC9l5mIlSMApZMrHA=\n\tdep\tgithub.com/prometheus/client_golang\tv1.24.1\th1:JnJkREXzWxUdCuPFpIWZiPispT9xVV59uiuyR2bPlnU=\n\tdep\tgithub.com/prometheus/client_model\tv0.6.3\th1:O0jaTVAYNxTHYInEPFJt5I3+sN8zqBtVMPTB1qyxiEo=\n\tdep\tgithub.com/prometheus/common\tv0.71.0\th1:9KDAKb7Mj3HEVKyFCK6Dc/HIwlBzZIN2l7/lrHl3KK8=\n\tdep\tgithub.com/stretchr/testify\tv1.12.1\th1:EuwCh5fleGS7H32xRwO3wRGT7DxrDhLAT6FF8MpWDWE=\n\tdep\tgo.uber.org/atomic\tv1.12.0\th1:BvcXdFKuviU4fTL/f+SxdQ5qJX/Jix8pAkgdUcb3XOE=\n\tdep\tgo.uber.org/goleak\tv1.3.0\th1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=\n\tdep\tgo.yaml.in/yaml/v3\tv3.0.5\th1:N6y/pJk8buWs9NY5ERU2HSMfm+IuD/OtfdAnq6kESPw=\n\tdep\tgolang.org/x/sys\tv0.48.0\th1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=\n\tdep\tgolang.org/x/text\tv0.42.0\th1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=\n\tdep\tgoogle.golang.org/protobuf\tv1.36.12\th1:pJOKDDOyeXErUroCihFAd5LQuwXBSpVnKGrj5o/fwxc=\n\tbuild\t-buildmode=exe\n\tbuild\t-compiler=gc\n\tbuild\tDefaultGODEBUG=tracebacklabels=0,x509sslcertoverrideplatform=0\n\tbuild\tCGO_ENABLED=1\n\tbuild\tCGO_CFLAGS=\n\tbuild\tCGO_CPPFLAGS=\n\tbuild\tCGO_CXXFLAGS=\n\tbuild\tCGO_LDFLAGS=\n\tbuild\tGOARCH=arm64\n\tbuild\tGOEXPERIMENT=simd\n\tbuild\tGOOS=darwin\n\tbuild\tGOARM64=v8.0"
+    }
+  },
+  "completed_utc": "2026-10-01T19:35:46.514391+00:00",
+  "observations": 396
+}

@@ -1,0 +1,23 @@
+File: alp-big-simd.test
+Type: cpu
+Time: 2026-10-06 09:00:51 CEST
+Duration: 6.22s, Total samples = 5.80s (93.27%)
+Showing nodes accounting for 4.40s, 75.86% of 5.80s total
+Dropped 64 nodes (cum <= 0.03s)
+Showing top 15 nodes out of 50
+      flat  flat%   sum%        cum   cum%
+         0     0%     0%      3.30s 56.90%  runtime.systemstack
+     3.01s 51.90% 51.90%      3.01s 51.90%  runtime.kevent
+         0     0% 51.90%      3.01s 51.90%  runtime.netpoll
+         0     0% 51.90%      3.01s 51.90%  runtime.startTheWorldWithSema
+     0.01s  0.17% 52.07%      2.71s 46.72%  github.com/prometheus/prometheus/tsdb/chunkenc.BenchmarkALPMatrix.func1.1.1
+         0     0% 52.07%      2.71s 46.72%  testing.(*B).run1.func1
+         0     0% 52.07%      2.71s 46.72%  testing.(*B).runN
+     0.09s  1.55% 53.62%      2.70s 46.55%  github.com/prometheus/prometheus/tsdb/chunkenc.alpMatrixFixture.encode
+     0.01s  0.17% 53.79%      1.83s 31.55%  github.com/prometheus/prometheus/tsdb/chunkenc.(*ALPChunk).Bytes
+     0.14s  2.41% 56.21%      1.71s 29.48%  github.com/prometheus/prometheus/tsdb/chunkenc.alpEncodeSamplesWithState
+         0     0% 56.21%      1.67s 28.79%  runtime.gcStart.func4
+     0.74s 12.76% 68.97%      1.57s 27.07%  github.com/prometheus/prometheus/tsdb/chunkenc.alpEncodeValuesWithState
+         0     0% 68.97%      1.34s 23.10%  runtime.gcMarkTermination.func3
+     0.38s  6.55% 75.52%      0.63s 10.86%  github.com/prometheus/prometheus/tsdb/chunkenc.(*alpAppender).Append
+     0.02s  0.34% 75.86%      0.48s  8.28%  github.com/prometheus/prometheus/tsdb/chunkenc.alpEncodeValuesWithState.func2
